@@ -357,34 +357,37 @@ $(document).ready(function() {
 			}
 		]
 		var attackPieChart = new Chart(ctx).Pie(data,{});
-		var ctx = $("#defencePie").get(0).getContext("2d");
-		var data = [
-			{
-				value: <?=$defenceStats[3];?>,
-				color:"#D0470D",
-				highlight: "#E0470D",
-				label: "3 Star Defence"
-			},
-			{
-				value: <?=$defenceStats[2];?>,
-				color: "#E15B00",
-				highlight: "#E16F00",
-				label: "2 Star Defence"
-			},
-			{
-				value: <?=$defenceStats[1];?>,
-				color: "#F8CC00",
-				highlight: "#F8EB00",
-				label: "1 Star Defence"
-			},
-			{
-				value: <?=$defenceStats[0];?>,
-				color: "#419641",
-				highlight: "#5CB85C",
-				label: "Defended"
-			}
-		]
-		var defencePieChart = new Chart(ctx).Pie(data,{});
+		var defenceAvailable = "<?=(count($defences)>0);?>";
+		if(defenceAvailable){
+			var ctx = $("#defencePie").get(0).getContext("2d");
+			var data = [
+				{
+					value: <?=$defenceStats[3];?>,
+					color:"#D0470D",
+					highlight: "#E0470D",
+					label: "3 Star Defence"
+				},
+				{
+					value: <?=$defenceStats[2];?>,
+					color: "#E15B00",
+					highlight: "#E16F00",
+					label: "2 Star Defence"
+				},
+				{
+					value: <?=$defenceStats[1];?>,
+					color: "#F8CC00",
+					highlight: "#F8EB00",
+					label: "1 Star Defence"
+				},
+				{
+					value: <?=$defenceStats[0];?>,
+					color: "#419641",
+					highlight: "#5CB85C",
+					label: "Defended"
+				}
+			]
+			var defencePieChart = new Chart(ctx).Pie(data,{});
+		}
 	}
 	showAllTimeGraph();
 });
