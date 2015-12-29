@@ -5,6 +5,7 @@ class player{
 	private $tag;
 	private $dateCreated;
 	private $dateModified;
+	private $warsSinceLastParticipated;
 
 	private $acceptGet = array(
 		'id' => 'id',
@@ -163,7 +164,7 @@ class player{
 					throw new illegalQueryException('The database encountered an error. ' . $db->error);
 				}
 			}else{
-				throw new illegalLootAmountException('New loot recording must be positive and more than previous recording.');
+				throw new illegalLootAmountException('New loot recording must be positive and more than previous recording. Player ID: ' . $this->id . ".");
 			}
 		}else{
 			throw new illegalFunctionCallException('ID not set for recording loot.');
@@ -518,6 +519,7 @@ class player{
 
 	public static function searchPlayers($query){
 		global $db;
+		$query = trim($query);
 		$queries = explode(' ', $query);
 		$query = str_replace(' ', '%', $query);
 		array_unshift($queries, $query);
@@ -549,5 +551,79 @@ class player{
 			}
 		}
 		return $players;
+	}
+
+	public function warsSinceLastParticipated(){
+		if(isset($this->warsSinceLastParticipated)){
+			return $this->warsSinceLastParticipated;
+		}
+		$wars = $this->getWars();
+		if(count($wars)>0){
+			$lastWarId = $wars[0]->get("id");
+			$clanWars = $this->getMyClan()->getMyWars();
+			if(count($clanWars)>0){
+				$count = 0;
+				foreach ($clanWars as $war) {
+					if($war->get("id") != $lastWarId){
+						$count++;
+					}else{
+						break;
+					}
+				}
+				return $count;
+			}else{
+				return 0;
+			}
+		}else{
+			return INF;
+		}
+	}
+
+	public static function getIdsForPlayersWithName($name){
+		global $db;
+		$procedure = buildProcedure('p_get_players_with_name', $name);
+		if(($db->multi_query($procedure)) === TRUE){
+			$results = $db->store_result();
+			while ($db->more_results()){
+				$db->next_result();
+			}
+			$playerIds = array();
+			if ($results->num_rows) {
+				while ($playerObj = $results->fetch_object()) {
+					$playerIds[] = $playerObj->id;
+				}
+			}
+			return $playerIds;
+		}else{
+			throw new illegalQueryException('The database encountered an error. ' . $db->error);
+		}		
+	}
+
+	public function removeAllLootValues($type, $date='%'){
+		global $db;
+		if(isset($this->id)){
+			$procedure = buildProcedure('p_player_remove_loot', $this->id, $type, $date);
+			if(($db->multi_query($procedure)) === TRUE){
+				while ($db->more_results()){
+					$db->next_result();
+				}
+			}else{
+				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set for recording loot.');
+		}
+	}
+
+	public function removeAllGoldValues($date='%'){
+		$this->removeAllLootValues('GO', $date);
+	}
+
+	public function removeAllElixirValues($date='%'){
+		$this->removeAllLootValues('EL', $date);
+	}
+
+	public function removeAllDarkElixirValues($date='%'){
+		$this->removeAllLootValues('DE', $date);
 	}
 }

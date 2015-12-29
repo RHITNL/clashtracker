@@ -475,7 +475,7 @@ drop procedure if exists p_player_get_wars;
 delimiter //
 create procedure p_player_get_wars(varPlayerId int)
 begin
-	select war_id from war_player where player_id = varPlayerId;
+	select war_id from war_player where player_id = varPlayerId order by date_created desc;
 end //
 delimiter ;
 
@@ -500,5 +500,24 @@ delimiter //
 create procedure p_player_search(varQuery varChar(50))
 begin
 	select id from player where lower(name) like lower(varQuery) or lower(tag) like lower(varQuery) limit 50;
+end //
+delimiter ;
+
+drop procedure if exists p_get_players_with_name;
+delimiter //
+create procedure p_get_players_with_name(varName varChar(50))
+begin
+	select id from player where name = varName;
+end //
+delimiter ;
+
+drop procedure if exists p_player_remove_loot;
+delimiter //
+create procedure p_player_remove_loot(varId int, varType varChar(2), varDate varChar(50))
+begin
+if(varDate ='%')
+	then delete from loot where player_id = varId and loot_type = varType;
+	else delete from loot where player_id = varId and loot_type = varType and date_recorded >= varDate;
+end if;
 end //
 delimiter ;

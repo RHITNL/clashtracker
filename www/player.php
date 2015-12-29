@@ -213,22 +213,90 @@ require('header.php');
 					</div>
 					<div class="col-md-1"></div>
 					<div class="jumbotron col-md-5">
-						<?if($goldAvailable){?>
-							<label class="col-sm-4">Average&nbsp;<i class="fa fa-2x fa-coins" style="color: gold;"></i></label>
-							<div class="col-sm-8 text-right">
-								<p><?=number_format($player->getAverageGold(), 0, '.', ',') . '/week';?></p>
+						<div id="allTimeAverage">
+							<?if($goldAvailable){?>
+								<label class="col-sm-4">Average&nbsp;<i class="fa fa-2x fa-coins" style="color: gold;"></i></label>
+								<div class="col-sm-8 text-right">
+									<p><?=number_format($player->getAverageGold(), 0, '.', ',') . '/week';?></p>
+								</div>
+							<?}
+							if($elixirAvailable){?>
+								<label class="col-sm-4">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint" style="color: #FF09F4;"></i></label>
+								<div class="col-sm-8 text-right">
+									<p><?=number_format($player->getAverageElixir(), 0, '.', ',') . '/week';?></p>
+								</div>
+							<?}
+							if($oilAvailable){?>
+								<label class="col-sm-4">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint"></i></label>
+								<div class="col-sm-8 text-right">
+									<p><?=number_format($player->getAverageDarkElixir(), 0, '.', ',') . '/week';?></p>
+								</div>
+							<?}?>
+						</div>
+						<?if($lootAvailablePastYear){?>
+							<div id="pastYearAverage" hidden>
+								<?if($goldAvailable){?>
+									<label class="col-sm-4">Average&nbsp;<i class="fa fa-2x fa-coins" style="color: gold;"></i></label>
+									<div class="col-sm-8 text-right">
+										<p><?=number_format($player->getAverageGold(yearAgo()), 0, '.', ',') . '/week';?></p>
+									</div>
+								<?}
+								if($elixirAvailable){?>
+									<label class="col-sm-4">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint" style="color: #FF09F4;"></i></label>
+									<div class="col-sm-8 text-right">
+										<p><?=number_format($player->getAverageElixir(yearAgo()), 0, '.', ',') . '/week';?></p>
+									</div>
+								<?}
+								if($oilAvailable){?>
+									<label class="col-sm-4">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint"></i></label>
+									<div class="col-sm-8 text-right">
+										<p><?=number_format($player->getAverageDarkElixir(yearAgo()), 0, '.', ',') . '/week';?></p>
+									</div>
+								<?}?>
 							</div>
 						<?}
-						if($elixirAvailable){?>
-							<label class="col-sm-4">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint" style="color: #FF09F4;"></i></label>
-							<div class="col-sm-8 text-right">
-								<p><?=number_format($player->getAverageElixir(), 0, '.', ',') . '/week';?></p>
+						if($lootAvailablePastMonth){?>
+							<div id="pastMonthAverage" hidden>
+								<?if($goldAvailable){?>
+									<label class="col-sm-4">Average&nbsp;<i class="fa fa-2x fa-coins" style="color: gold;"></i></label>
+									<div class="col-sm-8 text-right">
+										<p><?=number_format($player->getAverageGold(monthAgo()), 0, '.', ',') . '/week';?></p>
+									</div>
+								<?}
+								if($elixirAvailable){?>
+									<label class="col-sm-4">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint" style="color: #FF09F4;"></i></label>
+									<div class="col-sm-8 text-right">
+										<p><?=number_format($player->getAverageElixir(monthAgo()), 0, '.', ',') . '/week';?></p>
+									</div>
+								<?}
+								if($oilAvailable){?>
+									<label class="col-sm-4">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint"></i></label>
+									<div class="col-sm-8 text-right">
+										<p><?=number_format($player->getAverageDarkElixir(monthAgo()), 0, '.', ',') . '/week';?></p>
+									</div>
+								<?}?>
 							</div>
 						<?}
-						if($oilAvailable){?>
-							<label class="col-sm-4">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint"></i></label>
-							<div class="col-sm-8 text-right">
-								<p><?=number_format($player->getAverageDarkElixir(), 0, '.', ',') . '/week';?></p>
+						if($lootAvailablePastWeek){?>
+							<div id="pastWeekAverage" hidden>
+								<?if($goldAvailable){?>
+									<label class="col-sm-4">Average&nbsp;<i class="fa fa-2x fa-coins" style="color: gold;"></i></label>
+									<div class="col-sm-8 text-right">
+										<p><?=number_format($player->getAverageGold(weekAgo()), 0, '.', ',') . '/week';?></p>
+									</div>
+								<?}
+								if($elixirAvailable){?>
+									<label class="col-sm-4">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint" style="color: #FF09F4;"></i></label>
+									<div class="col-sm-8 text-right">
+										<p><?=number_format($player->getAverageElixir(weekAgo()), 0, '.', ',') . '/week';?></p>
+									</div>
+								<?}
+								if($oilAvailable){?>
+									<label class="col-sm-4">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint"></i></label>
+									<div class="col-sm-8 text-right">
+										<p><?=number_format($player->getAverageDarkElixir(weekAgo()), 0, '.', ',') . '/week';?></p>
+									</div>
+								<?}?>
 							</div>
 						<?}?>
 					</div>
@@ -586,6 +654,10 @@ function showRecordLootButton(){
 	return false;
 }
 function showLootGraph(type){
+	$('#allTimeAverage').hide();
+	$('#pastYearAverage').hide();
+	$('#pastMonthAverage').hide();
+	$('#pastWeekAverage').hide();
 	$('#allTimeTab').removeClass('active');
 	$('#pastYearTab').removeClass('active');
 	$('#pastMonthTab').removeClass('active');
@@ -595,12 +667,16 @@ function showLootGraph(type){
 	lootChart.destroy();
 	if(type == 'allTime'){
 		showAllTimeGraph();
+		$('#allTimeAverage').show();
 	}else if(type == 'pastYear'){
 		showPastYearGraph();
+		$('#pastYearAverage').show();
 	}else if(type == 'pastMonth'){
 		showPastMonthGraph();
+		$('#pastMonthAverage').show();
 	}else if(type == 'pastWeek'){
 		showPastWeekGraph();
+		$('#pastWeekAverage').show();
 	}
 }
 </script>

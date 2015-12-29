@@ -119,12 +119,12 @@ require('header.php');
 					<h4>Select Defender:</h4><br>
 					<table class="table table-hover">
 						<tbody>
-							<?foreach ($defenders as $defender) {?>
+							<?foreach ($defenders as $rank => $defender) {?>
 								<tr style="cursor: pointer;">
 									<td onclick="selectMember(<?=$defender->get('id');?>);">
 										<div class="checkbox">
 											<label>
-												<input class="defender" data-stars-available="<?=$defenderStarsAvailable[$defender->get('id')];?>" id="<?=$defender->get('id');?>" type="checkbox" name="defenderId" value="<?=$defender->get('id');?>"><?=$defender->get('name');?>
+												<input class="defender" data-stars-available="<?=$defenderStarsAvailable[$defender->get('id')];?>" id="<?=$defender->get('id');?>" type="checkbox" name="defenderId" value="<?=$defender->get('id');?>"><?=($rank+1) . ". " . $defender->get('name');?>
 											</label>
 										</div>
 									</td>

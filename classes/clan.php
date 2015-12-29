@@ -510,6 +510,7 @@ class clan{
 
 	public static function searchClans($query){
 		global $db;
+		$query = trim($query);
 		$queries = explode(' ', $query);
 		$query = str_replace(' ', '%', $query);
 		array_unshift($queries, $query);

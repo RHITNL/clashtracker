@@ -51,6 +51,21 @@ foreach ($allMembers as $member) {
 		$members[] = $member;
 	}
 }
+for ($i=1; $i < count($members); $i++) {
+	$j=$i;
+	$member1Val = $members[$j]->warsSinceLastParticipated();
+	$member2Val = $members[$j-1]->warsSinceLastParticipated();
+	while($j>0 && $member1Val < $member2Val){
+		$temp = $members[$j];
+		$members[$j] = $members[$j-1];
+		$members[$j-1] = $temp;
+		$j--;
+		if($j>0){
+			$member1Val = $members[$j]->warsSinceLastParticipated();
+			$member2Val = $members[$j-1]->warsSinceLastParticipated();
+		}
+	}
+}
 
 require('header.php');
 ?>
