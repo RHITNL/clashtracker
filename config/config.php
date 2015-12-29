@@ -1,6 +1,6 @@
 <?
 define('DEVELOPMENT', true);
-if(DEVELOPMENT == true){
+if(DEVELOPMENT == false){
 	//	Configuration for the MySQL Local Server
 	define('DBHOST', 'localhost');
 	define('DBNAME', 'clash');
