@@ -111,13 +111,38 @@ require('header.php');
 		<li class="active"><?=htmlspecialchars($player->get('name'));?></li>
 	</ol>
 	<?require('showMessages.php');?>
-	<h1><?=htmlspecialchars($player->get('name'));?></h1>
-	<?if(isset($clan)){?>
-		<h6><?=rankFromCode($player->get('rank', $clan->get('id')));?></h6>
-	<?}else{?>
-		<h6><?=rankFromCode($player->get('rank'));?></h6>
-	<?}
-	if($warsAvailable){?>
+	<div class="col-md-12">
+		<div class="col-md-6">
+			<h1><?=htmlspecialchars($player->get('name'));?></h1>
+		</div>
+		<div class="col-md-6 text-right">
+			<div id="editNameButtonDiv">
+				<button type="button" class="btn btn-primary" onclick="showEditNameForm();">Edit Name</button>
+			</div>
+			<div id="editNameFormDiv" hidden>
+				<form class="form-inline" action="/processEditName.php" method="POST">
+					<input hidden name="playerId" value="<?=$player->get('id');?>"></input>
+					<?if(isset($clan)){?>
+						<input hidden name="clanId" value="<?=$clan->get('id');?>"></input>
+					<?}?>
+					<div class="form-group">
+						<label for="name">Name </label>
+						<input type="text" class="form-control" id="name" name="name" placeholder="<?=htmlspecialchars($player->get('name'));?>">
+					</div>
+					<button type="cancel" class="btn btn-default text-right" onclick="return showEditNameButton();">Cancel</button>
+					<button type="submit" class="btn btn-primary text-right">Save</button>
+				</form>
+			</div>
+		</div>
+		<div class="col-md-12">
+			<?if(isset($clan)){?>
+				<h6><?=rankFromCode($player->get('rank', $clan->get('id')));?></h6>
+			<?}else{?>
+				<h6><?=rankFromCode($player->get('rank'));?></h6>
+			<?}?>
+		</div>
+	</div>
+	<?if($warsAvailable){?>
 		<div class="col-md-12">
 			<h3><i class="fa fa-star" style="color: gold;"></i>&nbsp;Wars</h3>
 			<div class="col-md-12">
@@ -162,19 +187,19 @@ require('header.php');
 						<?}?>
 						<div class="col-md-3">
 							<div class="form-group">
-								<label for="gold">Gold</label>
+								<label for="gold">Gold </label>
 								<input type="number" class="form-control" id="gold" name="gold" placeholder="<?=(count($gold)>0) ? $gold[0]['lootAmount'] : '0';?>">
 							</div>
 						</div>
 						<div class="col-md-3">
 							<div class="form-group">
-								<label for="elixir">Elixir</label>
+								<label for="elixir">Elixir </label>
 								<input type="number" class="form-control" id="elixir" name="elixir" placeholder="<?=(count($elixir)>0) ? $elixir[0]['lootAmount'] : '0';?>">
 							</div>
 						</div>
 						<div class="col-md-3">
 							<div class="form-group">
-								<label for="darkElixir">Dark Elixir</label>
+								<label for="darkElixir">Dark Elixir </label>
 								<input type="number" class="form-control" id="darkElixir" name="darkElixir" placeholder="<?=(count($oil)>0) ? $oil[0]['lootAmount'] : '0';?>">
 							</div>
 						</div>
@@ -380,7 +405,9 @@ var options;
 $(document).ready(function() {
 	var largestValue = <?=$largestValue;?>;
 	var label;
-	if(largestValue > 100000000){
+	if(largestValue > 1000000000){
+		label = "<%=Math.round(value/1000000)/1000 + 'B'%>";
+	}else if(largestValue > 100000000){
 		label = "<%=Math.round(value/100000)/10 + 'M'%>";
 	}else if(largestValue > 10000000){
 		label = "<%=Math.round(value/10000)/100 + 'M'%>";
@@ -498,7 +525,7 @@ function showAllTimeGraph(){
 				},
 			<?}if($oilAvailable){?>
 				{
-					label: 'Dark Elixir (x100)',
+					label: 'Dark Elixir (×100)',
 					strokeColor: 'black',
 					pointColor: 'black',
 					pointStrokeColor: '#fff',
@@ -544,7 +571,7 @@ function showPastYearGraph(){
 				},
 			<?}if($oilAvailablePastYear){?>
 				{
-					label: 'Dark Elixir (x100)',
+					label: 'Dark Elixir (×100)',
 					strokeColor: 'black',
 					pointColor: 'black',
 					pointStrokeColor: '#fff',
@@ -590,7 +617,7 @@ function showPastMonthGraph(){
 				},
 			<?}if($oilAvailablePastMonth){?>
 				{
-					label: 'Dark Elixir (x100)',
+					label: 'Dark Elixir (×100)',
 					strokeColor: 'black',
 					pointColor: 'black',
 					pointStrokeColor: '#fff',
@@ -636,7 +663,7 @@ function showPastWeekGraph(){
 				},
 			<?}if($oilAvailablePastWeek){?>
 				{
-					label: 'Dark Elixir (x100)',
+					label: 'Dark Elixir (×100)',
 					strokeColor: 'black',
 					pointColor: 'black',
 					pointStrokeColor: '#fff',
@@ -658,6 +685,15 @@ function showRecordLootForm(){
 function showRecordLootButton(){
 	$('#recordLootButtonDiv').show();
 	$('#recordLootDiv').hide();
+	return false;
+}
+function showEditNameForm(){
+	$('#editNameButtonDiv').hide();
+	$('#editNameFormDiv').show();
+}
+function showEditNameButton(){
+	$('#editNameButtonDiv').show();
+	$('#editNameFormDiv').hide();
 	return false;
 }
 function showLootGraph(type){
