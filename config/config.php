@@ -1,21 +1,4 @@
 <?
-define('DEVELOPMENT', true);
-if(DEVELOPMENT){
-	//	Configuration for the MySQL Local Server
-	define('DBHOST', 'localhost');
-	define('DBNAME', 'clash');
-	define('DBUSER', 'clash');
-	define('DBPASS', 'cl@sh!');
-}else{
-	$url = parse_url(getenv("CLEARDB_DATABASE_URL"));
-	define('DBHOST', $url["host"]);
-	define('DBNAME', substr($url["path"], 1));
-	define('DBUSER', $url["user"]);
-	define('DBPASS', $url["pass"]);
-}
-
-// Create connection
-$db = new mysqli(DBHOST, DBUSER, DBPASS, DBNAME);
 
 // Time values in seconds
 define('MINUTE', 60);
@@ -55,3 +38,22 @@ foreach ($apiClasses as $apiClass) {
 		include(APPROOT . '/api/' . $apiClass);
 	}
 }
+
+$development = $_SERVER['REMOTE_ADDR'] == '127.0.0.1';
+define('DEVELOPMENT', $development);
+if(DEVELOPMENT){
+	//	Configuration for the MySQL Local Server
+	define('DBHOST', 'localhost');
+	define('DBNAME', 'clash');
+	define('DBUSER', 'clash');
+	define('DBPASS', 'cl@sh!');
+}else{
+	$url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+	define('DBHOST', $url["host"]);
+	define('DBNAME', substr($url["path"], 1));
+	define('DBUSER', $url["user"]);
+	define('DBPASS', $url["pass"]);
+}
+
+// Create connection
+$db = new mysqli(DBHOST, DBUSER, DBPASS, DBNAME);
