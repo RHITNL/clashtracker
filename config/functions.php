@@ -251,11 +251,8 @@ function refreshClanInfo($clanId){
 			if($apiMember->name == $temp->get('name')){
 				$count++;
 				$member = $temp;
-				$memberKey = $key;
+				unset($members[$key]);
 			}
-		}
-		if($count>0){
-			unset($members[$memberKey]);
 		}
 		if($count==1){
 			$clan->updatePlayerRank($member->get('id'), convertRank($apiMember->role));
