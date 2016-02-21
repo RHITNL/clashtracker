@@ -1,5 +1,4 @@
 <?
-
 // Time values in seconds
 define('MINUTE', 60);
 define('HOUR', 3600);
@@ -11,7 +10,6 @@ define('YEAR', 31556926);
 define('NO_ACCESS', 'You do not have access to that page.');
 
 $ip = trim(shell_exec("dig +short myip.opendns.com @resolver1.opendns.com"));
-error_log(print_r($ip, true));
 define('IP', $ip);
 
 $dir = str_replace('/config', '', __DIR__);
@@ -39,7 +37,7 @@ foreach ($apiClasses as $apiClass) {
 	}
 }
 
-$development = $_SERVER['REMOTE_ADDR'] == '127.0.0.1';
+$development = strpos(__DIR__, 'alexinman') !== FALSE;
 define('DEVELOPMENT', $development);
 if(DEVELOPMENT){
 	//	Configuration for the MySQL Local Server
