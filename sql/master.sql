@@ -757,3 +757,11 @@ begin
 	delete from clan where id = varId;
 end //
 delimiter ;
+
+drop procedure if exists p_api_delete;
+delimiter //
+create procedure p_api_delete(varIp varchar(39))
+begin
+	delete from api_keys where ip = varIp;
+end //
+delimiter ;

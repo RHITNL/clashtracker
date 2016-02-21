@@ -1,5 +1,5 @@
 <?
-define('DEVELOPMENT', false);
+define('DEVELOPMENT', true);
 if(DEVELOPMENT){
 	//	Configuration for the MySQL Local Server
 	define('DBHOST', 'localhost');
@@ -28,7 +28,7 @@ define('YEAR', 31556926);
 define('NO_ACCESS', 'You do not have access to that page.');
 
 $ip = trim(shell_exec("dig +short myip.opendns.com @resolver1.opendns.com"));
-mail('alexinmann@gmail.com', 'Heroku IP Address', $ip, $headers);
+error_log(print_r($ip, true));
 define('IP', $ip);
 
 $dir = str_replace('/config', '', __DIR__);

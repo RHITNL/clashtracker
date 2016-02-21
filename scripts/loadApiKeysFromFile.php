@@ -9,8 +9,10 @@ foreach ($lines as $line) {
 	$key = $tokens[1];
 	try{
 		$apiKey = new apiKey($ip);
+		$apiKey->delete();
 	}catch(Exception $e){
-		$apiKey = new apiKey();
-		$apiKey->create($ip, $key);
+		//do nothing
 	}
+	$apiKey = new apiKey();
+	$apiKey->create($ip, $key);
 }

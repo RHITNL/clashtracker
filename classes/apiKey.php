@@ -74,4 +74,20 @@ class apiKey{
 			throw new illegalFunctionCallException('IP not set for get.');
 		}
 	}
+
+	public function delete(){
+		if(isset($this->ip)){
+			global $db;
+			$procedure = buildProcedure('p_api_delete', $this->ip);
+			if(($db->multi_query($procedure)) === TRUE){
+				while ($db->more_results()){
+					$db->next_result();
+				}
+			}else{
+				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set for delete.');
+		}
+	}
 }
