@@ -1,5 +1,5 @@
 <?
-define('DEVELOPMENT', true);
+define('DEVELOPMENT', false);
 if(DEVELOPMENT){
 	//	Configuration for the MySQL Local Server
 	define('DBHOST', 'localhost');
