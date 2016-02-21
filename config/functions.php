@@ -254,13 +254,15 @@ function refreshClanInfo($clanId){
 				$memberKey = $key;
 			}
 		}
+		if($count>0){
+			unset($members[$memberKey]);
+		}
 		if($count==1){
 			$clan->updatePlayerRank($member->get('id'), convertRank($apiMember->role));
 			$member->set('level', $apiMember->expLevel);
 			$member->set('trophies', $apiMember->trophies);
 			$member->set('donations', $apiMember->donations);
 			$member->set('received', $apiMember->donationsReceived);
-			unset($members[$memberKey]);
 		}elseif ($count==0) {
 			//TODO: The player needs to be added to the clan
 			//		Need the player tag though, which is not provided yet
