@@ -9,9 +9,6 @@ define('YEAR', 31556926);
 
 define('NO_ACCESS', 'You do not have access to that page.');
 
-$ip = trim(shell_exec("dig +short myip.opendns.com @resolver1.opendns.com"));
-define('IP', $ip);
-
 $dir = str_replace('/config', '', __DIR__);
 define('APPROOT', $dir);
 
@@ -55,3 +52,10 @@ if(DEVELOPMENT){
 
 // Create connection
 $db = new mysqli(DBHOST, DBUSER, DBPASS, DBNAME);
+
+if($development){
+	$ip = trim(shell_exec("dig +short myip.opendns.com @resolver1.opendns.com"));
+}else{
+	$ip = '52.5.38.201';
+}
+define('IP', $ip);
