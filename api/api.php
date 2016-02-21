@@ -11,7 +11,8 @@ class api{
 	}
 
 	protected function request($extension){
-		$quotaguard_env = getenv("QUOTAGUARDSTATIC_URL");
+		// $quotaguard_env = getenv("QUOTAGUARDSTATIC_URL");
+		$quotaguard_env = 'http://quotaguard4826:ba0ab104caa7@us-east-1-static-hopper.quotaguard.com:9293';
 		$quotaguard = parse_url($quotaguard_env);
 
 		$proxyUrl = $quotaguard['host'].":".$quotaguard['port'];
