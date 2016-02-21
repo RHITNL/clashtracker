@@ -1,3 +1,5 @@
+drop table if exists api_keys;
+drop table if exists clan_allowed_users;
 drop table if exists player_allowed_users;
 drop table if exists user;
 drop table if exists war_attack;
@@ -717,7 +719,7 @@ delimiter ;
 
 create table api_keys(
 	ip varchar(39) not null unique,
-	api_key varchar(767) not null unique
+	api_key varchar(750) not null
 );
 
 drop procedure if exists p_api_key_create;
