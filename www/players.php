@@ -1,5 +1,6 @@
 <?
-require(__DIR__ . '/../config/functions.php');
+require('init.php');
+require('session.php');
 
 $players = array();
 try{
@@ -32,10 +33,10 @@ require('header.php');
 				<tbody>
 					<?foreach ($players as $player) {?>
 						<tr style="cursor: pointer;">
-							<td onclick="clickRow('player.php?playerId=<?=$player->get("id");?>');"><?=$player->get('name');?></td>
+							<td onclick="clickRow('player.php?playerId=<?=$player->get("id");?>');"><?=htmlspecialchars($player->get('name'));?></td>
 							<?$clan = $player->getMyClan();
 							if(isset($clan)){?>
-								<td onclick="clickRow('clan.php?clanId=<?=$clan->get("id");?>');"><?=$clan->get('name');?></td>
+								<td onclick="clickRow('clan.php?clanId=<?=$clan->get("id");?>');"><?=htmlspecialchars($clan->get('name'));?></td>
 							<?}else{?>
 								<td onclick="clickRow('player.php?playerId=<?=$player->get("id");?>');"></td>
 							<?}?>

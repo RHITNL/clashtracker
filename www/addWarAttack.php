@@ -1,5 +1,6 @@
 <?
-require(__DIR__ . '/../config/functions.php');
+require('init.php');
+require('session.php');
 
 $warId = $_GET['warId'];
 try{
@@ -96,12 +97,12 @@ require('header.php');
 		<li><a href="/home.php">Home</a></li>
 		<?if(isset($clanId)){?>
 			<li><a href="/clans.php">Clans</a></li>
-			<li><a href="/clan.php?clanId=<?=$clan1->get('id');?>"><?=$clan1->get('name');?></a></li>
+			<li><a href="/clan.php?clanId=<?=$clan1->get('id');?>"><?=htmlspecialchars($clan1->get('name'));?></a></li>
 			<li><a href="/wars.php?clanId=<?=$clan1->get('id');?>">Wars</a></li>
-			<li><a href="/war.php?warId=<?=$war->get('id');?>&clanId=<?=$clan1->get('id');?>"><?=$clan1->get('name');?> vs. <?=$clan2->get('name');?></a></li>
+			<li><a href="/war.php?warId=<?=$war->get('id');?>&clanId=<?=$clan1->get('id');?>"><?=htmlspecialchars($clan1->get('name'));?> vs. <?=htmlspecialchars($clan2->get('name'));?></a></li>
 		<?}else{?>
 			<li><a href="/wars.php">Wars</a></li>
-			<li><a href="/war.php?warId=<?=$war->get('id');?>"><?=$clan1->get('name');?> vs. <?=$clan2->get('name');?></a></li>
+			<li><a href="/war.php?warId=<?=$war->get('id');?>"><?=htmlspecialchars($clan1->get('name'));?> vs. <?=htmlspecialchars($clan2->get('name'));?></a></li>
 		<?}?>
 		<li class="active">Add War Attack</li>
 	</ol>
@@ -124,7 +125,7 @@ require('header.php');
 									<td onclick="selectMember(<?=$defender->get('id');?>);">
 										<div class="checkbox">
 											<label>
-												<input class="defender" data-stars-available="<?=$defenderStarsAvailable[$defender->get('id')];?>" id="<?=$defender->get('id');?>" type="checkbox" name="defenderId" value="<?=$defender->get('id');?>"><?=($rank+1) . ". " . $defender->get('name');?>
+												<input class="defender" data-stars-available="<?=$defenderStarsAvailable[$defender->get('id')];?>" id="<?=$defender->get('id');?>" type="checkbox" name="defenderId" value="<?=$defender->get('id');?>"><?=($rank+1) . ". " . htmlspecialchars($defender->get('name'));?>
 											</label>
 										</div>
 									</td>

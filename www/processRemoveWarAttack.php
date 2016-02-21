@@ -1,5 +1,6 @@
 <?
-require(__DIR__ . '/../config/functions.php');
+require('init.php');
+require('session.php');
 
 $warId = $_GET['warId'];
 try{
@@ -63,7 +64,7 @@ if($war->isPlayerInWar($defenderId)){
 
 $attack = $war->getAttack($attackerId, $defenderId);
 if(!isset($attack)){
-	$_SESSION['curError'] = $attacker->get('name') . ' never attacked ' . $defender->get('name') . ' in this war.';
+	$_SESSION['curError'] = htmlspecialchars($attacker->get('name')) . ' never attacked ' . htmlspecialchars($defender->get('name')) . ' in this war.';
 	if(isset($clanId)){
 		header('Location: /war.php?warId=' . $war->get('id') . '&clanId=' . $clanId);
 	}else{

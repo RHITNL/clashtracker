@@ -1,5 +1,6 @@
 <?
-require(__DIR__ . '/../config/functions.php');
+require('init.php');
+require('session.php');
 
 $action = $_GET['action'];
 $clanId = $_GET['clanId'];

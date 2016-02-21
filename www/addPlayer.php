@@ -1,5 +1,6 @@
 <?
-require(__DIR__ . '/../config/functions.php');
+require('init.php');
+require('session.php');
 
 $clanId = $_GET['clanId'];
 try{
@@ -16,7 +17,7 @@ require('header.php');
 		<li><a href="/home.php">Home</a></li>
 		<?if(isset($clan)){?>
 			<li><a href="/clans.php">Clans</a></li>
-			<li><a href="/clan.php?clanId=<?=$clan->get('id');?>"><?=$clan->get('name');?></a></li>
+			<li><a href="/clan.php?clanId=<?=$clan->get('id');?>"><?=htmlspecialchars($clan->get('name'));?></a></li>
 			<li class="active">Add Member</li>
 		<?}else{?>
 			<li><a href="/players.php">Players</a></li>
@@ -46,21 +47,15 @@ require('header.php');
 				</div>
 			</div>
 			<div class="col-sm-6">
-				<?if(isset($clan)){?>
-					<input hidden name="clanId" value="<?=$clan->get('id');?>"></input>
+				<?if(!isset($loggedInUserPlayer) && isset($loggedInUser)){?>
 					<div class="form-group">
-						<label class="col-sm-4 control-lable" for="clanRank">Clan Rank:</label>
+						<label class="col-sm-4 control-lable" for="link">Link to Account?</label>
 						<div class="col-sm-8">
-							<select class="form-control" id="clanRank" name="clanRank">
-								<option <?=($_SESSION['clanRank'] == 'ME') ? 'selected' : '';?> value="ME">Member</option>
-								<option <?=($_SESSION['clanRank'] == 'EL') ? 'selected' : '';?> value="EL">Elder</option>
-								<option <?=($_SESSION['clanRank'] == 'CO') ? 'selected' : '';?> value="CO">Co-leader</option>
-								<?if(!$clan->hasLeader()){?>
-									<option <?=($_SESSION['clanRank'] == 'LE') ? 'selected' : '';?> value="LE">Leader</option>
-								<?}?>
-							</select>
+							<input id="link" name="link" value="true" class="stars" type="checkbox">
 						</div>
 					</div>
+				<?}if(isset($clan)){?>
+					<input hidden id="clanId" name="clanId" value="<?=$clan->get('id');?>"></input>
 				<?}?>
 			</div>
 			<div class="row">

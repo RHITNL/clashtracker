@@ -1,5 +1,6 @@
 <?
-require(__DIR__ . '/../config/functions.php');
+require('init.php');
+require('session.php');
 
 $warId = $_GET['warId'];
 try{
@@ -102,92 +103,93 @@ require('header.php');
 		<li><a href="/home.php">Home</a></li>
 		<?if(isset($clanId)){?>
 			<li><a href="/clans.php">Clans</a></li>
-			<li><a href="/clan.php?clanId=<?=$clan1->get('id');?>"><?=$clan1->get('name');?></a></li>
+			<li><a href="/clan.php?clanId=<?=$clan1->get('id');?>"><?=htmlspecialchars($clan1->get('name'));?></a></li>
 			<li><a href="/wars.php?clanId=<?=$clan1->get('id');?>">Wars</a></li>
 		<?}else{?>
 			<li><a href="/wars.php">Wars</a></li>
 		<?}?>
-		<li class="active"><?=$clan1->get('name');?> vs. <?=$clan2->get('name');?></li>
+		<li class="active"><?=htmlspecialchars($clan1->get('name'));?> vs. <?=htmlspecialchars($clan2->get('name'));?></li>
 	</ol>
 	<?require('showMessages.php');?>
 	<div class="visible-lg-block">
-		<div class="col-sm-6 text-center"><h1><?=$clan1->get('name');?></h1></div>
-		<div class="col-sm-6 text-center"><h1><?=$clan2->get('name');?></h1></div>
+		<div class="col-sm-6 text-center"><h1><?=htmlspecialchars($clan1->get('name'));?></h1></div>
+		<div class="col-sm-6 text-center"><h1><?=htmlspecialchars($clan2->get('name'));?></h1></div>
 	</div>
 	<div class="col-sm-12 text-center"><h2><i class="fa fa-star" style="color: gold;"></i> <?=$clan1Stars;?> - <?=$clan2Stars;?> <i class="fa fa-star" style="color: gold;"></i></h2></div>
-	<div class="col-md-6">
-		<h2 class="hidden-lg"><?=$clan1->get('name');?></h2>
-		<div class="panel panel-primary">
-			<div class="panel-heading text-center">
-				<h3 class=" panel-title">Attack Totals</h3>
+	<?if(!$isEditable){?>
+		<div class="col-md-6">
+			<h2 class="hidden-lg"><?=htmlspecialchars($clan1->get('name'));?></h2>
+			<div class="panel panel-primary">
+				<div class="panel-heading text-center">
+					<h3 class=" panel-title">Attack Totals</h3>
+				</div>
+				<div class="panel-body">
+					<p class="col-sm-6 text-center">Attacks Used</p>
+					<p class="col-sm-6 text-center"><?=$clan1AttacksUsed;?></p>
+					<br>
+					<p class="col-sm-6 text-center">Attacks Won</p>
+					<p class="col-sm-6 text-center"><?=$clan1AttacksWon;?></p>
+					<br>
+					<p class="col-sm-6 text-center">Attacks Lost</p>
+					<p class="col-sm-6 text-center"><?=$clan1AttacksLost;?></p>
+					<br>
+					<p class="col-sm-6 text-center">Attacks Remaining</p>
+					<p class="col-sm-6 text-center"><?=$clan1AttacksLeft;?></p>
+				</div>
 			</div>
-			<div class="panel-body">
-				<p class="col-sm-6 text-center">Attacks Used</p>
-				<p class="col-sm-6 text-center"><?=$clan1AttacksUsed;?></p>
-				<br>
-				<p class="col-sm-6 text-center">Attacks Won</p>
-				<p class="col-sm-6 text-center"><?=$clan1AttacksWon;?></p>
-				<br>
-				<p class="col-sm-6 text-center">Attacks Lost</p>
-				<p class="col-sm-6 text-center"><?=$clan1AttacksLost;?></p>
-				<br>
-				<p class="col-sm-6 text-center">Attacks Remaining</p>
-				<p class="col-sm-6 text-center"><?=$clan1AttacksLeft;?></p>
-			</div>
-		</div>
-		<div class="panel panel-primary">
-			<div class="panel-heading text-center">
-				<h3 class=" panel-title">Best Attacks</h3>
-			</div>
-			<div class="panel-body">
-				<p class="col-sm-6 text-center">3 Stars</p>
-				<p class="col-sm-6 text-center"><?=$clan1BestAttacks[3];?></p>
-				<br>
-				<p class="col-sm-6 text-center">2 Stars</p>
-				<p class="col-sm-6 text-center"><?=$clan1BestAttacks[2];?></p>
-				<br>
-				<p class="col-sm-6 text-center">1 Star</p>
-				<p class="col-sm-6 text-center"><?=$clan1BestAttacks[1];?></p>
-			</div>
-		</div>
-	</div>
-	<div class="col-md-6">
-		<h2 class="hidden-lg"><?=$clan2->get('name');?></h2>
-		<div class="panel panel-primary">
-			<div class="panel-heading text-center">
-				<h3 class=" panel-title">Attack Totals</h3>
-			</div>
-			<div class="panel-body">
-				<p class="col-sm-6 text-center">Attacks Used</p>
-				<p class="col-sm-6 text-center"><?=$clan2AttacksUsed;?></p>
-				<br>
-				<p class="col-sm-6 text-center">Attacks Won</p>
-				<p class="col-sm-6 text-center"><?=$clan2AttacksWon;?></p>
-				<br>
-				<p class="col-sm-6 text-center">Attacks Lost</p>
-				<p class="col-sm-6 text-center"><?=$clan2AttacksLost;?></p>
-				<br>
-				<p class="col-sm-6 text-center">Attacks Remaining</p>
-				<p class="col-sm-6 text-center"><?=$clan2AttacksLeft;?></p>
+			<div class="panel panel-primary">
+				<div class="panel-heading text-center">
+					<h3 class=" panel-title">Best Attacks</h3>
+				</div>
+				<div class="panel-body">
+					<p class="col-sm-6 text-center">3 Stars</p>
+					<p class="col-sm-6 text-center"><?=$clan1BestAttacks[3];?></p>
+					<br>
+					<p class="col-sm-6 text-center">2 Stars</p>
+					<p class="col-sm-6 text-center"><?=$clan1BestAttacks[2];?></p>
+					<br>
+					<p class="col-sm-6 text-center">1 Star</p>
+					<p class="col-sm-6 text-center"><?=$clan1BestAttacks[1];?></p>
+				</div>
 			</div>
 		</div>
-		<div class="panel panel-primary">
-			<div class="panel-heading text-center">
-				<h3 class=" panel-title">Best Attacks</h3>
+		<div class="col-md-6">
+			<h2 class="hidden-lg"><?=htmlspecialchars($clan2->get('name'));?></h2>
+			<div class="panel panel-primary">
+				<div class="panel-heading text-center">
+					<h3 class=" panel-title">Attack Totals</h3>
+				</div>
+				<div class="panel-body">
+					<p class="col-sm-6 text-center">Attacks Used</p>
+					<p class="col-sm-6 text-center"><?=$clan2AttacksUsed;?></p>
+					<br>
+					<p class="col-sm-6 text-center">Attacks Won</p>
+					<p class="col-sm-6 text-center"><?=$clan2AttacksWon;?></p>
+					<br>
+					<p class="col-sm-6 text-center">Attacks Lost</p>
+					<p class="col-sm-6 text-center"><?=$clan2AttacksLost;?></p>
+					<br>
+					<p class="col-sm-6 text-center">Attacks Remaining</p>
+					<p class="col-sm-6 text-center"><?=$clan2AttacksLeft;?></p>
+				</div>
 			</div>
-			<div class="panel-body">
-				<p class="col-sm-6 text-center">3 Stars</p>
-				<p class="col-sm-6 text-center"><?=$clan2BestAttacks[3];?></p>
-				<br>
-				<p class="col-sm-6 text-center">2 Stars</p>
-				<p class="col-sm-6 text-center"><?=$clan2BestAttacks[2];?></p>
-				<br>
-				<p class="col-sm-6 text-center">1 Star</p>
-				<p class="col-sm-6 text-center"><?=$clan2BestAttacks[1];?></p>
+			<div class="panel panel-primary">
+				<div class="panel-heading text-center">
+					<h3 class=" panel-title">Best Attacks</h3>
+				</div>
+				<div class="panel-body">
+					<p class="col-sm-6 text-center">3 Stars</p>
+					<p class="col-sm-6 text-center"><?=$clan2BestAttacks[3];?></p>
+					<br>
+					<p class="col-sm-6 text-center">2 Stars</p>
+					<p class="col-sm-6 text-center"><?=$clan2BestAttacks[2];?></p>
+					<br>
+					<p class="col-sm-6 text-center">1 Star</p>
+					<p class="col-sm-6 text-center"><?=$clan2BestAttacks[1];?></p>
+				</div>
 			</div>
 		</div>
-	</div>
-	<?if(count($clan1Attacks) > 0 || count($clan2Attacks) > 0){?>
+	<?}if(count($clan1Attacks) > 0 || count($clan2Attacks) > 0){?>
 		<div class="col-md-12">
 			<ul class="nav nav-pills" role="tablist">
 				<li id="warPlayersTab" role="presentation" class="active">
@@ -202,7 +204,7 @@ require('header.php');
 	<div id="warPlayers" class="col-md-12">
 		<br>
 		<div class="col-md-6">
-			<h2 class="hidden-lg"><?=$clan1->get('name');?></h2>
+			<h2 class="hidden-lg"><?=htmlspecialchars($clan1->get('name'));?></h2>
 			<div class="col-md-12">
 				<?if($clan1CanAddMore && $isEditable){
 					if(isset($clanId)){?>
@@ -275,7 +277,7 @@ require('header.php');
 											}?>
 										</td>
 									<?}?>
-									<td><?=$rank . '. ' . $player->get('name');?></td>
+									<td><?=$rank . '. ' . htmlspecialchars($player->get('name'));?></td>
 									<td>
 										<?if(isset($firstAttack)){
 											for($i=$firstAttack['totalStars']-$firstAttack['newStars'];$i>0;$i--){?>
@@ -350,7 +352,7 @@ require('header.php');
 			</div>
 		</div>
 		<div class="col-md-6">
-			<h2 class="hidden-lg"><?=$clan2->get('name');?></h2>
+			<h2 class="hidden-lg"><?=htmlspecialchars($clan2->get('name'));?></h2>
 			<div class="col-md-12">
 				<?if($clan2CanAddMore && $isEditable){
 					if(isset($clanId)){?>
@@ -423,7 +425,7 @@ require('header.php');
 											}?>
 										</td>
 									<?}?>
-									<td><?=$rank . '. ' . $player->get('name');?></td>
+									<td><?=$rank . '. ' . htmlspecialchars($player->get('name'));?></td>
 									<td>
 										<?if(isset($firstAttack)){
 											for($i=$firstAttack['totalStars']-$firstAttack['newStars'];$i>0;$i--){?>
@@ -503,11 +505,11 @@ require('header.php');
 			<table class="table table-hover">
 				<thead>
 					<tr>
-						<th class="text-left"><h3><?=$clan1->get('name');?></h3></th>
+						<th class="text-left"><h3><?=htmlspecialchars($clan1->get('name'));?></h3></th>
 						<?if($isEditable){?>
 							<th class="text-center">Actions</th>
 						<?}?>
-						<th class="text-right"><h3><?=$clan2->get('name');?></h3></th>
+						<th class="text-right"><h3><?=htmlspecialchars($clan2->get('name'));?></h3></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -521,7 +523,7 @@ require('header.php');
 						$newStars = $attack['newStars'];?>
 						<tr>
 							<?if($attackerClanId == $clan1->get('id')){?>
-								<td class="text-left"><strong><?=$attackerRank . '. ' . $attacker->get('name');?></strong>&nbsp;<i class="fa fa-star"></i><br>
+								<td class="text-left"><strong><?=$attackerRank . '. ' . htmlspecialchars($attacker->get('name'));?></strong>&nbsp;<i class="fa fa-star"></i><br>
 									<?for($i=$totalStars-$newStars;$i>0;$i--){?>
 										<i class="fa fa-star" style="color: silver;"></i>
 									<?}
@@ -543,7 +545,7 @@ require('header.php');
 										<?}?>
 									</td>
 								<?}?>
-								<td class="text-right"><i class="fa fa-shield"></i>&nbsp;<strong><?=$defenderRank . '. ' . $defender->get('name');?></strong><br>
+								<td class="text-right"><i class="fa fa-shield"></i>&nbsp;<strong><?=$defenderRank . '. ' . htmlspecialchars($defender->get('name'));?></strong><br>
 									<?if($totalStars==0){?>
 										<i>Defended</i>
 									<?}else{?>
@@ -551,7 +553,7 @@ require('header.php');
 									<?}?>
 								</td>
 							<?}else{?>
-								<td class="text-left"><strong><?=$defenderRank . '. ' . $defender->get('name');?></strong>&nbsp;<i class="fa fa-shield"></i><br>
+								<td class="text-left"><strong><?=$defenderRank . '. ' . htmlspecialchars($defender->get('name'));?></strong>&nbsp;<i class="fa fa-shield"></i><br>
 									<?if($totalStars==0){?>
 										<i>Defended</i>
 									<?}else{?>
@@ -569,7 +571,7 @@ require('header.php');
 										<?}?>
 									</td>
 								<?}?>
-								<td class="text-right"><i class="fa fa-star"></i>&nbsp;<strong><?=$attackerRank . '. ' . $attacker->get('name');?></strong><br>
+								<td class="text-right"><i class="fa fa-star"></i>&nbsp;<strong><?=$attackerRank . '. ' . htmlspecialchars($attacker->get('name'));?></strong><br>
 									<?for($i=$totalStars-$newStars;$i>0;$i--){?>
 										<i class="fa fa-star" style="color: silver;"></i>
 									<?}

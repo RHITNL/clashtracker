@@ -1,3 +1,5 @@
+drop table if exists player_allowed_users;
+drop table if exists user;
 drop table if exists war_attack;
 drop table if exists war_player;
 drop table if exists war;
@@ -17,7 +19,7 @@ create table player(
 
 create table clan(
 	id int auto_increment not null,
-	name varchar(50) not null,
+	name varchar(50),
 	tag varchar(15) not null unique,
 	description varchar(256),
 	clan_type varchar(2) not null default 'AN',
@@ -228,8 +230,8 @@ delimiter //
 create procedure p_clan_get_members(varClanId int, varRank varchar(2))
 begin
 if (varRank = '%')
-	then select player_id from clan_member where clan_id = varClanId order by date_left desc, date_created;
-	else select player_id from clan_member where clan_id = varClanId and rank = varRank order by date_left desc, date_created;
+	then select player_id, name from clan_member join player on player_id = player.id where clan_id = varClanId order by name;
+	else select player_id from clan_member join player on player_id = player.id where clan_id = varClanId and rank = varRank order by name;
 end if;
 end //
 delimiter ;
@@ -332,7 +334,7 @@ drop procedure if exists p_get_clans;
 delimiter //
 create procedure p_get_clans(varPageSize int)
 begin
-	select id from clan limit varPageSize;
+	select id from clan order by clan_points desc limit varPageSize;
 end //
 delimiter ;
 
@@ -519,5 +521,237 @@ if(varDate ='%')
 	then delete from loot where player_id = varId and loot_type = varType;
 	else delete from loot where player_id = varId and loot_type = varType and date_recorded >= varDate;
 end if;
+end //
+delimiter ;
+
+-- New Table and Procedures for user accounts
+
+create table user(
+	id int auto_increment not null,
+	email varchar(254) not null unique,
+	password varchar(255) not null,
+	player_id int default null unique,
+	date_created datetime not null,
+	date_modified datetime default null,
+	primary key(id),
+	foreign key(player_id) references player(id)
+);
+
+drop procedure if exists p_user_create;
+delimiter //
+create procedure p_user_create(varEmail varchar(254), varPassword varchar(255))
+begin
+	insert into user(email, password, date_created) values(varEmail, varPassword, NOW());
+	select last_insert_id() as id;
+end //
+delimiter ;
+
+drop procedure if exists p_user_load;
+delimiter //
+create procedure p_user_load(varId int)
+begin
+	select * from user where id = varId;
+end //
+delimiter ;
+
+drop procedure if exists p_user_load_by_email;
+delimiter //
+create procedure p_user_load_by_email(varEmail varchar(254))
+begin
+	select * from user where email = varEmail;
+end //
+delimiter ;
+
+drop procedure if exists p_user_change_password;
+delimiter //
+create procedure p_user_change_password(varId int, varPassword varchar(255))
+begin
+	update user set password = varPassword, date_modified = NOW() where id = varId;
+end //
+delimiter ;
+
+drop procedure if exists p_user_link_player;
+delimiter //
+create procedure p_user_link_player(varUserId int, varPlayerId int)
+begin
+	update user set player_id = varPlayerId, date_modified = NOW() where id = varUserId;
+end //
+delimiter ;
+
+drop procedure if exists p_user_unlink_player;
+delimiter //
+create procedure p_user_unlink_player(varUserId int)
+begin
+	update user set player_id = null, date_modified = NOW() where id = varUserId;
+end //
+delimiter ;
+
+drop procedure if exists p_player_get_linked_user;
+delimiter //
+create procedure p_player_get_linked_user(varId int)
+begin
+	select id from user where player_id = varId;
+end //
+delimiter ;
+
+drop procedure if exists p_user_set;
+delimiter //
+create procedure p_user_set(varId int, varKey varchar(40), varValue text)
+begin
+	set @st := concat('update user set ', varKey, ' = ', quote(varValue), ', date_modified = NOW() where id = ', quote(varId));
+	prepare stmt from @st;
+	execute stmt;
+end //
+delimiter ;
+
+alter table player add access_type varchar(2) not null default 'AN';
+alter table player add min_rank_access varchar(2) default null;
+
+create table player_allowed_users(
+	player_id int not null,
+	user_id int not null,
+	primary key(player_id, user_id),
+	foreign key(player_id) references player(id),
+	foreign key(user_id) references user(id)
+);
+
+drop procedure if exists p_player_allow_user;
+delimiter //
+create procedure p_player_allow_user(varPlayerId int, varUserId int)
+begin
+	insert into player_allowed_users(player_id, user_id) values(varPlayerId, varUserId);
+end //
+delimiter ;
+
+drop procedure if exists p_player_disallow_user;
+delimiter //
+create procedure p_player_disallow_user(varPlayerId int, varUserId int)
+begin
+	delete from player_allowed_users where player_id = varPlayerId and user_id = varUserId;
+end //
+delimiter ;
+
+drop procedure if exists p_player_disallow_all_users;
+delimiter //
+create procedure p_player_disallow_all_users(varPlayerId int)
+begin
+	delete from player_allowed_users where player_id = varPlayerId;
+end //
+delimiter ;
+
+drop procedure if exists p_player_get_allowed_users;
+delimiter //
+create procedure p_player_get_allowed_users(varPlayerId int)
+begin
+	select user_id from player_allowed_users where player_id = varPlayerId;
+end //
+delimiter ;
+
+alter table user add clan_id int unique default null;
+alter table clan add access_type varchar(2) not null default 'AN';
+alter table clan add min_rank_access varchar(2) default null;
+
+drop procedure if exists p_user_link_clan;
+delimiter //
+create procedure p_user_link_clan(varUserId int, varClanId int)
+begin
+	update user set clan_id = varClanId, date_modified = NOW() where id = varUserId;
+end //
+delimiter ;
+
+drop procedure if exists p_user_unlink_clan;
+delimiter //
+create procedure p_user_unlink_clan(varUserId int)
+begin
+	update user set clan_id = null, date_modified = NOW() where id = varUserId;
+end //
+delimiter ;
+
+drop procedure if exists p_clan_get_linked_user;
+delimiter //
+create procedure p_clan_get_linked_user(varId int)
+begin
+	select id from user where clan_id = varId;
+end //
+delimiter ;
+
+create table clan_allowed_users(
+	clan_id int not null,
+	user_id int not null,
+	primary key(clan_id, user_id),
+	foreign key(clan_id) references clan(id) on delete cascade,
+	foreign key(user_id) references user(id) on delete cascade
+);
+
+drop procedure if exists p_clan_allow_user;
+delimiter //
+create procedure p_clan_allow_user(varClanId int, varUserId int)
+begin
+	insert into clan_allowed_users(clan_id, user_id) values(varClanId, varUserId);
+end //
+delimiter ;
+
+drop procedure if exists p_clan_disallow_user;
+delimiter //
+create procedure p_clan_disallow_user(varClanId int, varUserId int)
+begin
+	delete from clan_allowed_users where clan_id = varClanId and user_id = varUserId;
+end //
+delimiter ;
+
+drop procedure if exists p_clan_disallow_all_users;
+delimiter //
+create procedure p_clan_disallow_all_users(varClanId int)
+begin
+	delete from clan_allowed_users where clan_id = varClanId;
+end //
+delimiter ;
+
+drop procedure if exists p_clan_get_allowed_users;
+delimiter //
+create procedure p_clan_get_allowed_users(varClanId int)
+begin
+	select user_id from clan_allowed_users where clan_id = varClanId;
+end //
+delimiter ;
+
+create table api_keys(
+	ip varchar(39) not null unique,
+	api_key varchar(767) not null unique
+);
+
+drop procedure if exists p_api_key_create;
+delimiter //
+create procedure p_api_key_create(varIp varchar(39), varKey varchar(767))
+begin
+	insert into api_keys(ip, api_key) values(varIp, varKey);
+	select * from api_keys where ip = varIp;
+end //
+delimiter ;
+
+drop procedure if exists p_api_key_get;
+delimiter //
+create procedure p_api_key_get(varIp varchar(39))
+begin
+	select * from api_keys where ip = varIp;
+end //
+delimiter ;
+
+alter table clan add members int default 0;
+alter table clan add clan_level int default 1;
+alter table clan add clan_points int default 0;
+alter table clan add war_wins int default 0;
+alter table clan add badgeUrl varchar(200) default null;
+
+alter table player add level int default 1;
+alter table player add trophies int default 0;
+alter table player add donations int default 0;
+alter table player add received int default 0;
+
+drop procedure if exists p_clan_delete;
+delimiter //
+create procedure p_clan_delete(varId int)
+begin
+	delete from clan where id = varId;
 end //
 delimiter ;

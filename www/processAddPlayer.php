@@ -1,17 +1,19 @@
 <?
-require(__DIR__ . '/../config/functions.php');
+require('init.php');
+require('session.php');
 
 function unsetAll(){
 	unset($_SESSION['name']);
 	unset($_SESSION['playerTag']);
 	unset($_SESSION['clanId']);
-	unset($_SESSION['clanRank']);
 }
 
 $name = $_POST['name'];
 $playerTag = $_POST['playerTag'];
 $clanId = $_POST['clanId'];
-$clanRank = $_POST['clanRank'];
+if(!isset($loggedInUserPlayer)){
+	$link = $_POST['link'];
+}
 
 try{
 	$clan = new clan($clanId);
@@ -33,10 +35,9 @@ if($_POST['cancel']){
 $_SESSION['name'] = $name;
 $_SESSION['playerTag'] = $playerTag;
 $_SESSION['clanId'] = $clanId;
-$_SESSION['clanRank'] = $clanRank;
 
 if(strlen($playerTag) == 0){
-	$_SESSION['curError'] .= 'Player Tag cannot be blank.';
+	$_SESSION['curError'] = 'Player Tag cannot be blank.';
 	if(isset($clan)){
 		header('Location: /addPlayer.php?clanId=' . $clan->get('id'));
 	}else{
@@ -45,18 +46,12 @@ if(strlen($playerTag) == 0){
 	exit;
 }
 
-if(isset($clan) && $clan->hasLeader() && $clanRank == 'LE'){
-	$_SESSION['curError'] .= 'Clan can only have one leader.';
-	header('Location: /addPlayer.php?clanId=' . $clan->get('id'));
-	exit;
-}
-
 try{
 	$player = new player($playerTag);
 	$alreadyCreated = true;
 }catch(Exception $e){
 	if(strlen($name) == 0){
-		$_SESSION['curError'] .= 'Player Name cannot be blank.';
+		$_SESSION['curError'] = 'Player Name cannot be blank.';
 		if(isset($clan)){
 			header('Location: /addPlayer.php?clanId=' . $clan->get('id'));
 		}else{
@@ -71,20 +66,28 @@ try{
 if(isset($clan)){
 	$playerClan = $player->getMyClan();
 	if(isset($playerClan) && $playerClan->get('id') == $clan->get('id')){
-		$_SESSION['curMessage'] = 'Player already in ' . $clan->get('name') . '.';
+		$_SESSION['curError'] = 'Player already in ' . htmlspecialchars($clan->get('name')) . '.';
 	}else{
-		$clan->addPlayer($player->get('id'), $clanRank);
+		$clan->addPlayer($player->get('id'));
 		$_SESSION['curMessage'] = 'Member successfully added to the clan.';
 	}
 	header('Location: /clan.php?clanId=' . $clan->get('id'));
 }else{
 	if($alreadyCreated){
-		$_SESSION['curMessage'] = 'Player already created with player tag: ' . correctTag($playerTag);
+		$_SESSION['curError'] = 'Player already created with player tag: ' . correctTag($playerTag);
 	}else{
 		$_SESSION['curMessage'] = 'Player successfully created.';
 	}
 	header('Location: /player.php?playerId=' . $player->get('id'));
 }
 
+$linkedUser = $player->getLinkedUser();
+if($link){
+	if(isset($linkedUser)){
+		$_SESSION['curError'] = 'Cannot link to player who is already linked to another account.';
+	}else{
+		$loggedInUser->linkWithPlayer($player->get('id'));
+	}
+}
 unsetAll();
 exit;

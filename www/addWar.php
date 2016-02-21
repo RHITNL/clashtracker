@@ -1,5 +1,6 @@
 <?
-require(__DIR__ . '/../config/functions.php');
+require('init.php');
+require('session.php');
 
 $clanId = $_GET['clanId'];
 try{
@@ -17,7 +18,7 @@ require('header.php');
 	<ol class="breadcrumb">
 		<li><a href="/home.php">Home</a></li>
 		<li><a href="/clans.php">Clans</a></li>
-		<li><a href="/clan.php?clanId=<?=$clan->get('id');?>"><?=$clan->get('name');?></a></li>
+		<li><a href="/clan.php?clanId=<?=$clan->get('id');?>"><?=htmlspecialchars($clan->get('name'));?></a></li>
 		<li class="active">Add War</li>
 	</ol>
 	<?require('showMessages.php');?>
@@ -25,12 +26,12 @@ require('header.php');
 	<div class="">
 		<form class="form-horizontal" action="/processAddWar.php" method="POST">
 			<div class="col-sm-6">
-				<div class="form-group">
+				<!-- <div class="form-group">
 					<label class="col-sm-4 control-lable" for="enemyClanName">Enemy Clan Name:</label>
 					<div class="col-sm-8">
 						<input type="text" class="form-control" id="enemyClanName" name="enemyClanName" placeholder="Stinky Ugly Clan" value="<?=$_SESSION['enemyClanName'];?>"></input>
 					</div>
-				</div>
+				</div> -->
 				<div class="form-group">
 					<label class="col-sm-4 control-lable" for="enemyClanTag">Enemy Clan Tag:</label>
 					<div class="col-sm-8">

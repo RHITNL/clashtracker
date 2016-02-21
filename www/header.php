@@ -38,9 +38,15 @@
 						<!-- <li><a href="/home.php">Home</a></li> -->
 						<li><a href="/players.php">Players</a></li>
 						<li><a href="/clans.php">Clans</a></li>
+						<?if(!isset($loggedInUser)){?>
+							<li><a href="/login.php">Log In</a></li>
+						<?}else{?>
+							<li><a href="/accountSettings.php">Settings</a></li>
+							<li><a href="/processLogout.php">Log Out</a></li>
+						<?}?>
 						<!-- <li><a href="/wars.php">Wars</a></li> -->
 					</ul>
-					<form class="navbar-form navbar-right" action="searchResults.php" method="POST">
+					<form class="navbar-form navbar-right" action="searchResults.php" method="GET">
 						<input type="text" name="query" class="form-control" placeholder="Search...">
 					</form>
 				</div>

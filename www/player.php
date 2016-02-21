@@ -1,5 +1,6 @@
 <?
-require(__DIR__ . '/../config/functions.php');
+require('init.php');
+require('session.php');
 
 $playerId = $_GET['playerId'];
 try{
@@ -94,6 +95,8 @@ foreach ($oil as $loot) {
 	}
 }
 
+$userHasAccessToUpdateLoot = userHasAccessToUpdateLoot($player);
+
 require('header.php');
 ?>
 <div class="col-md-12">
@@ -101,14 +104,14 @@ require('header.php');
 		<li><a href="/home.php">Home</a></li>
 		<?if(isset($clan)){?>
 			<li><a href="/clans.php">Clans</a></li>
-			<li><a href="/clan.php?clanId=<?=$clan->get('id');?>"><?=$clan->get('name');?></a></li>
+			<li><a href="/clan.php?clanId=<?=$clan->get('id');?>"><?=htmlspecialchars($clan->get('name'));?></a></li>
 		<?}else{?>
 			<li><a href="/players.php">Players</a></li>
 		<?}?>
-		<li class="active"><?=$player->get('name');?></li>
+		<li class="active"><?=htmlspecialchars($player->get('name'));?></li>
 	</ol>
 	<?require('showMessages.php');?>
-	<h1><?=$player->get('name');?></h1>
+	<h1><?=htmlspecialchars($player->get('name'));?></h1>
 	<?if(isset($clan)){?>
 		<h6><?=rankFromCode($player->get('rank', $clan->get('id')));?></h6>
 	<?}else{?>
@@ -145,42 +148,44 @@ require('header.php');
 	<?}?>
 	<div class="col-md-12">
 		<h3><i class="fa fa-coins" style="color: gold;"></i>&nbsp;Loot</h3>
-		<div class="col-md-12">
-			<div id="recordLootButtonDiv" class="col-md-12">
-				<button type="button" class="btn btn-primary" onclick="showRecordLootForm();">Record Loot</button>
-			</div>
-			<div id="recordLootDiv" hidden class="col-md-12">
-				<form class="form-inline" action="/processRecordLoot.php" method="POST">
-					<input hidden name="type" value="single"></input>
-					<input hidden name="playerId" value="<?=$player->get('id');?>"></input>
-					<?if(isset($clan)){?>
-						<input hidden name="clanId" value="<?=$clan->get('id');?>"></input>
-					<?}?>
-					<div class="col-md-3">
-						<div class="form-group">
-							<label for="gold">Gold</label>
-							<input type="number" class="form-control" id="gold" name="gold" placeholder="<?=(count($gold)>0) ? $gold[0]['lootAmount'] : '0';?>">
+		<?if($userHasAccessToUpdateLoot){?>
+			<div class="col-md-12">
+				<div id="recordLootButtonDiv" class="col-md-12">
+					<button type="button" class="btn btn-primary" onclick="showRecordLootForm();">Record Loot</button>
+				</div>
+				<div id="recordLootDiv" hidden class="col-md-12">
+					<form class="form-inline" action="/processRecordLoot.php" method="POST">
+						<input hidden name="type" value="single"></input>
+						<input hidden name="playerId" value="<?=$player->get('id');?>"></input>
+						<?if(isset($clan)){?>
+							<input hidden name="clanId" value="<?=$clan->get('id');?>"></input>
+						<?}?>
+						<div class="col-md-3">
+							<div class="form-group">
+								<label for="gold">Gold</label>
+								<input type="number" class="form-control" id="gold" name="gold" placeholder="<?=(count($gold)>0) ? $gold[0]['lootAmount'] : '0';?>">
+							</div>
 						</div>
-					</div>
-					<div class="col-md-3">
-						<div class="form-group">
-							<label for="elixir">Elixir</label>
-							<input type="number" class="form-control" id="elixir" name="elixir" placeholder="<?=(count($elixir)>0) ? $elixir[0]['lootAmount'] : '0';?>">
+						<div class="col-md-3">
+							<div class="form-group">
+								<label for="elixir">Elixir</label>
+								<input type="number" class="form-control" id="elixir" name="elixir" placeholder="<?=(count($elixir)>0) ? $elixir[0]['lootAmount'] : '0';?>">
+							</div>
 						</div>
-					</div>
-					<div class="col-md-3">
-						<div class="form-group">
-							<label for="darkElixir">Dark Elixir</label>
-							<input type="number" class="form-control" id="darkElixir" name="darkElixir" placeholder="<?=(count($oil)>0) ? $oil[0]['lootAmount'] : '0';?>">
+						<div class="col-md-3">
+							<div class="form-group">
+								<label for="darkElixir">Dark Elixir</label>
+								<input type="number" class="form-control" id="darkElixir" name="darkElixir" placeholder="<?=(count($oil)>0) ? $oil[0]['lootAmount'] : '0';?>">
+							</div>
 						</div>
-					</div>
-					<div class="col-md-3">
-						<button type="cancel" class="btn btn-default text-right" onclick="return showRecordLootButton();">Cancel</button>
-						<button type="submit" class="btn btn-primary text-right">Save</button>
-					</div>
-				</form>
-			</div>
-		</div><br><br>
+						<div class="col-md-3">
+							<button type="cancel" class="btn btn-default text-right" onclick="return showRecordLootButton();">Cancel</button>
+							<button type="submit" class="btn btn-primary text-right">Save</button>
+						</div>
+					</form>
+				</div>
+			</div><br><br>
+		<?}?>
 		<div class="col-md-12">
 			<?if($lootAvailable){?>
 				<div class="col-md-12">
@@ -321,7 +326,7 @@ require('header.php');
 				<div class="jumbotron col-md-5">
 					<label class="col-sm-4">Current Clan</label>
 					<div class="col-sm-8 text-right" style="cursor: pointer;" onclick="clickRow('clan.php?clanId=<?=$playerClan->get("id");?>');">
-						<p><?=$playerClan->get('name');?></p>
+						<p><?=htmlspecialchars($playerClan->get('name'));?></p>
 					</div>
 					<label class="col-sm-4">Current Rank</label>
 					<div class="col-sm-8 text-right">
@@ -344,7 +349,8 @@ require('header.php');
 						<thead>
 							<tr>
 								<th>Name</th>
-								<th>Method of Leaving</th>
+								<th>Clan Points</th>
+								<th>Wars Won</th>
 								<th class="text-right">Clan Tag</th>
 							</tr>
 						</thead>
@@ -352,8 +358,9 @@ require('header.php');
 							<?foreach ($playerClans as $clan) {
 								if((isset($playerClan) && $clan->get('id') != $playerClan->get('id')) || !isset($playerClan)){?>
 									<tr style="cursor: pointer;" onclick="clickRow('clan.php?clanId=<?=$clan->get("id");?>');">
-										<td><?=$clan->get('name');?></td>
-										<td><?=rankFromCode($player->get('rank', $clan->get('id')));?></td>
+										<td><?=htmlspecialchars($clan->get('name'));?></td>
+										<td><?=$clan->get('clanPoints');?></td>
+										<td><?=$clan->get('warWins');?></td>
 										<td class="text-right"><?=$clan->get('tag');?></td>
 									</tr>
 								<?}

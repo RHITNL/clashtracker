@@ -1,5 +1,6 @@
 <?
-require(__DIR__ . '/../config/functions.php');
+require('init.php');
+require('session.php');
 
 $clanId = $_POST['clanId'];
 try{
@@ -44,13 +45,15 @@ if($_POST['type'] == 'single'){
 	$loot[$playerId]['darkElixir'] = $_POST['darkElixir'];
 }elseif($_POST['type'] == 'multiple'){
 	$loot = array();
-	$members = $clan->getMyActiveClanMembers();
+	$members = $clan->getCurrentMembers();
 	foreach ($members as $member) {
-		$memberId = $member->get('id');
-		$loot[$memberId] = array();
-		$loot[$memberId]['gold'] = $_POST['gold' . $memberId];
-		$loot[$memberId]['elixir'] = $_POST['elixir' . $memberId];
-		$loot[$memberId]['darkElixir'] = $_POST['darkElixir' . $memberId];
+		if(userHasAccessToUpdateLoot($member)){
+			$memberId = $member->get('id');
+			$loot[$memberId] = array();
+			$loot[$memberId]['gold'] = $_POST['gold' . $memberId];
+			$loot[$memberId]['elixir'] = $_POST['elixir' . $memberId];
+			$loot[$memberId]['darkElixir'] = $_POST['darkElixir' . $memberId];
+		}
 	}
 }
 
@@ -71,7 +74,7 @@ foreach ($loot as $playerId => $playerLoot) {
 			$updates = true;
 		}else{
 			$errors = true;
-			$_SESSION['curError'] .= $player->get('name') . ' has already stolen ' . $gold[0]['lootAmount'] . ' gold. New value must be greater than this.<br>';
+			$_SESSION['curError'] .= htmlspecialchars($player->get('name')) . ' has already stolen ' . $gold[0]['lootAmount'] . ' gold. New value must be greater than this.<br>';
 		}
 	}
 	if(strlen($playerLoot['elixir']) != 0){
@@ -81,7 +84,7 @@ foreach ($loot as $playerId => $playerLoot) {
 			$updates = true;
 		}else{
 			$errors = true;
-			$_SESSION['curError'] .= $player->get('name') . ' has already stolen ' . $elixir[0]['lootAmount'] . ' elixir. New value must be greater than this.<br>';
+			$_SESSION['curError'] .= htmlspecialchars($player->get('name')) . ' has already stolen ' . $elixir[0]['lootAmount'] . ' elixir. New value must be greater than this.<br>';
 		}
 	}
 	if(strlen($playerLoot['darkElixir']) != 0){
@@ -91,7 +94,7 @@ foreach ($loot as $playerId => $playerLoot) {
 			$updates = true;
 		}else{
 			$errors = true;
-			$_SESSION['curError'] .= $player->get('name') . ' has already stolen ' . $darkElixir[0]['lootAmount'] . ' dark elixir. New value must be greater than this.<br>';
+			$_SESSION['curError'] .= htmlspecialchars($player->get('name')) . ' has already stolen ' . $darkElixir[0]['lootAmount'] . ' dark elixir. New value must be greater than this.<br>';
 		}
 	}
 }

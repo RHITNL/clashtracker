@@ -9,6 +9,11 @@ class clan{
 	private $warFrequency;
 	private $dateCreated;
 	private $dateModified;
+	private $members;
+	private $clanLevel;
+	private $clanPoints;
+	private $warWins;
+	private $badgeUrl;
 
 	private $acceptGet = array(
 		'id' => 'id',
@@ -19,7 +24,12 @@ class clan{
 		'minimum_trophies' => 'minimumTrophies',
 		'war_frequency' => 'warFrequency',
 		'date_created' => 'dateCreated',
-		'date_modified' => 'dateModified'
+		'date_modified' => 'dateModified',
+		'members' => 'members',
+		'clan_level' => 'clanLevel',
+		'clan_points' => 'clanPoints',
+		'war_wins' => 'warWins',
+		'badge_url' => 'badgeUrl'
 	);
 
 	private $acceptSet = array(
@@ -27,13 +37,18 @@ class clan{
 		'description' => 'description',
 		'clan_type' => 'clanType',
 		'minimum_trophies' => 'minimumTrophies',
-		'war_frequency' => 'warFrequency'
+		'war_frequency' => 'warFrequency',
+		'members' => 'members',
+		'clan_level' => 'clanLevel',
+		'clan_points' => 'clanPoints',
+		'war_wins' => 'warWins',
+		'badge_url' => 'badgeUrl'
 	);
 
-	public function create($name, $tag, $description=null, $clanType='AN', $minimumTrophies=0, $warFrequency='NS'){
+	public function create($tag, $name="", $description=null, $clanType='AN', $minimumTrophies=0, $warFrequency='NS'){
 		global $db;
 		if(!isset($this->id)){
-			if((strlen($name) > 0) && (strlen($tag) > 0)){
+			if(strlen($tag) > 0){
 				$tag = correctTag($tag);
 				$procedure = buildProcedure('p_clan_create', $name, $tag, $description, $clanType, $minimumTrophies, $warFrequency);
 				if(($db->multi_query($procedure)) === TRUE){
@@ -47,7 +62,7 @@ class clan{
 					throw new illegalQueryException('The database encountered an error. ' . $db->error);
 				}
 			}else{
-				throw new Exception('Niether name nor tag can be blank.');
+				throw new illegalArgumentException('Clan tag cannot be blank.');
 			}
 		}else{
 			throw new illegalFunctionCallException('ID set, cannot create.');
@@ -87,6 +102,11 @@ class clan{
 					$this->warFrequency = $record->war_frequency;
 					$this->dateCreated = $record->date_created;
 					$this->dateModified = $record->date_modified;
+					$this->members = $record->members;
+					$this->clanPoints = $record->clan_points;
+					$this->clanLevel = $record->clan_level;
+					$this->warWins = $record->war_wins;
+					$this->badgeUrl = $record->badge_url;
 				}else{
 					throw new noResultFoundException('No clan found with id ' . $this->id);
 				}
@@ -123,6 +143,11 @@ class clan{
 					$this->warFrequency = $record->war_frequency;
 					$this->dateCreated = $record->date_created;
 					$this->dateModified = $record->date_modified;
+					$this->members = $record->members;
+					$this->clanPoints = $record->clan_points;
+					$this->clanLevel = $record->clan_level;
+					$this->warWins = $record->war_wins;
+					$this->badgeUrl = $record->badge_url;
 				}else{
 					throw new noResultFoundException('No clan found with tag ' . $tag);
 				}
@@ -170,38 +195,30 @@ class clan{
 	public function addPlayer($playerId, $rank='ME'){
 		global $db;
 		if(isset($this->id)){
-			if($this->getNumMembers() < 50 || $rank == 'KI' || $rank == 'EX'){
-				if($rank != 'LE' || !$this->hasLeader()){
-					$player = new player($playerId);
-					$playerClan = $player->getMyClan();
-					if(isset($playerClan) && $playerClan->get('id') != $this->id){
-						$player->leaveClan();
-					}
-					$isNewMember = true;
-					$members = $this->getMyClanMembers();
-					foreach ($members as $member) {
-						if($member->get('id') == $playerId){
-							$isNewMember = false;
-							break;
-						}
-					}
-					$procedure = buildProcedure('p_clan_add_player', $this->id, $playerId, $rank);
-					if(($db->multi_query($procedure)) === TRUE){
-						while ($db->more_results()){
-							$db->next_result();
-						}
-						if($isNewMember){
-							$warRank = $this->getHighestWarRank() + 1;
-							$this->updatePlayerWarRank($playerId, $warRank);
-						}
-					}else{
-						throw new illegalQueryException('The database encountered an error. ' . $db->error);
-					}
-				}else{
-					throw new illegalClanRankException('Clan can only have one leader.');
+			$player = new player($playerId);
+			$playerClan = $player->getMyClan();
+			if(isset($playerClan) && $playerClan->get('id') != $this->id){
+				$player->leaveClan();
+			}
+			$isNewMember = true;
+			$members = $this->getMembers();
+			foreach ($members as $member) {
+				if($member->get('id') == $playerId){
+					$isNewMember = false;
+					break;
+				}
+			}
+			$procedure = buildProcedure('p_clan_add_player', $this->id, $playerId, $rank);
+			if(($db->multi_query($procedure)) === TRUE){
+				while ($db->more_results()){
+					$db->next_result();
+				}
+				if($isNewMember){
+					$warRank = $this->getHighestWarRank() + 1;
+					$this->updatePlayerWarRank($playerId, $warRank);
 				}
 			}else{
-				throw new illegalClanManagementException('Clan cannot have more than 50 members.');
+				throw new illegalQueryException('The database encountered an error. ' . $db->error);
 			}
 		}else{
 			throw new illegalFunctionCallException('ID not set for add.');
@@ -237,76 +254,12 @@ class clan{
 		return isset($leader);
 	}
 
-	private function updatePlayerRank($playerId, $rank){
+	public function updatePlayerRank($playerId, $rank){
 		$this->addPlayer($playerId, $rank);
 	}
 
-	public function promotePlayer($playerId){
-		if(isset($this->id)){
-			$player = new player($playerId);
-			$playerClan = $player->getMyClan();
-			if(isset($playerClan) && $playerClan->get('id') == $this->id){
-				$rank = $player->getClanRank();
-				switch ($rank){
-					case 'LE':
-						throw new illegalClanRankException('Cannot promote leader.');
-						break;
-					case 'CO':
-						$leader = $this->getMyLeader();
-						if(isset($leader)){
-							$this->demotePlayer($leader->get('id'));
-						}
-						$this->updatePlayerRank($playerId, 'LE');
-						break;
-					case 'EL':
-						$this->updatePlayerRank($playerId, 'CO');
-						break;
-					case 'ME':
-						$this->updatePlayerRank($playerId, 'EL');
-						break;
-					default:
-						throw new illegalClanRankException('Invalid rank for promotion.');
-				}
-			}else{
-				throw new illegalClanManagementException('Cannot promote player. Player not in this clan.');
-			}
-		}else{
-			throw new illegalFunctionCallException('ID not set for promote.');
-		}
-	}
-
-	public function demotePlayer($playerId){
-		if(isset($this->id)){
-			$player = new player($playerId);
-			$playerClan = $player->getMyClan();
-			if(isset($playerClan) && $playerClan->get('id') == $this->id){
-				$rank = $player->getClanRank();
-				switch ($rank){
-					case 'LE':
-						$this->updatePlayerRank($playerId, 'CO');
-						break;
-					case 'CO':
-						$this->updatePlayerRank($playerId, 'EL');
-						break;
-					case 'EL':
-						$this->updatePlayerRank($playerId, 'ME');
-						break;
-					case 'ME':
-						throw new illegalClanRankException('Cannot demote member.');
-						break;
-					default:
-						throw new illegalClanRankException('Invalid rank for promotion.');
-				}
-			}else{
-				throw new illegalClanManagementException('Cannot demote player. Player not in this clan.');
-			}
-		}else{
-			throw new illegalFunctionCallException('ID not set for demote.');
-		}
-	}
-
-	public function getMyActiveClanMembers($rank='%'){
-		$allMembers = $this->getMyClanMembers($rank);
+	public function getCurrentMembers($rank='%'){
+		$allMembers = $this->getMembers($rank);
 		$members = array();
 		foreach ($allMembers as $member) {
 			$rank = $member->get('rank', $this->id);
@@ -317,8 +270,8 @@ class clan{
 		return $members;
 	}
 
-	public function getMyPastClanMembers($rank='%'){
-		$allMembers = $this->getMyClanMembers($rank);
+	public function getPastMembers($rank='%'){
+		$allMembers = $this->getMembers($rank);
 		$members = array();
 		foreach ($allMembers as $member) {
 			$rank = $member->get('rank', $this->id);
@@ -329,7 +282,7 @@ class clan{
 		return $members;
 	}
 
-	public function getMyClanMembers($rank='%'){
+	public function getMembers($rank='%'){
 		global $db;
 		if(isset($this->id)){
 			$procedure = buildProcedure('p_clan_get_members', $this->id, $rank);
@@ -412,21 +365,6 @@ class clan{
 		}else{
 			throw new illegalQueryException('The database encountered an error. ' . $db->error);
 		}
-	}
-
-	public function getNumWarsWon(){
-		$wars = $this->getMyWars();
-		$count = 0;
-		foreach ($wars as $war) {
-			if($war->getWinner() == $this->id){
-				$count++;
-			}
-		}
-		return $count;
-	}
-
-	public function getNumMembers(){
-		return count($this->getMyActiveClanMembers());
 	}
 
 	public function isPlayerInClan($playerId){
@@ -542,5 +480,25 @@ class clan{
 			}
 		}
 		return $clans;
+	}
+
+	public function delete(){
+		if(isset($this->id)){
+			$wars = $this->getMyWars();
+			$members = $this->getMembers();
+			if(count($wars) + count($members)==0){
+				global $db;
+				$procedure = buildProcedure('p_clan_delete', $this->id);
+				if(($db->multi_query($procedure)) === TRUE){
+					while ($db->more_results()){
+						$db->next_result();
+					}
+				}else{
+					throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				}
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set for delete.');
+		}
 	}
 }

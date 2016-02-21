@@ -1,19 +1,17 @@
 <?
-require(__DIR__ . '/../config/functions.php');
+require('init.php');
+require('session.php');
 
 function unsetAll(){
-	unset($_SESSION['enemyClanName']);
 	unset($_SESSION['enemyClanTag']);
 	unset($_SESSION['size']);
 	unset($_SESSION['clanId']);
 }
 
-$enemyClanName = $_POST['enemyClanName'];
 $enemyClanTag = $_POST['enemyClanTag'];
 $size = $_POST['size'];
 $clanId = $_POST['clanId'];
 
-$_SESSION['enemyClanName'] = $enemyClanName;
 $_SESSION['enemyClanTag'] = $enemyClanTag;
 $_SESSION['size'] = $size;
 $_SESSION['clanId'] = $clanId;
@@ -44,12 +42,13 @@ try{
 	$enemyClan = new clan($enemyClanTag);
 }catch(Exception $e){
 	$enemyClan = new clan();
-	if(strlen($enemyClanName) == 0){
-		$_SESSION['curError'] = 'Enemy Clan Name cannot be blank.';
-		header('Location: /addWar.php?clanId=' . $clan->get('id'));
-		exit;
-	}
-	$enemyClan->create($enemyClanName, $enemyClanTag);
+	$enemyClan->create($enemyClanTag);
+}
+if(refreshClanInfo($enemyClan->get('id'))==-1){
+	$enemyClan->delete();
+	$_SESSION['curError'] = 'Enemy Clan Tag was not found in Clash of Clans.';
+	header('Location: /addWar.php?clanId=' . $clan->get('id'));
+	exit;
 }
 
 $war = new war();

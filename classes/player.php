@@ -6,17 +6,36 @@ class player{
 	private $dateCreated;
 	private $dateModified;
 	private $warsSinceLastParticipated;
+	private $accessType;
+	private $minRankAccess;
+	private $level;
+	private $trophies;
+	private $donations;
+	private $received;
 
 	private $acceptGet = array(
 		'id' => 'id',
 		'name' => 'name',
 		'tag' => 'tag',
 		'date_created' => 'dateCreated',
-		'date_modified' => 'dateModified'
+		'date_modified' => 'dateModified',
+		'access_type' => 'accessType',
+		'min_rank_access' => 'minRankAccess',
+		'trophies' => 'trophies',
+		'donations' => 'donations',
+		'received' => 'received',
+		'level' => 'level'
 	);
 
 	private $acceptSet = array(
-		'name' => 'name'
+		'tag' => 'tag',
+		'name' => 'name',
+		'access_type' => 'accessType',
+		'level' => 'level',
+		'trophies' => 'trophies',
+		'donations' => 'donations',
+		'received' => 'received',
+		'min_rank_access' => 'minRankAccess'
 	);
 
 	public function create($name, $tag){
@@ -36,7 +55,7 @@ class player{
 					throw new illegalQueryException('The database encountered an error. ' . $db->error);
 				}
 			}else{
-				throw new Exception('Niether name nor tag can be blank.');
+				throw new illegalArgumentException('Niether name nor tag can be blank.');
 			}
 		}else{
 			throw new illegalFunctionCallException('ID set, cannot create.');
@@ -71,6 +90,13 @@ class player{
 					$this->name = $record->name;
 					$this->tag = $record->tag;
 					$this->dateCreated = $record->date_created;
+					$this->dateModified = $record->date_modified;
+					$this->accessType = $record->access_type;
+					$this->minRankAccess = $record->min_rank_access;
+					$this->level = $record->level;
+					$this->trophies = $record->trophies;
+					$this->donations = $record->donations;
+					$this->received = $record->received;
 				}else{
 					throw new noResultFoundException('No player found with id ' . $this->id);
 				}
@@ -102,6 +128,13 @@ class player{
 					$this->name = $record->name;
 					$this->tag = $record->tag;
 					$this->dateCreated = $record->date_created;
+					$this->dateModified = $record->date_modified;
+					$this->accessType = $record->access_type;
+					$this->minRankAccess = $record->min_rank_access;
+					$this->level = $record->level;
+					$this->trophies = $record->trophies;
+					$this->donations = $record->donations;
+					$this->received = $record->received;
 				}else{
 					throw new noResultFoundException('No player found with tag ' . $tag);
 				}
@@ -625,5 +658,131 @@ class player{
 
 	public function removeAllDarkElixirValues($date='%'){
 		$this->removeAllLootValues('DE', $date);
+	}
+
+	public function getLinkedUser(){
+		global $db;
+		if(isset($this->id)){
+			$procedure = buildProcedure('p_player_get_linked_user', $this->id);
+			if(($db->multi_query($procedure)) === TRUE){
+				$result = $db->store_result();
+				while ($db->more_results()){
+					$db->next_result();
+				}
+				if ($result->num_rows){
+					$userObj = $result->fetch_object();
+					return new user($userObj->id);
+				}else{
+					return null;
+				}
+			}else{
+				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set for getting linked player.');
+		}
+	}
+
+	public function resetAccess(){
+		$this->revokeAllAccess();
+		$this->set('accessType', 'AN');
+		$this->set('minRankAccess', null);
+	}
+
+	public function getAllowedUsers(){
+		global $db;
+		if(isset($this->id)){
+			if($this->accessType == 'US'){
+				$procedure = buildProcedure('p_player_get_allowed_users', $this->id);
+				if(($db->multi_query($procedure)) === TRUE){
+					$results = $db->store_result();
+					while ($db->more_results()){
+						$db->next_result();
+					}
+					$users = array();
+					if ($results->num_rows) {
+						while ($userObj = $results->fetch_object()) {
+							$user = new user($userObj->user_id);
+							$users[] = $user;
+						}
+					}
+					return $users;
+				}else{
+					throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				}
+			}elseif($this->accessType == 'CL'){
+				$clan = $this->getMyClan();
+				if(isset($clan)){
+					$clanMembers = $clan->getMembers();
+					$users = array();
+					foreach ($clanMembers as $member) {
+						$clanRank = $member->getClanRank();
+						if($clanRank == $this->minRankAccess || rankIsHigher($clanRank, $this->minRankAccess)){
+							$user = $member->getLinkedUser();
+							if(isset($user)){
+								$users[] = $user;
+							}
+						}
+					}
+					return $users;
+				}else{
+					return array();
+				}
+			}else{
+				return array();
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set for get.');
+		}		
+	}
+
+	public function grantUserAccess($userId){
+		global $db;
+		if(isset($this->id)){
+			$user = new user($userId);
+			$procedure = buildProcedure('p_player_allow_user', $this->id, $user->get('id'));
+			if(($db->multi_query($procedure)) === TRUE){
+				while ($db->more_results()){
+					$db->next_result();
+				}
+			}else{
+				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set for grant.');
+		}	
+	}
+
+	public function revokeUserAccess($userId){
+		global $db;
+		if(isset($this->id)){
+			$user = new user($userId);
+			$procedure = buildProcedure('p_player_disallow_user', $this->id, $user->get('id'));
+			if(($db->multi_query($procedure)) === TRUE){
+				while ($db->more_results()){
+					$db->next_result();
+				}
+			}else{
+				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set for revoke.');
+		}	
+	}
+
+	public function revokeAllAccess(){
+		global $db;
+		if(isset($this->id)){
+			$procedure = buildProcedure('p_player_disallow_all_users', $this->id);
+			if(($db->multi_query($procedure)) === TRUE){
+				while ($db->more_results()){
+					$db->next_result();
+				}
+			}else{
+				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set for revoke.');
+		}	
 	}
 }

@@ -1,5 +1,6 @@
 <?
-require(__DIR__ . '/../config/functions.php');
+require('init.php');
+require('session.php');
 
 $warId = $_POST['warId'];
 try{
@@ -57,7 +58,7 @@ try{
 }
 
 if(!$war->isPlayerInWar($attacker->get('id'))){
-	$_SESSION['curError'] = $attacker->get('name') . ' not in war.';
+	$_SESSION['curError'] = htmlspecialchars($attacker->get('name')) . ' not in war.';
 	if(isset($clanId)){
 		header('Location: /war.php?warId=' . $war->get('id') . '&clanId=' . $clanId);
 	}else{
@@ -81,7 +82,7 @@ try{
 }
 
 if(!$war->isPlayerInWar($defender->get('id'))){
-	$_SESSION['curError'] = $defender->get('name') . ' not in war.';
+	$_SESSION['curError'] = htmlspecialchars($defender->get('name')) . ' not in war.';
 	if(isset($clanId)){
 		header('Location: /addWarAttack.php?warId=' . $war->get('id') . '&playerId=' . $attacker->get('id') . '&clanId=' . $clanId);
 	}else{
@@ -105,7 +106,7 @@ if($attackerClan->get('id') == $defenderClan->get('id')){
 
 $attackerAttacks = $war->getPlayerAttacks($attacker->get('id'));
 if(count($attackerAttacks) >= 2){
-	$_SESSION['curError'] = $attacker->get('name') . ' has already used both attacks.';
+	$_SESSION['curError'] = htmlspecialchars($attacker->get('name')) . ' has already used both attacks.';
 	if(isset($clanId)){
 		header('Location: /war.php?warId=' . $war->get('id') . '&clanId=' . $clanId);
 	}else{
@@ -115,7 +116,7 @@ if(count($attackerAttacks) >= 2){
 }
 
 if(isset($attackerAttacks[0]) && $attackerAttacks[0]['defenderId'] == $defender->get('id')){
-	$_SESSION['curError'] = $attacker->get('name') . ' has already attacked ' . $defender->get('name') . '.';
+	$_SESSION['curError'] = htmlspecialchars($attacker->get('name')) . ' has already attacked ' . htmlspecialchars($defender->get('name')) . '.';
 	if(isset($clanId)){
 		header('Location: /war.php?warId=' . $war->get('id') . '&clanId=' . $clanId);
 	}else{

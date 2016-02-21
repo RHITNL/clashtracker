@@ -1,5 +1,6 @@
 <?
-require(__DIR__ . '/../config/functions.php');
+require('init.php');
+require('session.php');
 
 $warId = $_GET['warId'];
 try{
@@ -44,11 +45,26 @@ if($war->isClanInWar($addClanId)){
 
 $warPlayers = $war->getMyWarPlayers($addClan->get('id'));
 $limit = $war->get('size') - count($warPlayers);
-$allMembers = $addClan->getMyActiveClanMembers();
+$allMembers = $addClan->getCurrentMembers();
 $members = array();
 foreach ($allMembers as $member) {
 	if(!$war->isPlayerInWar($member->get('id'))){
 		$members[] = $member;
+	}
+}
+for ($i=1; $i < count($members); $i++) {
+	$j=$i;
+	$member1Val = $members[$j]->get('warRank');
+	$member2Val = $members[$j-1]->get('warRank');
+	while($j>0 && $member1Val < $member2Val){
+		$temp = $members[$j];
+		$members[$j] = $members[$j-1];
+		$members[$j-1] = $temp;
+		$j--;
+		if($j>0){
+			$member1Val = $members[$j]->get('warRank');
+			$member2Val = $members[$j-1]->get('warRank');
+		}
 	}
 }
 for ($i=1; $i < count($members); $i++) {
@@ -74,12 +90,12 @@ require('header.php');
 		<li><a href="/home.php">Home</a></li>
 		<?if(isset($clanId)){?>
 			<li><a href="/clans.php">Clans</a></li>
-			<li><a href="/clan.php?clanId=<?=$clan->get('id');?>"><?=$clan->get('name');?></a></li>
+			<li><a href="/clan.php?clanId=<?=$clan->get('id');?>"><?=htmlspecialchars($clan->get('name'));?></a></li>
 			<li><a href="/wars.php?clanId=<?=$clan->get('id');?>">Wars</a></li>
-			<li><a href="/war.php?warId=<?=$war->get('id');?>&clanId=<?=$clan->get('id');?>"><?=$clan->get('name');?> vs. <?=$clanEnemy->get('name');?></a></li>
+			<li><a href="/war.php?warId=<?=$war->get('id');?>&clanId=<?=$clan->get('id');?>"><?=htmlspecialchars($clan->get('name'));?> vs. <?=htmlspecialchars($clanEnemy->get('name'));?></a></li>
 		<?}else{?>
 			<li><a href="/wars.php">Wars</a></li>
-			<li><a href="/war.php?warId=<?=$war->get('id');?>"><?=$clan1->get('name');?> vs. <?=$clan2->get('name');?></a></li>
+			<li><a href="/war.php?warId=<?=$war->get('id');?>"><?=htmlspecialchars($clan1->get('name'));?> vs. <?=htmlspecialchars($clan2->get('name'));?></a></li>
 		<?}?>
 		<li class="active">Add Players to War</li>
 	</ol>
@@ -103,7 +119,7 @@ require('header.php');
 										<td onclick="selectMember(<?=$member->get('id');?>);">
 											<div class="checkbox">
 												<label>
-													<input id="<?=$member->get('id');?>" type="checkbox" name="members[]" value="<?=$member->get('id');?>"><?=$member->get('name');?>
+													<input id="<?=$member->get('id');?>" type="checkbox" name="members[]" value="<?=$member->get('id');?>"><?=htmlspecialchars($member->get('name'));?>
 												</label>
 											</div>
 										</td>
@@ -138,6 +154,7 @@ require('header.php');
 					<button type="submit" class="btn btn-success" name="submit" value="submit">Submit</button>
 				</div>
 			</div>
+			<br>
 		</form>
 	</div>
 </div>

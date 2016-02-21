@@ -1,5 +1,6 @@
 <?
-require(__DIR__ . '/../config/functions.php');
+require('init.php');
+require('session.php');
 
 $clanId = $_GET['clanId'];
 try{
@@ -35,12 +36,12 @@ require('header.php');
 		<li><a href="/home.php">Home</a></li>
 		<?if(isset($clanId)){?>
 			<li><a href="/clans.php">Clans</a></li>
-			<li><a href="/clan.php?clanId=<?=$clanId?>"><?=$clan->get('name');?></a></li>
+			<li><a href="/clan.php?clanId=<?=$clanId?>"><?=htmlspecialchars($clan->get('name'));?></a></li>
 		<?}?>
 		<li class="active">Wars</li>
 	</ol>
 	<?require('showMessages.php');?>
-	<h1><?=$title;?></h1><br>
+	<h1><?=htmlspecialchars($title);?></h1><br>
 	<?if(count($wars)>0){?>
 		<div class="table-responsive">
 			<table class="table table-hover">
@@ -65,7 +66,7 @@ require('header.php');
 								$clan1 = new clan($war->get('firstClanId'));
 								$clan2 = new clan($war->get('secondClanId'));
 							}
-							$name = $clan1->get('name') . ' vs. ' . $clan2->get('name');
+							$name = htmlspecialchars($clan1->get('name')) . ' vs. ' . htmlspecialchars($clan2->get('name'));
 							$score = $war->getClanStars($clan1->get('id')) . ' - ' . $war->getClanStars($clan2->get('id'));
 							?>
 							<td><?=$name;?></td>

@@ -1,5 +1,6 @@
 <?
-require(__DIR__ . '/../config/functions.php');
+require('init.php');
+require('session.php');
 if($_POST['cancel']){
 	unsetAll();
 	header('Location: /clans.php');
@@ -7,48 +8,36 @@ if($_POST['cancel']){
 }
 
 function unsetAll(){
-	unset($_SESSION['name']);
 	unset($_SESSION['clanTag']);
-	unset($_SESSION['description']);
-	unset($_SESSION['clanType']);
-	unset($_SESSION['minimumTrophies']);
-	unset($_SESSION['warFrequency']);
 }
 
-$name = $_POST['name'];
 $clanTag = $_POST['clanTag'];
-$description = $_POST['description'];
-$clanType = $_POST['clanType'];
-$minimumTrophies = $_POST['minimumTrophies'];
-$warFrequency = $_POST['warFrequency'];
 
-$_SESSION['name'] = $name;
 $_SESSION['clanTag'] = $clanTag;
-$_SESSION['description'] = $description;
-$_SESSION['clanType'] = $clanType;
-$_SESSION['minimumTrophies'] = $minimumTrophies;
-$_SESSION['warFrequency'] = $warFrequency;
 
 if(strlen($clanTag) == 0){
 	$_SESSION['curError'] = 'Clan Tag cannot be blank.';
-	header('Location: /addClan.php');
+	header('Location: /clans.php');
 	exit;
 }
 
 try{
 	$clan = new clan($clanTag);
 	$_SESSION['curMessage'] = 'Clan already created with clan tag: ' . correctTag($clanTag);
+	header('Location: /clan.php?clanId=' . $clan->get('id'));
+	exit;
 }catch(Exception $e){
-	if(strlen($name) == 0){
-		$_SESSION['curError'] = 'Clan Name cannot be blank.';
-		header('Location: /addClan.php');
-		exit;
-	}
 	$clan = new clan();
-	$clan->create($name, $clanTag, $description, $clanType, $minimumTrophies, $warFrequency);
-	$_SESSION['curMessage'] = 'Clan created successfully.';
+	$clan->create($clanTag);
+}
+unsetAll();
+if(refreshClanInfo($clan->get('id'))==-1){
+	$clan->delete();
+	$_SESSION['curError'] = 'Clan Tag was not found in Clash of Clans.';
+	header('Location: /clans.php');
+	exit;
 }
 
-unsetAll();
+$_SESSION['curMessage'] = 'Clan created successfully.';
 header('Location: /clan.php?clanId=' . $clan->get('id'));
 exit;

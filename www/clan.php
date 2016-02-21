@@ -1,18 +1,20 @@
 <?
-require(__DIR__ . '/../config/functions.php');
+require('init.php');
+require('session.php');
 
 $clanId = $_GET['clanId'];
+refreshClanInfo($clanId);
 try{
 	$clan = new clan($clanId);
+	$clan->load();
 }catch(Exception $e){
 	$_SESSION['curError'] = 'No clan with id ' . $clanId . ' found.';
 	header('Location: /clans.php');
 	exit;
 }
 
-$members = $clan->getMyActiveClanMembers();
-$members = sortPlayersByRank($members);
-$pastMembers = $clan->getMyPastClanMembers();
+$members = $clan->getCurrentMembers();
+$members = sortPlayersByTrophies($members);
 $wars = $clan->getMyWars();
 $war = $wars[0];
 
@@ -22,19 +24,19 @@ require('header.php');
 	<ol class="breadcrumb">
 		<li><a href="/home.php">Home</a></li>
 		<li><a href="/clans.php">Clans</a></li>
-		<li class="active"><?=$clan->get('name');?></li>
+		<li class="active"><?=htmlspecialchars($clan->get('name'));?></li>
 	</ol>
 	<?require('showMessages.php');?>
-	<h1 ><?=$clan->get('name');?></h1><br>
+	<h1><?=htmlspecialchars($clan->get('name'));?></h1><br>
 	<div class="well col-md-12">
 		<div class="col-md-6">
 			<label for="warsWon" class="col-sm-4 control-label">Wars Won:</label>
 			<div class="col-sm-8 text-right" id="warsWon">
-				<p><?=$clan->getNumWarsWon();?></p>
+				<p><?=$clan->get('warWins');?></p>
 			</div>
 			<label for="members" class="col-sm-4 control-label">Members:</label>
 			<div class="col-sm-8 text-right" id="members">
-				<p><?=count($members);?></p>
+				<p><?=$clan->get('members');?>/50</p>
 			</div>
 			<label for="type" class="col-sm-4 control-label">Type:</label>
 			<div class="col-sm-8 text-right" id="type">
@@ -54,12 +56,11 @@ require('header.php');
 			</div>
 		</div>
 		<div class="col-md-6">
-			<p><?=$clan->get('description');?></p>
+			<p><?=htmlspecialchars($clan->get('description'));?></p>
 		</div>
 	</div>
 	<div class="col-md-12">
 		<div class="col-md-6">
-			<a type="button" class="btn btn-success" href="/editClan.php?clanId=<?=$clan->get('id');?>">Edit</a>
 			<?if(count($members)<50){?>
 				<a type="button" class="btn btn-success" href="/addPlayer.php?clanId=<?=$clan->get('id');?>">Add Member</a>
 			<?}
@@ -85,27 +86,20 @@ require('header.php');
 				<tr>
 					<th>Name</th>
 					<th>Rank</th>
-					<th>Actions</th>
+					<th>Trophies</th>
+					<th>Troops donated:</th>
+					<th>Troops received:</th>
 					<th class="text-right">Player Tag</th>
 				</tr>
 			</thead>
 			<tbody>
 				<?foreach ($members as $member) {?>
 					<tr style="cursor: pointer;" onclick="clickRow('player.php?playerId=<?=$member->get("id");?>&clanId=<?=$clan->get('id');?>');">
-						<td><?=$member->get('name');?></td>
+						<td><?=htmlspecialchars($member->get('name'));?></td>
 						<td><?=rankFromCode($member->get('rank'));?></td>
-						<td>
-							<?if($member->get('rank') != 'LE'){?>
-								<a type="button" class="btn btn-sm btn-success" href="/processClanManage.php?clanId=<?=$clan->get('id')?>&playerId=<?=$member->get('id');?>&action=promote">Promote</a>
-							<?}
-							if($member->get('rank') != 'ME'){?>
-								<a type="button" class="btn btn-sm btn-warning" href="/processClanManage.php?clanId=<?=$clan->get('id')?>&playerId=<?=$member->get('id');?>&action=demote">Demote</a>
-							<?}?>
-							<a type="button" class="btn btn-sm btn-info" href="/processClanManage.php?clanId=<?=$clan->get('id')?>&playerId=<?=$member->get('id');?>&action=leave">Leave</a>
-							<?if($member->get('rank') != 'LE'){?>
-								<a type="button" class="btn btn-sm btn-danger" href="/processClanManage.php?clanId=<?=$clan->get('id')?>&playerId=<?=$member->get('id');?>&action=kick">Kick</a>
-							<?}?>
-						</td>
+						<td><?=$member->get('trophies');?></td>
+						<td><?=$member->get('donations');?></td>
+						<td><?=$member->get('received');?></td>
 						<td class="text-right"><?=$member->get('tag');?></td>
 					</tr>
 				<?}?>
@@ -115,43 +109,6 @@ require('header.php');
 		<h6>&nbsp;</h6>
 		<div class="alert alert-info">
 			<strong>Oh no!</strong> There's no members currently in this clan. You can start by adding one above.
-		</div>
-	<?}
-	if(count($pastMembers)>0){?>
-		<div class="col-md-12">
-			<div class="col-md-6">
-				<button type="button" class="btn btn-success" data-toggle="collapse" data-target="#pastMembers" aria-expanded="true" aria-controls="pastMembers">Past Members</button>
-				<br><br>
-			</div>
-		</div>
-		<div class="collapse" id="pastMembers">
-			<h3>Past Members</h3>
-			<table class="table table-hover">
-				<thead>
-					<tr>
-						<th>Name</th>
-						<th>Method of Leaving</th>
-						<?if(count($members)<50){?>
-							<th>Action</th>
-						<?}?>
-						<th class="text-right">Player Tag</th>
-					</tr>
-				</thead>
-				<tbody>
-					<?foreach ($pastMembers as $member) {?>
-						<tr style="cursor: pointer;" onclick="clickRow('player.php?playerId=<?=$member->get("id");?>&clanId=<?=$clan->get('id');?>');">
-							<td><?=$member->get('name');?></td>
-							<td><?=rankFromCode($member->get('rank', $clan->get('id')));?></td>
-							<?if(count($members)<50){?>
-								<td>
-									<a type="button" class="btn btn-sm btn-success" href="/processClanManage.php?clanId=<?=$clan->get('id')?>&playerId=<?=$member->get('id');?>&action=rejoin">Rejoin</a>
-								</td>
-							<?}?>
-							<td class="text-right"><?=$member->get('tag');?></td>
-						</tr>
-					<?}?>
-				</tbody>
-			</table>
 		</div>
 	<?}?>
 </div>

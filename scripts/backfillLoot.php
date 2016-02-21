@@ -1,5 +1,6 @@
 <?
 require(__DIR__ . '/../config/functions.php');
+$tag = $argv[1];
 $goldRawData = file_get_contents("goldBackFillData.txt");
 $goldRawData = explode("\n", $goldRawData);
 $goldDates = explode("\t", $goldRawData[0]);
@@ -17,6 +18,23 @@ foreach ($goldRawData as $i => $goldPlayerRow) {
 			$curr[] = intval($goldValue);
 		}
 		$gold[$id] = $curr;
+	}else{
+		$clan = new clan($tag);
+		foreach ($ids as $id) {
+			$player = new player($id);
+			$playerClan = $player->getMyClan();
+			if(isset($playerClan)){
+				if($playerClan->get('id') == $clan->get('id')){
+					$curr = array();
+					foreach ($goldPlayerRow as $j => $goldValue) {
+						if($j<4) continue;//skipping name, last week, average, and best week
+						$goldValue = str_replace(',', '', $goldValue);
+						$curr[] = intval($goldValue);
+					}
+					$gold[$id] = $curr;
+				}
+			}
+		}
 	}
 }
 $elixirRawData = file_get_contents("elixirBackFillData.txt");
@@ -36,6 +54,23 @@ foreach ($elixirRawData as $i => $elixirPlayerRow) {
 			$curr[] = intval($elixirValue);
 		}
 		$elixir[$id] = $curr;
+	}else{
+		$clan = new clan($tag);
+		foreach ($ids as $id) {
+			$player = new player($id);
+			$playerClan = $player->getMyClan();
+			if(isset($playerClan)){
+				if($playerClan->get('id') == $clan->get('id')){
+					$curr = array();
+					foreach ($elixirPlayerRow as $j => $elixirValue) {
+						if($j<4) continue;//skipping name, last week, average, and best week
+						$elixirValue = str_replace(',', '', $elixirValue);
+						$curr[] = intval($elixirValue);
+					}
+					$elixir[$id] = $curr;
+				}
+			}
+		}
 	}
 }
 $darkElixirRawData = file_get_contents("darkElixirBackFillData.txt");
@@ -55,6 +90,23 @@ foreach ($darkElixirRawData as $i => $darkElixirPlayerRow) {
 			$curr[] = intval($darkElixirValue);
 		}
 		$darkElixir[$id] = $curr;
+	}else{
+		$clan = new clan($tag);
+		foreach ($ids as $id) {
+			$player = new player($id);
+			$playerClan = $player->getMyClan();
+			if(isset($playerClan)){
+				if($playerClan->get('id') == $clan->get('id')){
+					$curr = array();
+					foreach ($darkElixirPlayerRow as $j => $darkElixirValue) {
+						if($j<4) continue;//skipping name, last week, average, and best week
+						$darkElixirValue = str_replace(',', '', $darkElixirValue);
+						$curr[] = intval($darkElixirValue);
+					}
+					$darkElixir[$id] = $curr;
+				}
+			}
+		}
 	}
 }
 

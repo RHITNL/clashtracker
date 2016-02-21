@@ -1,6 +1,6 @@
 <?
 define('DEVELOPMENT', true);
-if(DEVELOPMENT == false){
+if(DEVELOPMENT){
 	//	Configuration for the MySQL Local Server
 	define('DBHOST', 'localhost');
 	define('DBNAME', 'clash');
@@ -25,6 +25,11 @@ define('WEEK', 604800);
 define('MONTH', 2629743);
 define('YEAR', 31556926);
 
+define('NO_ACCESS', 'You do not have access to that page.');
+
+$ip = trim(shell_exec("dig +short myip.opendns.com @resolver1.opendns.com"));
+define('IP', $ip);
+
 $dir = str_replace('/config', '', __DIR__);
 define('APPROOT', $dir);
 
@@ -41,5 +46,11 @@ $exceptions = scandir(APPROOT . '/exceptions');
 foreach ($exceptions as $exception) {
 	if(strpos($exception, '.php') !== false){
 		include(APPROOT . '/exceptions/' . $exception);
+	}
+}
+$apiClasses = scandir(APPROOT . '/api');
+foreach ($apiClasses as $apiClass) {
+	if(strpos($apiClass, '.php') !== false){
+		include(APPROOT . '/api/' . $apiClass);
 	}
 }

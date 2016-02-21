@@ -1,5 +1,6 @@
 <?
-require(__DIR__ . '/../config/functions.php');
+require('init.php');
+require('session.php');
 
 $warId = $_GET['warId'];
 try{
@@ -63,7 +64,7 @@ if($war->isPlayerInWar($defenderId)){
 
 $attack = $war->getAttack($attackerId, $defenderId);
 if(!isset($attack)){
-	$_SESSION['curError'] = $attacker->get('name') . ' never attacked ' . $defender->get('name') . ' in this war.';
+	$_SESSION['curError'] = htmlspecialchars($attacker->get('name')) . ' never attacked ' . htmlspecialchars($defender->get('name')) . ' in this war.';
 	if(isset($clanId)){
 		header('Location: /war.php?warId=' . $war->get('id') . '&clanId=' . $clanId);
 	}else{
@@ -79,12 +80,12 @@ require('header.php');
 		<li><a href="/home.php">Home</a></li>
 		<?if(isset($clanId)){?>
 			<li><a href="/clans.php">Clans</a></li>
-			<li><a href="/clan.php?clanId=<?=$clan1->get('id');?>"><?=$clan1->get('name');?></a></li>
+			<li><a href="/clan.php?clanId=<?=$clan1->get('id');?>"><?=htmlspecialchars($clan1->get('name'));?></a></li>
 			<li><a href="/wars.php?clanId=<?=$clan1->get('id');?>">Wars</a></li>
-			<li><a href="/war.php?warId=<?=$war->get('id');?>&clanId=<?=$clan1->get('id');?>"><?=$clan1->get('name');?> vs. <?=$clan2->get('name');?></a></li>
+			<li><a href="/war.php?warId=<?=$war->get('id');?>&clanId=<?=$clan1->get('id');?>"><?=htmlspecialchars($clan1->get('name'));?> vs. <?=htmlspecialchars($clan2->get('name'));?></a></li>
 		<?}else{?>
 			<li><a href="/wars.php">Wars</a></li>
-			<li><a href="/war.php?warId=<?=$war->get('id');?>"><?=$clan1->get('name');?> vs. <?=$clan2->get('name');?></a></li>
+			<li><a href="/war.php?warId=<?=$war->get('id');?>"><?=htmlspecialchars($clan1->get('name'));?> vs. <?=htmlspecialchars($clan2->get('name'));?></a></li>
 		<?}?>
 		<li class="active">Edit War Attack</li>
 	</ol>
@@ -99,7 +100,7 @@ require('header.php');
 				<input hidden name="clanId" value="<?=$clan1->get('id');?>"></input>
 			<?}?>
 			<div class="col-md-12">
-				<h4><?=$attacker->get('name') . ' attacked ' . $defender->get('name');?></h4>
+				<h4><?=htmlspecialchars($attacker->get('name')) . ' attacked ' . htmlspecialchars($defender->get('name'));?></h4>
 				<div class="col-md-6">
 					<div class="form-group">
 						<label class="col-sm-4 control-lable" for="stars">Stars:</label>
