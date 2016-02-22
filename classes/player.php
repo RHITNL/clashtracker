@@ -12,6 +12,7 @@ class player{
 	private $trophies;
 	private $donations;
 	private $received;
+	private $leagueUrl;
 
 	private $acceptGet = array(
 		'id' => 'id',
@@ -24,6 +25,7 @@ class player{
 		'trophies' => 'trophies',
 		'donations' => 'donations',
 		'received' => 'received',
+		'league_url' => 'leagueUrl',
 		'level' => 'level'
 	);
 
@@ -35,6 +37,7 @@ class player{
 		'trophies' => 'trophies',
 		'donations' => 'donations',
 		'received' => 'received',
+		'league_url' => 'leagueUrl',
 		'min_rank_access' => 'minRankAccess'
 	);
 
@@ -97,6 +100,7 @@ class player{
 					$this->trophies = $record->trophies;
 					$this->donations = $record->donations;
 					$this->received = $record->received;
+					$this->leagueUrl = $record->league_url;
 				}else{
 					throw new noResultFoundException('No player found with id ' . $this->id);
 				}
@@ -135,6 +139,7 @@ class player{
 					$this->trophies = $record->trophies;
 					$this->donations = $record->donations;
 					$this->received = $record->received;
+					$this->leagueUrl = $record->league_url;
 				}else{
 					throw new noResultFoundException('No player found with tag ' . $tag);
 				}

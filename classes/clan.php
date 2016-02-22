@@ -14,6 +14,7 @@ class clan{
 	private $clanPoints;
 	private $warWins;
 	private $badgeUrl;
+	private $location;
 
 	private $acceptGet = array(
 		'id' => 'id',
@@ -29,6 +30,7 @@ class clan{
 		'clan_level' => 'clanLevel',
 		'clan_points' => 'clanPoints',
 		'war_wins' => 'warWins',
+		'location' => 'location',
 		'badge_url' => 'badgeUrl'
 	);
 
@@ -42,6 +44,7 @@ class clan{
 		'clan_level' => 'clanLevel',
 		'clan_points' => 'clanPoints',
 		'war_wins' => 'warWins',
+		'location' => 'location',
 		'badge_url' => 'badgeUrl'
 	);
 
@@ -107,6 +110,7 @@ class clan{
 					$this->clanLevel = $record->clan_level;
 					$this->warWins = $record->war_wins;
 					$this->badgeUrl = $record->badge_url;
+					$this->location = $record->location;
 				}else{
 					throw new noResultFoundException('No clan found with id ' . $this->id);
 				}
@@ -148,6 +152,7 @@ class clan{
 					$this->clanLevel = $record->clan_level;
 					$this->warWins = $record->war_wins;
 					$this->badgeUrl = $record->badge_url;
+					$this->location = $record->location;
 				}else{
 					throw new noResultFoundException('No clan found with tag ' . $tag);
 				}

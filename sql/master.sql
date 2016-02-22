@@ -344,7 +344,7 @@ drop procedure if exists p_get_players;
 delimiter //
 create procedure p_get_players(varPageSize int)
 begin
-	select id from player limit varPageSize;
+	select id from player order by trophies desc limit varPageSize;
 end //
 delimiter ;
 
@@ -765,3 +765,6 @@ begin
 	delete from api_keys where ip = varIp;
 end //
 delimiter ;
+
+alter table player add league_url varchar(200) default null;
+alter table clan add location varchar(50) default null;

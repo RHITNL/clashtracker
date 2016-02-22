@@ -24,7 +24,10 @@ require('header.php');
 			<table class="table table-hover">
 				<thead>
 					<tr>
+						<th></th>
 						<th>Name</th>
+						<th>Level</th>
+						<th>Trophies</th>
 						<th>Clan Name</th>
 						<th>Clan Rank</th>
 						<th class="text-right">Player Tag</th>
@@ -33,12 +36,20 @@ require('header.php');
 				<tbody>
 					<?foreach ($players as $player) {?>
 						<tr style="cursor: pointer;">
+							<td width="20">
+								<?$url = $player->get('leagueUrl');
+								if(strlen($url)>0){?>
+									<img src="<?=$url;?>" height="20" width="20">
+								<?}?>
+							</td>
 							<td onclick="clickRow('player.php?playerId=<?=$player->get("id");?>');"><?=htmlspecialchars($player->get('name'));?></td>
+							<td onclick="clickRow('player.php?playerId=<?=$player->get("id");?>');"><?=$player->get('level');?></td>
+							<td onclick="clickRow('player.php?playerId=<?=$player->get("id");?>');"><?=$player->get('trophies');?></td>
 							<?$clan = $player->getMyClan();
 							if(isset($clan)){?>
 								<td onclick="clickRow('clan.php?clanId=<?=$clan->get("id");?>');"><?=htmlspecialchars($clan->get('name'));?></td>
 							<?}else{?>
-								<td onclick="clickRow('player.php?playerId=<?=$player->get("id");?>');"></td>
+								<td></td>
 							<?}?>
 							<td onclick="clickRow('player.php?playerId=<?=$player->get("id");?>');"><?=rankFromCode($player->get('rank'));?></td>
 							<td class="text-right" onclick="clickRow('player.php?playerId=<?=$player->get("id");?>');"><?=$player->get('tag');?></td>

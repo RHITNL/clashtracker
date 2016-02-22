@@ -43,6 +43,7 @@ require('header.php');
 				<table class="table table-hover">
 					<thead>
 						<tr>
+							<th></th>
 							<th>Clan name</th>
 							<th>Clan Points</th>
 							<th>Wars Won</th>
@@ -56,6 +57,12 @@ require('header.php');
 					<tbody>
 						<?foreach ($clans as $clan) {?>
 							<tr style="cursor: pointer;" onclick="clickRow('clan.php?clanId=<?=$clan->get("id");?>');">
+								<td width="20">
+									<?$url = $clan->get('badgeUrl');
+									if(strlen($url)>0){?>
+										<img src="<?=$url;?>" height="20" width="20">
+									<?}?>
+								</td>
 								<td><?=htmlspecialchars($clan->get('name'));?></td>
 								<td><?=$clan->get('clanPoints');?></td>
 								<td><?=$clan->get('warWins');?></td>

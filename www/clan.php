@@ -27,9 +27,19 @@ require('header.php');
 		<li class="active"><?=htmlspecialchars($clan->get('name'));?></li>
 	</ol>
 	<?require('showMessages.php');?>
-	<h1><?=htmlspecialchars($clan->get('name'));?></h1><br>
+	<h1>
+		<?$url = $clan->get('badgeUrl');
+		if(strlen($url)>0){?>
+			<img src="<?=$url;?>">
+		<?}?>
+		<?=htmlspecialchars($clan->get('name'));?>
+	</h1><br>
 	<div class="well col-md-12">
 		<div class="col-md-6">
+			<label for="clanPoints" class="col-sm-4 control-label">Total Points:</label>
+			<div class="col-sm-8 text-right" id="clanPoints">
+				<p><?=$clan->get('clanPoints');?></p>
+			</div>
 			<label for="warsWon" class="col-sm-4 control-label">Wars Won:</label>
 			<div class="col-sm-8 text-right" id="warsWon">
 				<p><?=$clan->get('warWins');?></p>
@@ -49,6 +59,10 @@ require('header.php');
 			<label for="warFrequency" class="col-sm-4 control-label">War Frequency:</label>
 			<div class="col-sm-8 text-right" id="warFrequency">
 				<p><?=warFrequencyFromCode($clan->get('warFrequency'));?></p>
+			</div>
+			<label for="location" class="col-sm-4 control-label">Location:</label>
+			<div class="col-sm-8 text-right" id="location">
+				<p><?=$clan->get('location');?></p>
 			</div>
 			<label for="clanTag" class="col-sm-4 control-label">Clan Tag:</label>
 			<div class="col-sm-8 text-right" id="clanTag">
@@ -84,6 +98,7 @@ require('header.php');
 		<table class="table table-hover">
 			<thead>
 				<tr>
+					<th></th>
 					<th>Name</th>
 					<th>Rank</th>
 					<th>Trophies</th>
@@ -95,6 +110,12 @@ require('header.php');
 			<tbody>
 				<?foreach ($members as $member) {?>
 					<tr style="cursor: pointer;" onclick="clickRow('player.php?playerId=<?=$member->get("id");?>&clanId=<?=$clan->get('id');?>');">
+						<td width="20">
+							<?$url = $member->get('leagueUrl');
+							if(strlen($url)>0){?>
+								<img src="<?=$url;?>" height="20" width="20">
+							<?}?>
+						</td>
 						<td><?=htmlspecialchars($member->get('name'));?></td>
 						<td><?=rankFromCode($member->get('rank'));?></td>
 						<td><?=$member->get('trophies');?></td>

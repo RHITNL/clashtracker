@@ -244,6 +244,7 @@ function refreshClanInfo($clanId){
 	$clan->set('clanLevel', $clanInfo->clanLevel);
 	$clan->set('warWins', $clanInfo->warWins);
 	$clan->set('badgeUrl', $clanInfo->badgeUrls->small);
+	$clan->set('location', $clanInfo->location->name);
 	$members = $clan->getCurrentMembers();
 	foreach ($clanInfo->memberList as $apiMember) {
 		$count = 0;
@@ -260,6 +261,7 @@ function refreshClanInfo($clanId){
 			$member->set('trophies', $apiMember->trophies);
 			$member->set('donations', $apiMember->donations);
 			$member->set('received', $apiMember->donationsReceived);
+			$member->set('leagueUrl', $apiMember->league->iconUrls->small);
 		}elseif ($count==0) {
 			//TODO: The player needs to be added to the clan
 			//		Need the player tag though, which is not provided yet
