@@ -13,7 +13,7 @@ try{
 }
 
 $members = $clan->getCurrentMembers();
-$members = sortPlayersByRank($members);
+$members = sortPlayersByTrophies($members);
 
 require('header.php');
 ?>
