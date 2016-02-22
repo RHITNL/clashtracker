@@ -113,7 +113,13 @@ require('header.php');
 	<?require('showMessages.php');?>
 	<div class="col-md-12">
 		<div class="col-md-6">
-			<h1><?=htmlspecialchars($player->get('name'));?></h1>
+			<h1>
+				<?$url = $player->get('leagueUrl');
+				if(strlen($url)>0){?>
+					<img src="<?=$url;?>">
+				<?}?>
+				<?=htmlspecialchars($player->get('name'));?>
+			</h1>
 		</div>
 		<div class="col-md-6 text-right">
 			<?if($userHasAccessToUpdateLoot){?>
