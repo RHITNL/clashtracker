@@ -116,23 +116,25 @@ require('header.php');
 			<h1><?=htmlspecialchars($player->get('name'));?></h1>
 		</div>
 		<div class="col-md-6 text-right">
-			<div id="editNameButtonDiv">
-				<button type="button" class="btn btn-primary" onclick="showEditNameForm();">Edit Name</button>
-			</div>
-			<div id="editNameFormDiv" hidden>
-				<form class="form-inline" action="/processEditName.php" method="POST">
-					<input hidden name="playerId" value="<?=$player->get('id');?>"></input>
-					<?if(isset($clan)){?>
-						<input hidden name="clanId" value="<?=$clan->get('id');?>"></input>
-					<?}?>
-					<div class="form-group">
-						<label for="name">Name </label>
-						<input type="text" class="form-control" id="name" name="name" placeholder="<?=htmlspecialchars($player->get('name'));?>">
-					</div>
-					<button type="cancel" class="btn btn-default text-right" onclick="return showEditNameButton();">Cancel</button>
-					<button type="submit" class="btn btn-primary text-right">Save</button>
-				</form>
-			</div>
+			<?if($userHasAccessToUpdateLoot){?>
+				<div id="editNameButtonDiv">
+					<button type="button" class="btn btn-primary" onclick="showEditNameForm();">Edit Name</button>
+				</div>
+				<div id="editNameFormDiv" hidden>
+					<form class="form-inline" action="/processEditName.php" method="POST">
+						<input hidden name="playerId" value="<?=$player->get('id');?>"></input>
+						<?if(isset($clan)){?>
+							<input hidden name="clanId" value="<?=$clan->get('id');?>"></input>
+						<?}?>
+						<div class="form-group">
+							<label for="name">Name </label>
+							<input type="text" class="form-control" id="name" name="name" placeholder="<?=htmlspecialchars($player->get('name'));?>">
+						</div>
+						<button type="cancel" class="btn btn-default text-right" onclick="return showEditNameButton();">Cancel</button>
+						<button type="submit" class="btn btn-primary text-right">Save</button>
+					</form>
+				</div>
+			<?}?>
 		</div>
 		<div class="col-md-12">
 			<?if(isset($clan)){?>

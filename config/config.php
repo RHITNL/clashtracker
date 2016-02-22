@@ -34,8 +34,7 @@ foreach ($apiClasses as $apiClass) {
 	}
 }
 
-$development = strpos(__DIR__, 'alexinman') !== FALSE;
-define('DEVELOPMENT', $development);
+define('DEVELOPMENT', strpos(__DIR__, 'alexinman') !== FALSE);
 if(DEVELOPMENT){
 	//	Configuration for the MySQL Local Server
 	define('DBHOST', 'localhost');
@@ -53,7 +52,7 @@ if(DEVELOPMENT){
 // Create connection
 $db = new mysqli(DBHOST, DBUSER, DBPASS, DBNAME);
 
-if($development){
+if(DEVELOPMENT){
 	$ip = trim(shell_exec("dig +short myip.opendns.com @resolver1.opendns.com"));
 }else{
 	$ip = '52.5.38.201';
