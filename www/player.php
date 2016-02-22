@@ -177,7 +177,7 @@ require('header.php');
 					</div>
 				</div>
 			</div>
-		</div>
+		</div><br>
 	<?}?>
 	<div class="col-md-12">
 		<h3><i class="fa fa-coins" style="color: gold;"></i>&nbsp;Loot</h3>
@@ -346,8 +346,8 @@ require('header.php');
 					</div>
 				</div>
 			<?}?>
-		</div>
-	</div>
+		</div><br>
+	</div><br>
 	<?if(count($playerClans)>0){?>
 		<div class="col-md-12">
 			<?if(count($playerClans)>1){?>

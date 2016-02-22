@@ -35,7 +35,6 @@
 				</div>
 				<div id="navbar" class="navbar-collapse collapse">
 					<ul class="nav navbar-nav navbar-right">
-						<!-- <li><a href="/home.php">Home</a></li> -->
 						<li><a href="/players.php">Players</a></li>
 						<li><a href="/clans.php">Clans</a></li>
 						<?if(!isset($loggedInUser)){?>
@@ -44,7 +43,6 @@
 							<li><a href="/accountSettings.php">Settings</a></li>
 							<li><a href="/processLogout.php">Log Out</a></li>
 						<?}?>
-						<!-- <li><a href="/wars.php">Wars</a></li> -->
 					</ul>
 					<form class="navbar-form navbar-right" action="searchResults.php" method="GET">
 						<input type="text" name="query" class="form-control" placeholder="Search...">
