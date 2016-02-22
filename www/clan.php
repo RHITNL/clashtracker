@@ -95,37 +95,39 @@ require('header.php');
 	</div>
 	<?if(count($members)>0){?>
 		<h3>Clan Members</h3>
-		<table class="table table-hover">
-			<thead>
-				<tr>
-					<th></th>
-					<th>Name</th>
-					<th>Rank</th>
-					<th>Trophies</th>
-					<th>Troops donated:</th>
-					<th>Troops received:</th>
-					<th class="text-right">Player Tag</th>
-				</tr>
-			</thead>
-			<tbody>
-				<?foreach ($members as $member) {?>
-					<tr style="cursor: pointer;" onclick="clickRow('player.php?playerId=<?=$member->get("id");?>&clanId=<?=$clan->get('id');?>');">
-						<td width="20">
-							<?$url = $member->get('leagueUrl');
-							if(strlen($url)>0){?>
-								<img src="<?=$url;?>" height="20" width="20">
-							<?}?>
-						</td>
-						<td><?=htmlspecialchars($member->get('name'));?></td>
-						<td><?=rankFromCode($member->get('rank'));?></td>
-						<td><?=$member->get('trophies');?></td>
-						<td><?=$member->get('donations');?></td>
-						<td><?=$member->get('received');?></td>
-						<td class="text-right"><?=$member->get('tag');?></td>
+		<div class="table-responsive">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th></th>
+						<th>Name</th>
+						<th>Rank</th>
+						<th>Trophies</th>
+						<th>Troops donated:</th>
+						<th>Troops received:</th>
+						<th class="text-right">Player Tag</th>
 					</tr>
-				<?}?>
-			</tbody>
-		</table>
+				</thead>
+				<tbody>
+					<?foreach ($members as $member) {?>
+						<tr style="cursor: pointer;" onclick="clickRow('player.php?playerId=<?=$member->get("id");?>&clanId=<?=$clan->get('id');?>');">
+							<td width="20">
+								<?$url = $member->get('leagueUrl');
+								if(strlen($url)>0){?>
+									<img src="<?=$url;?>" height="20" width="20">
+								<?}?>
+							</td>
+							<td><?=htmlspecialchars($member->get('name'));?></td>
+							<td><?=rankFromCode($member->get('rank'));?></td>
+							<td><?=$member->get('trophies');?></td>
+							<td><?=$member->get('donations');?></td>
+							<td><?=$member->get('received');?></td>
+							<td class="text-right"><?=$member->get('tag');?></td>
+						</tr>
+					<?}?>
+				</tbody>
+			</table>
+		</div>
 	<?}else{?>
 		<h6>&nbsp;</h6>
 		<div class="alert alert-info">

@@ -271,4 +271,4 @@ function refreshClanInfo($clanId){
 		$member->leaveClan();
 	}
 	return 0;
-}
+}	
