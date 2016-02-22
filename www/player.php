@@ -359,7 +359,13 @@ require('header.php');
 				<div class="jumbotron col-md-5">
 					<label class="col-sm-4">Current Clan</label>
 					<div class="col-sm-8 text-right" style="cursor: pointer;" onclick="clickRow('clan.php?clanId=<?=$playerClan->get("id");?>');">
-						<p><?=htmlspecialchars($playerClan->get('name'));?></p>
+						<p>
+							<?$url = $playerClan->get('badgeUrl');
+							if(strlen($url)>0){?>
+								<img src="<?=$url;?>" height="20" width="20">
+							<?}?>
+							<?=htmlspecialchars($playerClan->get('name'));?>
+						</p>
 					</div>
 					<label class="col-sm-4">Current Rank</label>
 					<div class="col-sm-8 text-right">
@@ -381,6 +387,7 @@ require('header.php');
 					<table class="table table-hover">
 						<thead>
 							<tr>
+								<th></th>
 								<th>Name</th>
 								<th>Clan Points</th>
 								<th>Wars Won</th>
@@ -391,6 +398,12 @@ require('header.php');
 							<?foreach ($playerClans as $clan) {
 								if((isset($playerClan) && $clan->get('id') != $playerClan->get('id')) || !isset($playerClan)){?>
 									<tr style="cursor: pointer;" onclick="clickRow('clan.php?clanId=<?=$clan->get("id");?>');">
+										<td width="20">
+											<?$url = $clan->get('badgeUrl');
+											if(strlen($url)>0){?>
+												<img src="<?=$url;?>" height="20" width="20">
+											<?}?>
+										</td>
 										<td><?=htmlspecialchars($clan->get('name'));?></td>
 										<td><?=$clan->get('clanPoints');?></td>
 										<td><?=$clan->get('warWins');?></td>

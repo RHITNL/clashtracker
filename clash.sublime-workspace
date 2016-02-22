@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"showAdd",
+				"showAddClanForm"
+			],
+			[
 				"badge",
 				"badge_url"
 			],
@@ -510,10 +514,6 @@
 			[
 				"inde",
 				"index"
-			],
-			[
-				"print",
-				"println"
 			]
 		]
 	},
@@ -573,31 +573,59 @@
 	"file_history":
 	[
 		"/Users/alexinman/Documents/dev/clash/config/functions.php",
-		"/Users/alexinman/Documents/dev/clash/www/addPlayer.php",
-		"/Users/alexinman/Documents/dev/clash/www/processAddPlayer.php",
-		"/Users/alexinman/Documents/dev/clash/www/addClan.php",
-		"/Users/alexinman/Documents/dev/clash/classes/player.php",
-		"/Users/alexinman/Documents/dev/clash/api/api.php",
-		"/Users/alexinman/Documents/dev/clash/scripts/api_keys.txt",
-		"/Users/alexinman/Documents/dev/clash/api/clanApi.php",
+		"/Users/alexinman/Documents/dev/clash/www/css/bootstrap.min.css",
+		"/Users/alexinman/Documents/dev/clash/www/css/bootstrap.css",
+		"/Users/alexinman/Documents/dev/clash/www/clans.php",
+		"/Users/alexinman/Documents/dev/clash/www/player.php",
 		"/Users/alexinman/Documents/dev/clash/www/clan.php",
 		"/Users/alexinman/Documents/dev/clash/classes/clan.php",
-		"/Users/alexinman/Documents/dev/clash/scripts/fixClanTags.php",
-		"/Users/alexinman/Documents/dev/clash/scripts/backfillLoot.php",
-		"/Users/alexinman/Documents/dev/clash/config/config.php",
-		"/Users/alexinman/Documents/dev/clash/exceptions/illegalArgumentException.php",
-		"/Users/alexinman/Documents/dev/clash/exceptions/apiException.php",
-		"/Users/alexinman/Documents/dev/clash/www/processAddClan.php",
 		"/Users/alexinman/Documents/dev/clash/sql/master.sql",
-		"/Users/alexinman/Documents/dev/clash/www/processRefreshClan.php",
-		"/Users/alexinman/Documents/dev/clash/www/searchResults.php",
-		"/Users/alexinman/Documents/dev/clash/www/clans.php",
-		"/Users/alexinman/Documents/dev/clash/vendor/heroku/heroku-buildpack-php/conf/php/php.ini",
-		"/Users/alexinman/Documents/dev/clash/www/recordClanLoot.php",
-		"/Users/alexinman/Documents/dev/clash/www/processEditClan.php",
-		"/Users/alexinman/Documents/dev/clash/www/editClan.php",
+		"/Users/alexinman/Documents/dev/clash/www/players.php",
+		"/Users/alexinman/Documents/dev/clash/www/header.php",
+		"/Users/alexinman/Documents/dev/clash/api/leagueApi.php",
+		"/Users/alexinman/Documents/dev/clash/api/clanApi.php",
+		"/Users/alexinman/Documents/dev/clash/classes/player.php",
+		"/Users/alexinman/Documents/dev/clash/config/config.php",
+		"/Users/alexinman/Documents/dev/clash/www/processEditName.php",
+		"/Users/alexinman/Documents/dev/clash/www/processAddPlayer.php",
+		"/Users/alexinman/Documents/dev/clash/api/api.php",
+		"/Users/alexinman/Documents/dev/clash/scripts/quotaguard.php",
+		"/Users/alexinman/Documents/dev/clash/scripts/api_keys.txt",
 		"/Users/alexinman/Documents/dev/clash/scripts/loadApiKeysFromFile.php",
 		"/Users/alexinman/Documents/dev/clash/classes/apiKey.php",
+		"/Users/alexinman/Documents/dev/clash/www/processForgotPassword.php",
+		"/Users/alexinman/Documents/dev/clash/www/forgotPassword.php",
+		"/Users/alexinman/Documents/dev/clash/www/processChangeEmail.php",
+		"/Users/alexinman/Documents/dev/clash/connect to heroku db.txt",
+		"/Users/alexinman/Documents/dev/clash/backup.sql",
+		"/Users/alexinman/Documents/dev/clash/scripts/darkElixirBackFillData.txt",
+		"/Users/alexinman/Documents/dev/clash/scripts/elixirBackFillData.txt",
+		"/Users/alexinman/Documents/dev/clash/scripts/goldBackFillData.txt",
+		"/Users/alexinman/Documents/dev/clash/www/addPlayer.php",
+		"/Users/alexinman/Documents/dev/clash/www/processAddClan.php",
+		"/Users/alexinman/Documents/dev/clash/www/processAddWar.php",
+		"/Users/alexinman/Documents/dev/clash/www/addWar.php",
+		"/Users/alexinman/Documents/dev/clash/www/editWarAttack.php",
+		"/Users/alexinman/Documents/dev/clash/www/processAddWarAttack.php",
+		"/Users/alexinman/Documents/dev/clash/www/processEditWarAttack.php",
+		"/Users/alexinman/Documents/dev/clash/www/processRecordLoot.php",
+		"/Users/alexinman/Documents/dev/clash/www/processRemoveWarAttack.php",
+		"/Users/alexinman/Documents/dev/clash/www/recordClanLoot.php",
+		"/Users/alexinman/Documents/dev/clash/www/searchResults.php",
+		"/Users/alexinman/Documents/dev/clash/www/war.php",
+		"/Users/alexinman/Documents/dev/clash/www/wars.php",
+		"/Users/alexinman/Documents/dev/clash/www/addWarAttack.php",
+		"/Users/alexinman/Documents/dev/clash/www/addWarPlayer.php",
+		"/Users/alexinman/Documents/dev/clash/www/processClanManage.php",
+		"/Users/alexinman/Documents/dev/clash/www/addClan.php",
+		"/Users/alexinman/Documents/dev/clash/scripts/fixClanTags.php",
+		"/Users/alexinman/Documents/dev/clash/scripts/backfillLoot.php",
+		"/Users/alexinman/Documents/dev/clash/exceptions/illegalArgumentException.php",
+		"/Users/alexinman/Documents/dev/clash/exceptions/apiException.php",
+		"/Users/alexinman/Documents/dev/clash/www/processRefreshClan.php",
+		"/Users/alexinman/Documents/dev/clash/vendor/heroku/heroku-buildpack-php/conf/php/php.ini",
+		"/Users/alexinman/Documents/dev/clash/www/processEditClan.php",
+		"/Users/alexinman/Documents/dev/clash/www/editClan.php",
 		"/Users/alexinman/Documents/dev/clash/config/api_keys.txt",
 		"/Users/alexinman/Documents/dev/clash/www/fixClanTags.php",
 		"/Users/alexinman/Documents/dev/clash/Procfile",
@@ -671,35 +699,7 @@
 		"/Users/alexinman/Documents/dev/UCOSP/Markus/app/views/annotations/destroy.js.erb",
 		"/Users/alexinman/Documents/dev/UCOSP/Markus/app/views/results/common/_annotations.js.erb",
 		"/Users/alexinman/Documents/dev/UCOSP/Markus/app/assets/javascripts/SourceCodeGlower/AnnotationTextManager.js",
-		"/Users/alexinman/Documents/dev/UCOSP/Markus/app/assets/javascripts/SourceCodeGlower/ImageEventHandler.js",
-		"/Users/alexinman/Documents/dev/UCOSP/Markus/app/models/pdf_annotation.rb",
-		"/Users/alexinman/Documents/dev/UCOSP/Markus/app/views/results/marker/_marker_panes.html.erb",
-		"/Users/alexinman/Documents/dev/UCOSP/Markus/app/views/results/marker/_overall_comment.html.erb",
-		"/Users/alexinman/Documents/dev/UCOSP/Markus/app/views/annotation_categories/update_annotation.js.erb",
-		"/Users/alexinman/Documents/dev/UCOSP/Markus/app/views/results/common/_pdf_codeviewer.html.erb",
-		"/Users/alexinman/Documents/dev/UCOSP/Markus/app/assets/javascripts/pdfjs_lib/viewer.js",
-		"/Users/alexinman/Documents/dev/UCOSP/Markus/app/views/results/common/_image_codeviewer.html.erb",
-		"/Users/alexinman/Documents/dev/UCOSP/Markus/app/assets/javascripts/SourceCodeGlower/SourceCodeLineAnnotations.js",
-		"/Users/alexinman/Documents/dev/UCOSP/Markus/app/views/annotations/add_existing_annotation.js.erb",
-		"/Users/alexinman/Documents/dev/UCOSP/Markus/app/views/annotations/create.js.erb",
-		"/Users/alexinman/Documents/dev/UCOSP/Markus/app/models/annotation.rb",
-		"/Users/alexinman/Documents/dev/UCOSP/Markus/app/views/annotations/update_annotation.js.erb",
-		"/Users/alexinman/Documents/dev/UCOSP/Markus/app/assets/javascripts/SourceCodeGlower/AnnotationText.js",
-		"/Users/alexinman/Documents/dev/UCOSP/Markus/app/views/results/common/_text_codeviewer.html.erb",
-		"/Users/alexinman/Documents/dev/UCOSP/Markus/app/helpers/annotations_helper.rb",
-		"/Users/alexinman/Documents/dev/UCOSP/Markus/app/controllers/annotations_controller.rb",
-		"/Users/alexinman/Documents/dev/UCOSP/Markus/app/views/annotations/_annotation_list.html.erb",
-		"/Users/alexinman/Documents/dev/UCOSP/Markus/app/views/annotations/_annotation_categories.html.erb",
-		"/Users/alexinman/Documents/dev/UCOSP/Markus/app/views/annotation_categories/get_annotations.js.erb",
-		"/Users/alexinman/Documents/dev/UCOSP/Markus/app/views/annotation_categories/_annotation_category.html.erb",
-		"/Users/alexinman/Documents/dev/UCOSP/Markus/app/assets/javascripts/SourceCodeGlower/AnnotationTextDisplayer.js",
-		"/Users/alexinman/Documents/dev/UCOSP/Markus/app/views/assignments/_member.html.erb",
-		"/Users/alexinman/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings",
-		"/Users/alexinman/Library/Application Support/Sublime Text 3/Packages/Default/Preferences.sublime-settings",
-		"/Users/alexinman/Documents/dev/UCOSP/Markus/app/models/annotation_category.rb",
-		"/Users/alexinman/Documents/dev/UCOSP/Markus/app/models/annotation_text.rb",
-		"/Users/alexinman/Documents/dev/UCOSP/sshfs/app/views/assignments/_read.html.erb",
-		"/Users/alexinman/Documents/dev/UCOSP/sshfs/app/assets/stylesheets/assignments.scss"
+		"/Users/alexinman/Documents/dev/UCOSP/Markus/app/assets/javascripts/SourceCodeGlower/ImageEventHandler.js"
 	],
 	"find":
 	{
@@ -727,9 +727,71 @@
 	},
 	"find_state":
 	{
-		"case_sensitive": true,
+		"case_sensitive": false,
 		"find_history":
 		[
+			".btn",
+			"margin-bottom:0",
+			"padding:6px,12px;margin-bottom:0",
+			"padding:6px12px;margin-bottom:0",
+			"margin-bottom:0",
+			"padding:6px12px;margin-bottom:0;font-size:14px;",
+			"padding:6px12px;margin-bottom:0px;font-size:14px;",
+			"padding:6px12px;margin-bottom:4px;font-size:14px;",
+			"padding: 6px 12px;margin-bottom: 4px;font-size: 14px;",
+			"margin-bottom",
+			"0",
+			"btn",
+			"clan",
+			"warFrequency",
+			"leage",
+			"p_get_players",
+			"onclick=\"clickRow('player.php?playerId=<?=$player->get(\"id\");?>');\"",
+			"plyer",
+			"player",
+			"clan",
+			"gold",
+			"button",
+			"(x100)",
+			"ch",
+			"  ",
+			"api_keys",
+			"p_clan_delete",
+			"p_get_clans",
+			"rank",
+			"clanRank",
+			"error_log",
+			"log",
+			"err",
+			"clanRank",
+			"refreshClanInfo",
+			"p_get_clans",
+			"p_clan",
+			"enemyClan",
+			"p_api_key_get",
+			"p_clan_allow_user",
+			"wars",
+			"->get('description')",
+			"('",
+			"->get('name')",
+			"userHasAccessToUpdateLoot",
+			"promotePlayer",
+			"promotePlyer",
+			"addPlayer",
+			"members",
+			"player",
+			"level",
+			"trophies",
+			"level",
+			"access_type",
+			"warFrequency",
+			"type",
+			"apiMember",
+			"pastMembers",
+			"getMyPastClanMembers",
+			"getMyActiveClanMembers",
+			"getMyClanMembers",
+			"getMembers",
 			"player",
 			"name",
 			"clan",
@@ -795,69 +857,7 @@
 			"select[^e]",
 			"select",
 			"message",
-			"Notice",
-			"notice",
-			"Notice",
-			"notice",
-			"Error",
-			"Notice",
-			"error",
-			"ErrorDiv",
-			"error",
-			"onError",
-			"render",
-			"submissions_table",
-			"onError",
-			"render json",
-			"this.setState",
-			"onERror",
-			"create_new_assignment",
-			"select",
-			"react-release-marks",
-			"react-table",
-			"@heading_buttons",
-			"section",
-			"grading_can",
-			"notice_text",
-			"notice_text = ",
-			"browse_submissions",
-			"grading_can_begin",
-			"grading_can_begin_after",
-			"grading_can_begin",
-			"grading_can_begin_after",
-			"assignment",
-			"plural",
-			"%{plural}",
-			"and:",
-			"and",
-			"Section",
-			"grading_can_begin",
-			"grading can begin",
-			"notice_text.push(",
-			"flash_now",
-			"can begin grading",
-			"can begin grading now",
-			"notice_text",
-			"flash|notice",
-			"calculate_collection_time",
-			"can_collect_now?",
-			"due_date_color",
-			"can_collect_now",
-			"can_collect_now?",
-			"get_collection_time",
-			"past_collection_date?",
-			"calculate_collection_time",
-			"hours_sum",
-			"can_collect_now",
-			"@get_collection_time",
-			"get_collection_time",
-			"calculate_collection_time",
-			"hours_sum",
-			"start_collection_process",
-			"due_date",
-			"calculate_overtime_hours_from",
-			"get_original_result",
-			"calculate_overtime_hours_from"
+			"Notice"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -865,6 +865,12 @@
 		"regex": false,
 		"replace_history":
 		[
+			"league",
+			"(×100)",
+			" ",
+			"getPastMembers",
+			"getCurrentMembers",
+			"getMembers",
 			"Success",
 			"success",
 			"Success",
@@ -1043,7 +1049,7 @@
 	"project": "clash.sublime-project",
 	"replace":
 	{
-		"height": 46.0
+		"height": 64.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -1053,16 +1059,156 @@
 		"selected_items":
 		[
 			[
-				"clan",
-				"classes/clan.php"
+				"clans",
+				"www/clans.php"
 			],
 			[
-				"addclan",
-				"www/addClan.php"
+				"bootstrap.min.css",
+				"www/css/bootstrap.min.css"
+			],
+			[
+				"css",
+				"www/css/bootstrap.css"
+			],
+			[
+				"clan",
+				"www/clan.php"
+			],
+			[
+				"functions",
+				"config/functions.php"
 			],
 			[
 				"player",
+				"www/player.php"
+			],
+			[
+				"mastersql",
+				"sql/master.sql"
+			],
+			[
+				"players",
+				"www/players.php"
+			],
+			[
+				"clanapi",
+				"api/clanApi.php"
+			],
+			[
+				"header",
+				"www/header.php"
+			],
+			[
+				"master",
+				"sql/master.sql"
+			],
+			[
+				"config",
+				"config/config.php"
+			],
+			[
+				"palyer",
 				"classes/player.php"
+			],
+			[
+				"processaddpalyer",
+				"www/processAddPlayer.php"
+			],
+			[
+				"processaddplayer",
+				"www/processAddPlayer.php"
+			],
+			[
+				"api",
+				"api/api.php"
+			],
+			[
+				"apikeys",
+				"scripts/api_keys.txt"
+			],
+			[
+				"load",
+				"scripts/loadApiKeysFromFile.php"
+			],
+			[
+				"fucntions",
+				"config/functions.php"
+			],
+			[
+				"mats",
+				"sql/master.sql"
+			],
+			[
+				"apikey",
+				"classes/apiKey.php"
+			],
+			[
+				"loada",
+				"scripts/loadApiKeysFromFile.php"
+			],
+			[
+				"processforgotpassword",
+				"www/processForgotPassword.php"
+			],
+			[
+				"forgotpassword",
+				"www/forgotPassword.php"
+			],
+			[
+				"proceschange",
+				"www/processChangeEmail.php"
+			],
+			[
+				"backup",
+				"backup.sql"
+			],
+			[
+				"connect",
+				"connect to heroku db.txt"
+			],
+			[
+				"dark",
+				"scripts/darkElixirBackFillData.txt"
+			],
+			[
+				"elixir",
+				"scripts/elixirBackFillData.txt"
+			],
+			[
+				"gold",
+				"scripts/goldBackFillData.txt"
+			],
+			[
+				"functios",
+				"config/functions.php"
+			],
+			[
+				"processaddwar",
+				"www/processAddWar.php"
+			],
+			[
+				"addclan",
+				"www/processAddClan.php"
+			],
+			[
+				"addplayer",
+				"www/addPlayer.php"
+			],
+			[
+				"processaddclan",
+				"www/processAddClan.php"
+			],
+			[
+				"addwar",
+				"www/addWar.php"
+			],
+			[
+				"wwwclan",
+				"www/clan.php"
+			],
+			[
+				"classclan",
+				"classes/clan.php"
 			],
 			[
 				"scripts",
@@ -1077,51 +1223,11 @@
 				"scripts/fixClanTags.php"
 			],
 			[
-				"processaddplayer",
-				"www/processAddPlayer.php"
-			],
-			[
-				"addplayer",
-				"www/addPlayer.php"
-			],
-			[
-				"apikeys",
-				"scripts/api_keys.txt"
-			],
-			[
-				"clanapi",
-				"api/clanApi.php"
-			],
-			[
 				"illega",
 				"exceptions/illegalArgumentException.php"
 			],
 			[
-				"api",
-				"api/api.php"
-			],
-			[
-				"config",
-				"config/config.php"
-			],
-			[
-				"master",
-				"sql/master.sql"
-			],
-			[
-				"processaddclan",
-				"www/processAddClan.php"
-			],
-			[
-				"wwwclan",
-				"www/clan.php"
-			],
-			[
 				"function",
-				"config/functions.php"
-			],
-			[
-				"functions",
 				"config/functions.php"
 			],
 			[
@@ -1135,10 +1241,6 @@
 			[
 				"phpini",
 				"vendor/heroku/heroku-buildpack-php/conf/php/php.ini"
-			],
-			[
-				"apikey",
-				"classes/apiKey.php"
 			],
 			[
 				"api_keys",
@@ -1161,10 +1263,6 @@
 				"config/config.php"
 			],
 			[
-				"clans",
-				"www/clans.php"
-			],
-			[
 				"clan.h",
 				"www/clan.php"
 			],
@@ -1175,10 +1273,6 @@
 			[
 				"process",
 				"www/processAddClan.php"
-			],
-			[
-				"fucntions",
-				"config/functions.php"
 			],
 			[
 				"",
@@ -1475,94 +1569,6 @@
 			[
 				"section.rb",
 				"app/models/section.rb"
-			],
-			[
-				"grouping.rb",
-				"app/models/grouping.rb"
-			],
-			[
-				"_submissions_table",
-				"app/views/submissions/_submissions_table.js.jsx.erb"
-			],
-			[
-				"browse.html",
-				"app/views/submissions/browse.html.erb"
-			],
-			[
-				"submissions/submissions",
-				"lib/benchmarking/submission_files/submissions_controller.rb"
-			],
-			[
-				"submission_file_test.rb",
-				"test/unit/submission_file_test.rb"
-			],
-			[
-				"pdfannotationmanager",
-				"app/assets/javascripts/SourceCodeGlower/PdfAnnotationManager.js"
-			],
-			[
-				"imageannotationspec",
-				"spec/models/image_annotation_spec.rb"
-			],
-			[
-				"submissionfile",
-				"app/models/submission_file.rb"
-			],
-			[
-				"testunitsubmissionfile.",
-				"test/unit/submission_file_test.rb"
-			],
-			[
-				"imageannotationrb",
-				"app/models/image_annotation.rb"
-			],
-			[
-				"imageannotation",
-				"app/assets/javascripts/SourceCodeGlower/ImageAnnotationGrid.js"
-			],
-			[
-				"annotation_summary",
-				"app/views/results/marker/_annotation_summary.html.erb"
-			],
-			[
-				"annotationtextmanager",
-				"app/assets/javascripts/SourceCodeGlower/AnnotationTextManager.js"
-			],
-			[
-				"pdf_annotation",
-				"app/models/pdf_annotation.rb"
-			],
-			[
-				"imageeventhanlder",
-				"app/assets/javascripts/SourceCodeGlower/ImageEventHandler.js"
-			],
-			[
-				"imageannotationgrid",
-				"app/assets/javascripts/SourceCodeGlower/ImageAnnotationGrid.js"
-			],
-			[
-				"pdfannotatiomnanger",
-				"app/assets/javascripts/SourceCodeGlower/PdfAnnotationManager.js"
-			],
-			[
-				"annotations.js",
-				"app/views/results/common/_annotations.js.erb"
-			],
-			[
-				"results/marker/overallcomment",
-				"app/views/results/marker/_overall_comment.html.erb"
-			],
-			[
-				"destroy.js",
-				"app/views/annotations/destroy.js.erb"
-			],
-			[
-				"update",
-				"app/views/annotation_categories/update_annotation.js.erb"
-			],
-			[
-				"destory.js",
-				"app/views/annotations/destroy.js.erb"
 			]
 		],
 		"width": 0.0

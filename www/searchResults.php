@@ -31,6 +31,8 @@ require('header.php');
 	<?if(count($clans)>0){
 		if(count($clans)==1){?>
 			<h4>Found <?=count($clans);?> clan matching.</h4>
+		<?}elseif(count($clans)==50){?>
+			<h4>Found <?=count($clans);?>+ clans matching. Showing top 50.</h4>
 		<?}else{?>
 			<h4>Found <?=count($clans);?> clans matching.</h4>
 		<?}?>
@@ -38,6 +40,7 @@ require('header.php');
 			<table class="table table-hover">
 				<thead>
 					<tr>
+						<th></th>
 						<th>Clan name</th>
 						<th>Wars Won</th>
 						<th>Members</th>
@@ -50,6 +53,12 @@ require('header.php');
 				<tbody>
 					<?foreach ($clans as $clan) {?>
 						<tr style="cursor: pointer;" onclick="clickRow('clan.php?clanId=<?=$clan->get("id");?>');">
+							<td width="20">
+								<?$url = $clan->get('badgeUrl');
+								if(strlen($url)>0){?>
+									<img src="<?=$url;?>" height="20" width="20">
+								<?}?>
+							</td>
 							<td><?=htmlspecialchars($clan->get('name'));?></td>
 							<td><?=$clan->get('warWins');?></td>
 							<td><?=$clan->get('members');?></td>
@@ -66,6 +75,8 @@ require('header.php');
 	if(count($players)>0){
 		if(count($players)==1){?>
 			<h4>Found <?=count($players);?> player matching.</h4>
+		<?}elseif(count($players)==50){?>
+			<h4>Found <?=count($players);?>+ players matching. Showing top 50.</h4>
 		<?}else{?>
 			<h4>Found <?=count($players);?> players matching.</h4>
 		<?}?>
@@ -73,6 +84,7 @@ require('header.php');
 			<table class="table table-hover">
 				<thead>
 					<tr>
+						<th></th>
 						<th>Name</th>
 						<th>Clan Name</th>
 						<th>Clan Rank</th>
@@ -82,10 +94,22 @@ require('header.php');
 				<tbody>
 					<?foreach ($players as $player) {?>
 						<tr style="cursor: pointer;">
+							<td width="20">
+								<?$url = $player->get('leagueUrl');
+								if(strlen($url)>0){?>
+									<img src="<?=$url;?>" height="20" width="20">
+								<?}?>
+							</td>
 							<td onclick="clickRow('player.php?playerId=<?=$player->get("id");?>');"><?=htmlspecialchars($player->get('name'));?></td>
 							<?$clan = $player->getMyClan();
 							if(isset($clan)){?>
-								<td onclick="clickRow('clan.php?clanId=<?=$clan->get("id");?>');"><?=htmlspecialchars($clan->get('name'));?></td>
+								<td onclick="clickRow('clan.php?clanId=<?=$clan->get("id");?>');">
+									<?$url = $clan->get('badgeUrl');
+									if(strlen($url)>0){?>
+										<img src="<?=$url;?>" height="20" width="20">
+									<?}?>
+									<?=htmlspecialchars($clan->get('name'));?>
+								</td>
 							<?}else{?>
 								<td onclick="clickRow('player.php?playerId=<?=$player->get("id");?>');"></td>
 							<?}?>

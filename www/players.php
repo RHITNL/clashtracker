@@ -47,7 +47,13 @@ require('header.php');
 							<td onclick="clickRow('player.php?playerId=<?=$player->get("id");?>');"><?=$player->get('trophies');?></td>
 							<?$clan = $player->getMyClan();
 							if(isset($clan)){?>
-								<td onclick="clickRow('clan.php?clanId=<?=$clan->get("id");?>');"><?=htmlspecialchars($clan->get('name'));?></td>
+								<td onclick="clickRow('clan.php?clanId=<?=$clan->get("id");?>');">
+									<?$url = $clan->get('badgeUrl');
+									if(strlen($url)>0){?>
+										<img src="<?=$url;?>" height="20" width="20">
+									<?}?>
+									<?=htmlspecialchars($clan->get('name'));?>
+								</td>
 							<?}else{?>
 								<td></td>
 							<?}?>
