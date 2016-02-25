@@ -402,6 +402,8 @@ class player{
 	public function getMyClans(){
 		global $db;
 		if(isset($this->id)){
+			//TODO: Optimize to return all information so that
+			//		the clans can be loaded by json
 			$procedure = buildProcedure('p_player_get_clans', $this->id);
 			if(($db->multi_query($procedure)) === TRUE){
 				$results = $db->store_result();
@@ -718,7 +720,7 @@ class player{
 			}elseif($this->accessType == 'CL'){
 				$clan = $this->getMyClan();
 				if(isset($clan)){
-					$clanMembers = $clan->getMembers();
+					$clanMembers = $clan->getCurrentMembers();
 					$users = array();
 					foreach ($clanMembers as $member) {
 						$clanRank = $member->getClanRank();

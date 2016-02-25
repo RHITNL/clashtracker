@@ -2,7 +2,9 @@
 class war{
 	private $id;
 	private $firstClanId;
+	private $clan1;
 	private $secondClanId;
+	private $clan2;
 	private $size;
 	private $dateCreated;
 	private $dateModified;
@@ -83,6 +85,20 @@ class war{
 		if(isset($this->id)){
 			if(in_array($prpty, $this->acceptGet)){
 				return $this->$prpty;
+			}elseif($prpty == 'clan1'){
+				if(!isset($this->clan1)){
+					$this->clan1 = new clan($this->firstClanId);
+					return $this->clan1;
+				}else{
+					return $this->clan1;
+				}
+			}elseif($prpty == 'clan2'){
+				if(!isset($this->clan2)){
+					$this->clan2 = new clan($this->secondClanId);
+					return $this->clan2;
+				}else{
+					return $this->clan2;
+				}
 			}else{
 				throw new illegalOperationException('Property is not in accept get.');
 			}
@@ -178,6 +194,8 @@ class war{
 					throw new illegalWarClanException('Clan not in war.');
 				}
 			}
+			//TODO: Optimize DB call to get information about players
+			//		so that they can be loaded from json
 			$procedure = buildProcedure('p_war_get_players', $this->id, $clanId);
 			if(($db->multi_query($procedure)) === TRUE){
 				$results = $db->store_result();
@@ -494,6 +512,8 @@ class war{
 
 	public static function getWars($pageSize=50){
 		global $db;
+		//TODO: Optimize DB call to retrieve all information about wars
+		//		so they can be loaded by json
 		$procedure = buildProcedure('p_get_wars', $pageSize);
 		if(($db->multi_query($procedure)) === TRUE){
 			$results = $db->store_result();
@@ -657,14 +677,167 @@ class war{
 	}
 
 	public function isEditable(){
-		$clan1 = new clan($this->firstClanId);
+		$clan1 = $this->get('clan1');
 		$clan1Wars = $clan1->getMyWars();
 		$isClan1CurrWar = $clan1Wars[0]->get('id') == $this->id;
 
-		$clan2 = new clan($this->secondClanId);
+		$clan2 = $this->get('clan2');
 		$clan2Wars = $clan2->getMyWars();
 		$isClan2CurrWar = $clan2Wars[0]->get('id') == $this->id;
 
 		return $isClan1CurrWar && $isClan2CurrWar;
+	}
+
+	public function revokeAllAccess(){
+		global $db;
+		if(isset($this->id)){
+			$procedure = buildProcedure('p_war_disallow_all_users', $this->id);
+			if(($db->multi_query($procedure)) === TRUE){
+				while ($db->more_results()){
+					$db->next_result();
+				}
+			}else{
+				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set for revoke.');
+		}	
+	}
+
+	public function resetAccess(){
+		$this->revokeAllAccess();
+	}
+
+	public function getAllowedUsers(){
+		global $db;
+		if(isset($this->id)){
+			$procedure = buildProcedure('p_war_get_allowed_users', $this->id);
+			if(($db->multi_query($procedure)) === TRUE){
+				$results = $db->store_result();
+				while ($db->more_results()){
+					$db->next_result();
+				}
+				$users = array();
+				if ($results->num_rows) {
+					while ($userObj = $results->fetch_object()) {
+						$user = new user($userObj->user_id);
+						$users[] = $user;
+					}
+				}
+				return $users;
+			}else{
+				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set for get.');
+		}
+	}
+
+	public function grantUserAccess($userId){
+		global $db;
+		if(isset($this->id)){
+			$user = new user($userId);
+			$procedure = buildProcedure('p_war_allow_user', $this->id, $user->get('id'));
+			if(($db->multi_query($procedure)) === TRUE){
+				while ($db->more_results()){
+					$db->next_result();
+				}
+			}else{
+				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set for grant.');
+		}	
+	}
+
+	public function revokeUserAccess($userId){
+		global $db;
+		if(isset($this->id)){
+			$user = new user($userId);
+			$procedure = buildProcedure('p_war_disallow_user', $this->id, $user->get('id'));
+			if(($db->multi_query($procedure)) === TRUE){
+				while ($db->more_results()){
+					$db->next_result();
+				}
+			}else{
+				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set for revoke.');
+		}
+	}
+
+	public function requestAccess($userId, $message=""){
+		global $db;
+		if(isset($this->id)){
+			$user = new user($userId);
+			$procedure = buildProcedure('p_war_edit_request_create', $this->id, $user->get('id'), $message);
+			if(($db->multi_query($procedure)) === TRUE){
+				while ($db->more_results()){
+					$db->next_result();
+				}
+			}else{
+				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set for request.');
+		}
+	}
+
+	public function deleteRequest($userId){
+		global $db;
+		if(isset($this->id)){
+			$user = new user($userId);
+			$procedure = buildProcedure('p_war_edit_request_delete', $this->id, $user->get('id'));
+			if(($db->multi_query($procedure)) === TRUE){
+				while ($db->more_results()){
+					$db->next_result();
+				}
+			}else{
+				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set for delete request.');
+		}
+	}
+
+	public function getRequests(){
+		global $db;
+		if(isset($this->id)){
+			$procedure = buildProcedure('p_war_get_edit_requests', $this->id);
+			if(($db->multi_query($procedure)) === TRUE){
+				$results = $db->store_result();
+				while ($db->more_results()){
+					$db->next_result();
+				}
+				$editRequests = array();
+				if ($results->num_rows) {
+					while ($editRequestObj = $results->fetch_object()) {
+						$editRequest = new stdClass();
+						$editRequest->war = $this;
+						$user = new user();
+						$user->loadByObj($editRequestObj);
+						$editRequest->user = $user;
+						$editRequest->message = $editRequestObj->message;
+						$editRequests[] = $editRequest;
+					}
+				}
+				return $editRequests;
+			}else{
+				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set to get requests.');
+		}
+	}
+
+	public function userHasRequested($userId){
+		$requests = $this->getRequests();
+		foreach ($requests as $request) {
+			if($request->user->get('id') == $userId){
+				return true;
+			}
+		}
+		return false;
 	}
 }

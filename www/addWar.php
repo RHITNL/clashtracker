@@ -6,6 +6,11 @@ $clanId = $_GET['clanId'];
 try{
 	$clan = new clan($clanId);
 	$clanId = $clan->get('id');
+	if(!userHasAccessToUpdateClan($clan)){
+		$_SESSION['curError'] = NO_ACCESS;
+		header('Location: /clan.php?clanId=' . $clanId);
+		exit;
+	}
 }catch(Exception $e){
 	$_SESSION['curError'] = 'No clan with id ' . $clanId . ' found.';
 	header('Location: /clans.php');
@@ -26,12 +31,6 @@ require('header.php');
 	<div class="">
 		<form class="form-horizontal" action="/processAddWar.php" method="POST">
 			<div class="col-sm-6">
-				<!-- <div class="form-group">
-					<label class="col-sm-4 control-lable" for="enemyClanName">Enemy Clan Name:</label>
-					<div class="col-sm-8">
-						<input type="text" class="form-control" id="enemyClanName" name="enemyClanName" placeholder="Stinky Ugly Clan" value="<?=$_SESSION['enemyClanName'];?>"></input>
-					</div>
-				</div> -->
 				<div class="form-group">
 					<label class="col-sm-4 control-lable" for="enemyClanTag">Enemy Clan Tag:</label>
 					<div class="col-sm-8">

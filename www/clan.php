@@ -17,6 +17,7 @@ $members = $clan->getCurrentMembers();
 $members = sortPlayersByTrophies($members);
 $wars = $clan->getMyWars();
 $war = $wars[0];
+$userHasAccessToUpdateClan = userHasAccessToUpdateClan($clan);
 
 require('header.php');
 ?>
@@ -75,13 +76,13 @@ require('header.php');
 	</div>
 	<div class="col-md-12">
 		<div class="col-md-6">
-			<?if(count($members)<50){?>
+			<?if(count($members)<50 && $userHasAccessToUpdateClan){?>
 				<a type="button" class="btn btn-success" href="/addPlayer.php?clanId=<?=$clan->get('id');?>">Add Member</a>
 			<?}
-			if(count($members)>0){?>
+			if(count($members)>0 && $userHasAccessToUpdateClan){?>
 				<a type="button" class="btn btn-success" href="/recordClanLoot.php?clanId=<?=$clan->get('id');?>">Record Loot</a>
 			<?}
-			if(count($members)>=10){?>
+			if(count($members)>=10 && $userHasAccessToUpdateClan){?>
 				<a type="button" class="btn btn-success" href="/addWar.php?clanId=<?=$clan->get('id');?>">Add War</a>
 			<?}
 			if(isset($war)){?>

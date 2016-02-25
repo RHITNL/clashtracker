@@ -19,6 +19,11 @@ $_SESSION['clanId'] = $clanId;
 try{
 	$clan = new clan($clanId);
 	$clanId = $clan->get('id');
+	if(!userHasAccessToUpdateClan($clan)){
+		$_SESSION['curError'] = NO_ACCESS;
+		header('Location: /clan.php?clanId=' . $clanId);
+		exit;
+	}
 }catch(Exception $e){
 	$_SESSION['curError'] = 'No clan with id ' . $clanId . ' found.';
 	unsetAll();

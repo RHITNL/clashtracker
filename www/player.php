@@ -95,7 +95,7 @@ foreach ($oil as $loot) {
 	}
 }
 
-$userHasAccessToUpdateLoot = userHasAccessToUpdateLoot($player);
+$userHasAccessToUpdatePlayer = userHasAccessToUpdatePlayer($player);
 
 require('header.php');
 ?>
@@ -122,7 +122,7 @@ require('header.php');
 			</h1>
 		</div>
 		<div class="col-md-6 text-right">
-			<?if($userHasAccessToUpdateLoot){?>
+			<?if($userHasAccessToUpdatePlayer){?>
 				<div id="editNameButtonDiv">
 					<button type="button" class="btn btn-primary" onclick="showEditNameForm();">Edit Name</button>
 				</div>
@@ -181,7 +181,7 @@ require('header.php');
 	<?}?>
 	<div class="col-md-12">
 		<h3><i class="fa fa-coins" style="color: gold;"></i>&nbsp;Loot</h3>
-		<?if($userHasAccessToUpdateLoot){?>
+		<?if($userHasAccessToUpdatePlayer){?>
 			<div class="col-md-12">
 				<div id="recordLootButtonDiv" class="col-md-12">
 					<button type="button" class="btn btn-primary" onclick="showRecordLootForm();">Record Loot</button>

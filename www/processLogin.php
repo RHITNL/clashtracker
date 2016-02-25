@@ -27,9 +27,17 @@ if($user->login($password)){
 }
 unsetAll();
 $linkedPlayer = $user->get("player");
-if(isset($linkedPlayer)){
-	header('Location: /player.php?playerId=' . $linkedPlayer->get('id'));
+$linkedClan = $user->get("clan");
+if(isset($linkedClan)){
+	header('Location: /clan.php?clanId=' . $linkedClan->get('id'));
+}elseif(isset($linkedPlayer)){
+	$clan = $linkedPlayer->getMyClan();
+	if(isset($clan)){
+		header('Location: /clan.php?clanId=' . $clan->get('id'));
+	}else{
+		header('Location: /player.php?playerId=' . $linkedPlayer->get('id'));
+	}
 }else{
-	header('Location: /home.php');
+	header('Location: /clans.php');
 }
 exit;

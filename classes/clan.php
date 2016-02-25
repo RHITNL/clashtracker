@@ -15,6 +15,8 @@ class clan{
 	private $warWins;
 	private $badgeUrl;
 	private $location;
+	private $accessType;
+	private $minRankAccess;
 
 	private $acceptGet = array(
 		'id' => 'id',
@@ -26,6 +28,8 @@ class clan{
 		'war_frequency' => 'warFrequency',
 		'date_created' => 'dateCreated',
 		'date_modified' => 'dateModified',
+		'access_type' => 'accessType',
+		'min_rank_access' => 'minRankAccess',
 		'members' => 'members',
 		'clan_level' => 'clanLevel',
 		'clan_points' => 'clanPoints',
@@ -45,6 +49,8 @@ class clan{
 		'clan_points' => 'clanPoints',
 		'war_wins' => 'warWins',
 		'location' => 'location',
+		'access_type' => 'accessType',
+		'min_rank_access' => 'minRankAccess',
 		'badge_url' => 'badgeUrl'
 	);
 
@@ -111,6 +117,8 @@ class clan{
 					$this->warWins = $record->war_wins;
 					$this->badgeUrl = $record->badge_url;
 					$this->location = $record->location;
+					$this->accessType = $record->access_type;
+					$this->minRankAccess = $record->min_rank_access;
 				}else{
 					throw new noResultFoundException('No clan found with id ' . $this->id);
 				}
@@ -153,6 +161,8 @@ class clan{
 					$this->warWins = $record->war_wins;
 					$this->badgeUrl = $record->badge_url;
 					$this->location = $record->location;
+					$this->accessType = $record->access_type;
+					$this->minRankAccess = $record->min_rank_access;
 				}else{
 					throw new noResultFoundException('No clan found with tag ' . $tag);
 				}
@@ -264,6 +274,7 @@ class clan{
 	}
 
 	public function getCurrentMembers($rank='%'){
+		//TODO: Create a proc to get current members specifically
 		$allMembers = $this->getMembers($rank);
 		$members = array();
 		foreach ($allMembers as $member) {
@@ -276,6 +287,7 @@ class clan{
 	}
 
 	public function getPastMembers($rank='%'){
+		//TODO: Create a proc to get past members specifically
 		$allMembers = $this->getMembers($rank);
 		$members = array();
 		foreach ($allMembers as $member) {
@@ -290,6 +302,7 @@ class clan{
 	public function getMembers($rank='%'){
 		global $db;
 		if(isset($this->id)){
+			//TODO: Create a proc to get all information about members
 			$procedure = buildProcedure('p_clan_get_members', $this->id, $rank);
 			if(($db->multi_query($procedure)) === TRUE){
 				$results = $db->store_result();
@@ -329,6 +342,8 @@ class clan{
 	public function getMyWars(){
 		global $db;
 		if(isset($this->id)){
+			//TODO: Optimize DB call to retrieve all information to
+			//		load the information from a json
 			$procedure = buildProcedure('p_clan_get_wars', $this->id);
 			if(($db->multi_query($procedure)) === TRUE){
 				$results = $db->store_result();
@@ -353,6 +368,8 @@ class clan{
 
 	public static function getClans($pageSize=50){
 		global $db;
+		//TODO: Create a the DB call to retrieve all information about all clans
+		//		And add a function to load a clan from this information
 		$procedure = buildProcedure('p_get_clans', $pageSize);
 		if(($db->multi_query($procedure)) === TRUE){
 			$results = $db->store_result();
@@ -397,7 +414,7 @@ class clan{
 				}
 			}else{
 				throw new illegalQueryException('The database encountered an error. ' . $db->error);
-			}			
+			}
 		}else{
 			throw new illegalFunctionCallException('ID not set for war ranks.');
 		}
@@ -474,7 +491,7 @@ class clan{
 				}
 			}else{
 				throw new illegalQueryException('The database encountered an error. ' . $db->error);
-			}	
+			}
 		}
 		$foundIds = array();
 		foreach ($clans as $i => $clan) {
@@ -504,6 +521,127 @@ class clan{
 			}
 		}else{
 			throw new illegalFunctionCallException('ID not set for delete.');
+		}
+	}
+
+	public function revokeAllAccess(){
+		global $db;
+		if(isset($this->id)){
+			$procedure = buildProcedure('p_clan_disallow_all_users', $this->id);
+			if(($db->multi_query($procedure)) === TRUE){
+				while ($db->more_results()){
+					$db->next_result();
+				}
+			}else{
+				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set for revoke.');
+		}
+	}
+
+	public function resetAccess(){
+		$this->revokeAllAccess();
+		$this->set('accessType', 'AN');
+		$this->set('minRankAccess', null);
+	}
+
+	public function getAllowedUsers(){
+		global $db;
+		if(isset($this->id)){
+			if($this->accessType == 'US'){
+				$procedure = buildProcedure('p_clan_get_allowed_users', $this->id);
+				if(($db->multi_query($procedure)) === TRUE){
+					$results = $db->store_result();
+					while ($db->more_results()){
+						$db->next_result();
+					}
+					$users = array();
+					if ($results->num_rows) {
+						while ($userObj = $results->fetch_object()) {
+							$user = new user($userObj->user_id);
+							$users[] = $user;
+						}
+					}
+					return $users;
+				}else{
+					throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				}
+			}elseif($this->accessType == 'CL'){
+				$clanMembers = $this->getCurrentMembers();
+				$users = array();
+				foreach ($clanMembers as $member) {
+					$clanRank = $member->getClanRank();
+					if($clanRank == $this->minRankAccess || rankIsHigher($clanRank, $this->minRankAccess)){
+						$user = $member->getLinkedUser();
+						if(isset($user)){
+							$users[] = $user;
+						}
+					}
+				}
+				return $users;
+			}else{
+				return array();
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set for get.');
+		}
+	}
+
+	public function grantUserAccess($userId){
+		global $db;
+		if(isset($this->id)){
+			$user = new user($userId);
+			$procedure = buildProcedure('p_clan_allow_user', $this->id, $user->get('id'));
+			if(($db->multi_query($procedure)) === TRUE){
+				while ($db->more_results()){
+					$db->next_result();
+				}
+			}else{
+				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set for grant.');
+		}
+	}
+
+	public function revokeUserAccess($userId){
+		global $db;
+		if(isset($this->id)){
+			$user = new user($userId);
+			$procedure = buildProcedure('p_clan_disallow_user', $this->id, $user->get('id'));
+			if(($db->multi_query($procedure)) === TRUE){
+				while ($db->more_results()){
+					$db->next_result();
+				}
+			}else{
+				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set for revoke.');
+		}
+	}
+
+	public function getLinkedUser(){
+		global $db;
+		if(isset($this->id)){
+			$procedure = buildProcedure('p_clan_get_linked_user', $this->id);
+			if(($db->multi_query($procedure)) === TRUE){
+				$result = $db->store_result();
+				while ($db->more_results()){
+					$db->next_result();
+				}
+				if ($result->num_rows){
+					$userObj = $result->fetch_object();
+					return new user($userObj->id);
+				}else{
+					return null;
+				}
+			}else{
+				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set for getting linked player.');
 		}
 	}
 }

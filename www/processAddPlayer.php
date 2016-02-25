@@ -11,13 +11,18 @@ function unsetAll(){
 $name = $_POST['name'];
 $playerTag = $_POST['playerTag'];
 $clanId = $_POST['clanId'];
-if(!isset($loggedInUserPlayer)){
+if(!isset($loggedInUserPlayer) && isset($loggedInUser)){
 	$link = $_POST['link'];
 }
 
 try{
 	$clan = new clan($clanId);
 	$clanId = $clan->get('id');
+	if(!userHasAccessToUpdateClan($clan)){
+		$_SESSION['curError'] = NO_ACCESS;
+		header('Location: /clan.php?clanId=' . $clanId);
+		exit;
+	}
 }catch(Exception $e){
 	$clan = null;
 }

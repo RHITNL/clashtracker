@@ -6,6 +6,11 @@ $clanId = $_POST['clanId'];
 try{
 	$clan = new clan($clanId);
 	$clanId = $clan->get('id');
+	if($_POST['type'] == 'multiple' && !userHasAccessToUpdateClan($clan)){
+		$_SESSION['curError'] = NO_ACCESS;
+		header('Location: /clan.php?clanId=' . $clanId);
+		exit;
+	}
 }catch(Exception $e){
 	if($_POST['type'] == 'multiple'){
 		$_SESSION['curError'] = 'No clan with id ' . $playerId . ' found.';
@@ -29,6 +34,11 @@ if($_POST['type'] == 'single'){
 	try{
 		$player = new player($playerId);
 		$playerId = $player->get('id');
+		if(!userHasAccessToUpdatePlayer($player)){
+			$_SESSION['curError'] = NO_ACCESS;
+			header('Location: /player.php?playerId=' . $playerId);
+			exit;
+		}
 	}catch(Exception $e){
 		$_SESSION['curError'] = 'No player with id ' . $playerId . ' found.';
 		if(isset($clanId)){
@@ -47,7 +57,7 @@ if($_POST['type'] == 'single'){
 	$loot = array();
 	$members = $clan->getCurrentMembers();
 	foreach ($members as $member) {
-		if(userHasAccessToUpdateLoot($member)){
+		if(userHasAccessToUpdatePlayer($member)){
 			$memberId = $member->get('id');
 			$loot[$memberId] = array();
 			$loot[$memberId]['gold'] = $_POST['gold' . $memberId];

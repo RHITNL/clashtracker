@@ -7,6 +7,8 @@ if(isset($_SESSION['user_id'])){
 		$loggedInUserClan = $loggedInUser->get("clan");
 	}catch(Exception $e){
 		$loggedInUser = null;
+		$loggedInUserPlayer = null;
+		$loggedInUserClan = null;
 		$_SESSION['curError'] = 'No user with id ' . $userId . ' found.';
 		header('Location: /login.php');
 		exit;

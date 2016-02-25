@@ -17,10 +17,18 @@ if($war->isClanInWar($clanId)){
 	$clan1 = new clan($clanId);
 	$clanId = $clan1->get('id');
 	$clan2 = new clan($war->getEnemy($clanId));
+	$clanIdText = '&clanId=' . $clan1->get('id');
 }else{
 	$clanId = null;
+	$clanIdText = '';
 	$clan1 = new clan($war->get('firstClanId'));
 	$clan2 = new clan($war->get('secondClanId'));
+}
+
+if(!userHasAccessToUpdateClan($war->get('clan1'))){
+	$_SESSION['curError'] = NO_ACCESS;
+	header('Location: /war.php?warId=' . $war->get('id') . $clanIdText);
+	exit;
 }
 
 $playerId = $_GET['playerId'];

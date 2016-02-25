@@ -25,6 +25,7 @@ require('header.php');
 			<li id="generalTab"><a href="?tab=general">General</a></li>
 			<li id="passwordTab"><a href="?tab=password">Password</a></li>
 			<li id="playerTab"><a href="?tab=player">Player</a></li>
+			<li id="clanTab"><a href="?tab=clan">Clan</a></li>
 		</ul>
 	</div>
 	<div class="col-md-9 main">

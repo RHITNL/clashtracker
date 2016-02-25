@@ -6,13 +6,13 @@ class user{
 	private $dateCreated;
 	private $dateModified;
 	private $player;
+	private $playerId;
 	private $clan;
+	private $clanId;
 
 	private $acceptGet = array(
 		'id' => 'id',
 		'email' => 'email',
-		'player' => 'player',
-		'clan' => 'clan',
 		'date_created' => 'dateCreated',
 		'date_modified' => 'dateModified'
 	);
@@ -79,18 +79,10 @@ class user{
 					$this->id = $record->id;
 					$this->email = $record->email;
 					$this->password = $record->password;
-					$playerId = $record->player_id;
-					if(isset($playerId)){
-						$this->player = new player($playerId);
-					}else{
-						$this->player = null;
-					}
-					$clanId = $record->clan_id;
-					if(isset($clanId)){
-						$this->clan = new clan($clanId);
-					}else{
-						$this->clan = null;
-					}
+					$this->playerId = $record->player_id;
+					$this->player = null;
+					$this->clanId = $record->clan_id;
+					$this->clan = null;
 					$this->dateCreated = $record->date_created;
 					$this->dateModified = $record->date_modified;
 				}else{
@@ -119,18 +111,10 @@ class user{
 					$this->id = $record->id;
 					$this->email = $record->email;
 					$this->password = $record->password;
-					$playerId = $record->player_id;
-					if(isset($playerId)){
-						$this->player = new player($playerId);
-					}else{
-						$this->player = null;
-					}
-					$clanId = $record->clan_id;
-					if(isset($clanId)){
-						$this->clan = new clan($clanId);
-					}else{
-						$this->clan = null;
-					}
+					$this->playerId = $record->player_id;
+					$this->player = null;
+					$this->clanId = $record->clan_id;
+					$this->clan = null;
 					$this->dateCreated = $record->date_created;
 					$this->dateModified = $record->date_modified;
 				}else{
@@ -144,10 +128,38 @@ class user{
 		}
 	}
 
+	public function loadByObj($userObj){
+		$this->id = $userObj->id;
+		$this->email = $userObj->email;
+		$this->password = $userObj->password;
+		$this->playerId = $userObj->player_id;
+		$this->player = null;
+		$this->clanId = $userObj->clan_id;
+		$this->clan = null;
+		$this->dateCreated = $userObj->date_created;
+		$this->dateModified = $userObj->date_modified;
+	}
+
 	public function get($prpty){
 		if(isset($this->id)){
 			if(in_array($prpty, $this->acceptGet)){
 				return $this->$prpty;
+			}elseif($prpty == 'player'){
+				if(isset($this->player)){
+					return $this->player;
+				}elseif(isset($this->playerId)){
+					return new player($this->playerId);
+				}else{
+					return null;
+				}
+			}elseif($prpty == 'clan'){
+				if(isset($this->clan)){
+					return $this->clan;
+				}elseif(isset($this->clanId)){
+					return new clan($this->clanId);
+				}else{
+					return null;
+				}
 			}else{
 				throw new illegalOperationException('Property is not in accept get.');
 			}

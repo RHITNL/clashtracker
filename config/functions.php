@@ -169,31 +169,73 @@ function generateRandomPassword(){
 	return $password;
 }
 
-function userHasAccessToUpdateLoot($player){
+function userHasAccessToUpdatePlayer($player){
 	global $loggedInUser;
 	global $loggedInUserPlayer;
 	$accessType = $player->get('accessType');
 	if($accessType=='AN'){
-		$userHasAccessToUpdateLoot = true;
+		return true;
 	}else{
 		if(isset($loggedInUser)){
 			if(isset($loggedInUserPlayer) && $loggedInUserPlayer->get('id') == $player->get('id')){
-				$userHasAccessToUpdateLoot = true;
+				return true;
 			}else{
-				$userHasAccessToUpdateLoot = false;
 				$allowedUsers = $player->getAllowedUsers();
 				foreach ($allowedUsers as $user) {
 					if($loggedInUser->get('id') == $user->get('id')){
-						$userHasAccessToUpdateLoot = true;
-						break;
+						return true;
 					}
 				}
+				return false;
 			}
 		}else{
-			$userHasAccessToUpdateLoot = false;
+			return false;
 		}
 	}
-	return $userHasAccessToUpdateLoot;
+	return false;
+}
+
+function userHasAccessToUpdateClan($clan){
+	global $loggedInUser;
+	global $loggedInUserClan;
+	$accessType = $clan->get('accessType');
+	if($accessType=='AN'){
+		return true;
+	}else{
+		if(isset($loggedInUser)){
+			if(isset($loggedInUserClan) && $loggedInUserClan->get('id') == $clan->get('id')){
+				return true;
+			}else{
+				$allowedUsers = $clan->getAllowedUsers();
+				foreach ($allowedUsers as $user) {
+					if($loggedInUser->get('id') == $user->get('id')){
+						return true;
+					}
+				}
+				return false;
+			}
+		}else{
+			return false;
+		}
+	}
+	return false;
+}
+
+function userHasAccessToUpdateWar($war){
+	if(!userHasAccessToUpdateClan($war->get('clan1'))){
+		global $loggedInUser;
+		if(isset($loggedInUser)){
+			$allowedUsers = $war->getAllowedUsers();
+			foreach ($allowedUsers as $user) {
+				if($loggedInUser->get('id') == $user->get('id')){
+					return true;
+				}
+			}
+		}
+		return false;
+	}else{
+		return true;
+	}
 }
 
 function convertType($code){
@@ -234,6 +276,7 @@ function refreshClanInfo($clanId){
 		error_log($e->getMessage());
 		return -1;
 	}
+	//TODO: Optimize the DB calls
 	$clan->set('name', $clanInfo->name);
 	$clan->set('clanType', convertType($clanInfo->type));
 	$clan->set('description', $clanInfo->description);
@@ -256,6 +299,7 @@ function refreshClanInfo($clanId){
 			}
 		}
 		if($count==1){
+			//TODO: Optimize the DB calls
 			$clan->updatePlayerRank($member->get('id'), convertRank($apiMember->role));
 			$member->set('level', $apiMember->expLevel);
 			$member->set('trophies', $apiMember->trophies);
@@ -271,4 +315,4 @@ function refreshClanInfo($clanId){
 		$member->leaveClan();
 	}
 	return 0;
-}	
+}

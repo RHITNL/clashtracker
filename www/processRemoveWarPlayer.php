@@ -16,6 +16,13 @@ $clanId = $_GET['clanId'];
 if(!$war->isClanInWar($clanId)){
 	$clanId = null;
 }
+$clanIdText = isset($clanId) ? '&clanId=' . $clanId : '';
+
+if(!userHasAccessToUpdateClan($war->get('clan1'))){
+	$_SESSION['curError'] = NO_ACCESS;
+	header('Location: /war.php?warId=' . $war->get('id') . $clanIdText);
+	exit;
+}
 
 if(!$war->isEditable()){
 	$_SESSION['curError'] = 'This war is no longer editable.';

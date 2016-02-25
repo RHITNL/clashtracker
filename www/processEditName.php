@@ -9,6 +9,11 @@ $clanId = $_POST['clanId'];
 try{
 	$player = new player($playerId);
 	$playerId = $player->get('id');
+	if(!userHasAccessToUpdatePlayer($player)){
+		$_SESSION['curError'] = NO_ACCESS;
+		header('Location: /player.php?playerId=' . $playerId);
+		exit;
+	}
 }catch(Exception $e){
 	$_SESSION['curError'] = 'No player with id ' . $playerId . ' found.';
 	header('Location: /players.php');

@@ -5,7 +5,12 @@ require('session.php');
 $clanId = $_GET['clanId'];
 try{
 	$clan = new clan($clanId);
-	$clan->load();
+	$clanId = $clan->get('id');
+	if(!userHasAccessToUpdateClan($clan)){
+		$_SESSION['curError'] = NO_ACCESS;
+		header('Location: /clan.php?clanId=' . $clanId);
+		exit;
+	}
 }catch(Exception $e){
 	$_SESSION['curError'] = 'No clan with id ' . $clanId . ' found.';
 	header('Location: /clans.php');
@@ -36,7 +41,7 @@ require('header.php');
 		<input hidden name="type" value="multiple"></input>
 		<input hidden name="clanId" value="<?=$clan->get('id');?>"></input>
 		<?foreach ($members as $member) {
-			if(userHasAccessToUpdateLoot($member)){?>
+			if(userHasAccessToUpdatePlayer($member)){?>
 				<h4><?=htmlspecialchars($member->get('name'));?></h4>
 				<?$gold = $member->getGold();
 				$elixir = $member->getElixir();
