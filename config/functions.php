@@ -50,6 +50,7 @@ function buildProcedure(){
 			}
 		}
 		$procedure = rtrim($procedure, ",") . ');';
+		error_log($procedure);
 		return $procedure;
 	}else{
 		throw new illegalOperationException('buildProcedure first argument must be the procedure name.');

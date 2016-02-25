@@ -97,6 +97,8 @@ function getPlayerAttacks($playerId, $type='attack'){
 $isEditable = $war->isEditable();
 $userCanEdit = $isEditable && userHasAccessToUpdateWar($war);
 
+$requests = array();
+$allowedUsers = array();
 if(userHasAccessToUpdateClan($war->get('clan1')) && $isEditable){
 	$requests = $war->getRequests();
 	$allowedUsers = $war->getAllowedUsers();
