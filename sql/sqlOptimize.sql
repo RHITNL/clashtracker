@@ -97,6 +97,6 @@ drop procedure if exists p_player_get_wars;
 delimiter //
 create procedure p_player_get_wars(varPlayerId int)
 begin
-	select * from war_player where player_id = varPlayerId order by date_created desc;
+	select war.* from war_player join war on war.id = war_player.war_id where player_id = varPlayerId order by date_created desc;
 end //
 delimiter ;

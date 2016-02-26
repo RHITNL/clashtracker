@@ -174,6 +174,8 @@ class war{
 						while ($db->more_results()){
 							$db->next_result();
 						}
+						$this->warPlayers[] = $player;
+						$this->clanWarPlayers[$clan->get('id')][] = $player;
 						$this->updateRanks($clan);
 					}else{
 						throw new illegalQueryException('The database encountered an error. ' . $db->error);
@@ -213,7 +215,7 @@ class war{
 		}
 	}
 
-	public function getMyWarPlayers($clan=null, $force=false){
+	public function getMyWarPlayers($clan=null){
 		global $db;
 		if(isset($this->id)){
 			if(isset($clan)){
@@ -221,13 +223,13 @@ class war{
 				if(!$this->isClanInWar($clanId)){
 					throw new illegalWarClanException('Clan not in war.');
 				}
-				if(isset($this->clanWarPlayers[$clanId]) && !$force){
+				if(isset($this->clanWarPlayers[$clanId])){
 					return $this->clanWarPlayers[$clanId];
 				}
 			}else{
 				$clanId = '%';
-				if(isset($this->clanWarPlayers[$this->firstClanId]) && isset($this->clanWarPlayers[$this->secondClanId]) && !$force){
-					return array_merge($this->clanWarPlayers[$this->firstClanId], $this->clanWarPlayers[$this->secondClanId]);
+				if(isset($this->warPlayers)){
+					return $this->warPlayers;
 				}
 			}
 			$procedure = buildProcedure('p_war_get_players', $this->id, $clanId);
@@ -246,6 +248,8 @@ class war{
 				}
 				if(isset($clan)){
 					$this->clanWarPlayers[$clanId] = $players;
+				}else{
+					$this->warPlayers = $players;
 				}
 				return $players;
 			}else{
@@ -651,7 +655,7 @@ class war{
 			$this->updateRanks($this->get('clan2'));
 			return;
 		}
-		$warPlayers = $this->getMyWarPlayers($clan, true);
+		$warPlayers = $this->getMyWarPlayers($clan);
 		$clanId = $clan->get('id');
 		for ($i=1; $i < count($warPlayers); $i++) { 
 			$j=$i;
@@ -664,7 +668,10 @@ class war{
 		}
 		$count = 1;
 		foreach ($warPlayers as $player) {
-			$this->updatePlayerRank($player->get('id'), $count);
+			$prevRank = $player->get('warRank', $clanId);
+			if($prevRank!=$count){
+				$this->updatePlayerRank($player->get('id'), $count);
+			}
 			$count++;
 		}
 	}

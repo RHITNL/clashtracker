@@ -66,6 +66,7 @@ class player{
 	}
 
 	public function __construct($id=null){
+		$this->clanWarRank = array();
 		if($id!=null){
 			if(is_numeric($id)){
 				$this->id = $id;
@@ -459,6 +460,13 @@ class player{
 			if(isset($clan)){
 				$clanId = $clan->get('id');
 			}
+			if(isset($this->warRank)){
+				return $this->warRank;
+			}
+		}else{
+			if(isset($this->clanWarRank[$clanId])){
+				return $this->clanWarRank[$clanId];
+			}
 		}
 		if(isset($clanId)){
 			global $db;
@@ -470,7 +478,13 @@ class player{
 				}
 				$record = $results->fetch_object();
 				$results->close();
-				return $record->war_rank;
+				$rank = $record->war_rank;
+				if(isset($clan)){
+					$this->warRank = $rank;
+				}else{
+					$this->clanWarRank[$clanId] = $rank;
+				}
+				return $rank;
 			}else{
 				throw new illegalQueryException('The database encountered an error. ' . $db->error);
 			}
@@ -690,13 +704,14 @@ class player{
 						break;
 					}
 				}
-				return $count;
 			}else{
-				return 0;
+				$count = 0;
 			}
 		}else{
-			return INF;
+			$count = INF;
 		}
+		$this->warsSinceLastParticipated = $count;
+		return $count;
 	}
 
 	public static function getIdsForPlayersWithName($name){

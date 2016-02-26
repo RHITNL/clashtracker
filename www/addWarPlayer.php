@@ -14,9 +14,14 @@ try{
 
 $clanId = $_GET['clanId'];
 if($war->isClanInWar($clanId)){
-	$clan = new clan($clanId);
+	$clan = $war->get('clan1');
+	if($clan->get('id') == $clanId){
+		$clanEnemy = $war->get('clan2');
+	}else{
+		$clanEnemy = $clan;
+		$clan = $war->get('clan2');
+	}
 	$clanId = $clan->get('id');
-	$clanEnemy = new clan($war->getEnemy($clanId));
 }else{
 	$clanId = null;
 }
@@ -34,9 +39,13 @@ if(!$war->isEditable()){
 
 $addClanId = $_GET['addClanId'];
 if($war->isClanInWar($addClanId)){
-	$addClan = new clan($addClanId);
-	$clan1 = new clan($war->get('firstClanId'));
-	$clan2 = new clan($war->get('secondClanId'));
+	$clan1 = $war->get('clan1');
+	$clan2 = $war->get('clan2');
+	if($clan1->get('id') == $addClanId){
+		$addClan = $clan1;
+	}else{
+		$addClan = $clan2;
+	}
 }else{
 	$_SESSION['curError'] = 'Clan not in selected war.';
 	header('Location: /wars.php');
@@ -52,6 +61,7 @@ foreach ($allMembers as $member) {
 		$members[] = $member;
 	}
 }
+
 for ($i=1; $i < count($members); $i++) {
 	$j=$i;
 	$member1Val = $members[$j]->get('warRank');
@@ -67,6 +77,7 @@ for ($i=1; $i < count($members); $i++) {
 		}
 	}
 }
+
 for ($i=1; $i < count($members); $i++) {
 	$j=$i;
 	$member1Val = $members[$j]->warsSinceLastParticipated();
