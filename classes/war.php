@@ -668,7 +668,10 @@ class war{
 		}
 		$count = 1;
 		foreach ($warPlayers as $player) {
-			$this->updatePlayerRank($player->get('id'), $count);
+			$prevRank = $this->getPlayerRank($player->get('id'));
+			if($prevRank!=$count){
+				$this->updatePlayerRank($player->get('id'), $count);
+			}
 			$count++;
 		}
 	}
