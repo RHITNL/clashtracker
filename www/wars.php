@@ -63,11 +63,11 @@ require('header.php');
 								$clan1 = $clan;
 								$clan2 = new clan($war->getEnemy($clanId));
 							}else{
-								$clan1 = new clan($war->get('firstClanId'));
-								$clan2 = new clan($war->get('secondClanId'));
+								$clan1 = $war->get('clan1');
+								$clan2 = $war->get('clan2');
 							}
 							$name = htmlspecialchars($clan1->get('name')) . ' vs. ' . htmlspecialchars($clan2->get('name'));
-							$score = $war->getClanStars($clan1->get('id')) . ' - ' . $war->getClanStars($clan2->get('id'));
+							$score = $war->getClanStars($clan1) . ' - ' . $war->getClanStars($clan2);
 							?>
 							<td><?=$name;?></td>
 							<td><?=$war->get('size');?>v<?=$war->get('size');?></td>

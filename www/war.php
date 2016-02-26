@@ -13,22 +13,40 @@ try{
 }
 
 $clanId = $_GET['clanId'];
-if($war->isClanInWar($clanId)){
-	$clan1 = new clan($clanId);
-	$clanId = $clan1->get('id');
+
+$clan1 = $war->get('clan1');
+if($clan1->get('id') != $clanId){
+	$clan2 = $clan1;
+	$clan1 = $war->get('clan2');
 }else{
-	$clan1 = new clan($war->get('firstClanId'));
-	$clanId = null;
+	$clan2 = $war->get('clan2');
 }
-$clan2 = new clan($war->getEnemy($clan1->get('id')));
 
-$clan1Players = $war->getMyWarPlayers($clan1->get('id'));
-$clan2Players = $war->getMyWarPlayers($clan2->get('id'));
+$clan1Players = $war->getMyWarPlayers($clan1);
+$clan2Players = $war->getMyWarPlayers($clan2);
 
-$clan1Stars = $war->getClanStars($clan1->get('id'));
-$clan1Attacks = $war->getAttacks($clan1->get('id'));
+$warPlayers = array();
+foreach (array_merge($clan1Players, $clan2Players) as $player) {
+	$warPlayers[$player->get('id')] = $player;
+}
+
+$clan1CanAddMore = count($clan1Players) < $war->get('size');
+$clan2CanAddMore = count($clan2Players) < $war->get('size');
+
+$warAttacks = array_reverse($war->getAttacks());
+
+$clan1Stars = $war->getClanStars($clan1, true);
+$clan2Stars = $war->getClanStars($clan2, true);
+
+$clan1Attacks = $war->getAttacks($clan1);
+$clan2Attacks = $war->getAttacks($clan2);
+
 $clan1AttacksUsed = count($clan1Attacks);
-$clan1AttacksLeft = ($war->get('size') * 2) - $clan1AttacksUsed;
+$clan2AttacksUsed = count($clan2Attacks);
+
+$clan1AttacksLeft = $war->get('size')*2 - $clan1AttacksUsed;
+$clan2AttacksLeft = $war->get('size')*2 - $clan2AttacksUsed;
+
 $clan1AttacksWon = 0;
 $clan1AttacksLost = 0;
 foreach ($clan1Attacks as $attack) {
@@ -38,23 +56,7 @@ foreach ($clan1Attacks as $attack) {
 		$clan1AttacksLost++;
 	}
 }
-$clan1BestAttacks = array(3=>0, 2=>0, 1=>0, 0=>0);
-foreach ($clan2Players as $defender) {
-	$defences = $war->getPlayerDefences($defender->get('id'));
-	$starsAgainst = 0;
-	foreach ($defences as $defence) {
-		if($defence['totalStars'] > $starsAgainst){
-			$starsAgainst = $defence['totalStars'];
-		}
-	}
-	$clan1BestAttacks[$starsAgainst]++;
-}
-$clan1CanAddMore = count($clan1Players) < $war->get('size');
 
-$clan2Stars = $war->getClanStars($clan2->get('id'));
-$clan2Attacks = $war->getAttacks($clan2->get('id'));
-$clan2AttacksUsed = count($clan2Attacks);
-$clan2AttacksLeft = ($war->get('size') * 2) - $clan2AttacksUsed;
 $clan2AttacksWon = 0;
 $clan2AttacksLost = 0;
 foreach ($clan2Attacks as $attack) {
@@ -64,9 +66,10 @@ foreach ($clan2Attacks as $attack) {
 		$clan2AttacksLost++;
 	}
 }
+
 $clan2BestAttacks = array(3=>0, 2=>0, 1=>0, 0=>0);
 foreach ($clan1Players as $defender) {
-	$defences = $war->getPlayerDefences($defender->get('id'));
+	$defences = getPlayerAttacks($defender->get('id'), 'defence');
 	$starsAgainst = 0;
 	foreach ($defences as $defence) {
 		if($defence['totalStars'] > $starsAgainst){
@@ -75,9 +78,18 @@ foreach ($clan1Players as $defender) {
 	}
 	$clan2BestAttacks[$starsAgainst]++;
 }
-$clan2CanAddMore = count($clan2Players) < $war->get('size');
 
-$warAttacks = array_reverse($war->getAttacks());
+$clan1BestAttacks = array(3=>0, 2=>0, 1=>0, 0=>0);
+foreach ($clan2Players as $defender) {
+	$defences = getPlayerAttacks($defender->get('id'), 'defence');
+	$starsAgainst = 0;
+	foreach ($defences as $defence) {
+		if($defence['totalStars'] > $starsAgainst){
+			$starsAgainst = $defence['totalStars'];
+		}
+	}
+	$clan1BestAttacks[$starsAgainst]++;
+}
 
 function getPlayerAttacks($playerId, $type='attack'){
 	global $warAttacks;
@@ -99,10 +111,10 @@ $userCanEdit = $isEditable && userHasAccessToUpdateWar($war);
 
 $requests = array();
 $allowedUsers = array();
-if(userHasAccessToUpdateClan($war->get('clan1')) && $isEditable){
+if($isEditable && userHasAccessToUpdateClan($war->get('clan1'))){
 	$requests = $war->getRequests();
 	$allowedUsers = $war->getAllowedUsers();
-}elseif(userHasAccessToUpdateClan($war->get('clan2')) && $isEditable && !$userCanEdit && isset($loggedInUser) && !$war->userHasRequested($loggedInUser->get('id'))){
+}elseif($isEditable && userHasAccessToUpdateClan($war->get('clan2')) && !$userCanEdit && isset($loggedInUser) && !$war->userHasRequested($loggedInUser->get('id'))){
 	$canRequestAccess = true;
 }
 
@@ -199,13 +211,13 @@ require('header.php');
 				</div>
 			</div>
 		</div>
-	<?}if(count($clan1Attacks) > 0 || count($clan2Attacks) > 0 || count($requests) > 0 || count($allowedUsers) > 0 || $canRequestAccess){?>
+	<?}if(count($warAttacks) > 0 || count($requests) > 0 || count($allowedUsers) > 0 || $canRequestAccess){?>
 		<div class="col-md-12">
 			<ul class="nav nav-pills" role="tablist">
 				<li id="warPlayersTab" role="presentation" class="active">
 					<a style="cursor: pointer;">War Players</a>
 				</li>
-				<?if(count($clan1Attacks) > 0 || count($clan2Attacks) > 0){?>
+				<?if(count($warAttacks) > 0){?>
 					<li id="warAttacksTab" role="presentation">
 						<a style="cursor: pointer;">War Events</a>
 					</li>
@@ -542,8 +554,8 @@ require('header.php');
 				</thead>
 				<tbody>
 					<?foreach ($warAttacks as $attack) {
-						$attacker = new player($attack['attackerId']);
-						$defender = new player($attack['defenderId']);
+						$attacker = $warPlayers[$attack['attackerId']];
+						$defender = $warPlayers[$attack['defenderId']];
 						$attackerRank = $war->getPlayerRank($attacker->get('id'));
 						$defenderRank = $war->getPlayerRank($defender->get('id'));
 						$attackerClanId = $attack['attackerClanId'];

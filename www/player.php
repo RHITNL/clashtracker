@@ -78,25 +78,9 @@ $lootAvailablePastWeek = ($goldAvailablePastWeek||$elixirAvailablePastWeek||$oil
 $playerClan = $player->getMyClan();
 $playerClans = $player->getMyClans();
 
-$largestValue = 0;
-foreach ($gold as $loot) {
-	if($largestValue < $loot['lootAmount']){
-		$largestValue = $loot['lootAmount'];
-	}
-}
-foreach ($elixir as $loot) {
-	if($largestValue < $loot['lootAmount']){
-		$largestValue = $loot['lootAmount'];
-	}
-}
-foreach ($oil as $loot) {
-	if($largestValue < $loot['lootAmount']*100){
-		$largestValue = $loot['lootAmount']*100;
-	}
-}
+$largestValue = max($gold[0]['lootAmount'], $elixir[0]['lootAmount'], $oil[0]['lootAmount']);
 
 $userHasAccessToUpdatePlayer = userHasAccessToUpdatePlayer($player);
-
 require('header.php');
 ?>
 <div class="col-md-12">

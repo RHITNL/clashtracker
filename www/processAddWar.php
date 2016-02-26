@@ -49,7 +49,7 @@ try{
 	$enemyClan = new clan();
 	$enemyClan->create($enemyClanTag);
 }
-if(refreshClanInfo($enemyClan->get('id'))==-1){
+if(refreshClanInfo($enemyClan)==-1){
 	$enemyClan->delete();
 	$_SESSION['curError'] = 'Enemy Clan Tag was not found in Clash of Clans.';
 	header('Location: /addWar.php?clanId=' . $clan->get('id'));
@@ -57,7 +57,7 @@ if(refreshClanInfo($enemyClan->get('id'))==-1){
 }
 
 $war = new war();
-$war->create($clan->get('id'), $enemyClan->get('id'), $size);
+$war->create($clan, $enemyClan, $size);
 $_SESSION['curMessage'] = 'Clan War created successully.';
 unsetAll();
 header('Location: /war.php?warId=' . $war->get('id') . '&clanId=' . $clan->get('id'));

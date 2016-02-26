@@ -99,23 +99,6 @@ function sortPlayersByRank($players, $order='desc'){
 	}
 }
 
-function sortPlayersByTrophies($players, $order='desc'){
-	for ($i=1; $i < count($players); $i++) { 
-		$j=$i;
-		while ($j>0 && $players[$j-1]->get('trophies') < $players[$j]->get('trophies')){
-			$temp = $players[$j];
-			$players[$j] = $players[$j-1];
-			$players[$j-1] = $temp;
-			$j--;
-		}
-	}
-	if($order == 'desc'){
-		return $players;
-	}else{
-		return array_reverse($players);
-	}
-}
-
 function rankIsHigher($rank1, $rank2){
 	switch ($rank1) {
 		case 'LE':
@@ -267,29 +250,16 @@ function convertRank($code){
 	return $ranks[$code];
 }
 
-function refreshClanInfo($clanId){
+function refreshClanInfo($clan){
 	try{
-		$clan = new clan($clanId);
-		$clan->load();
 		$api = new clanApi();
 		$clanInfo = $api->getClanInformation($clan->get('tag'));
 	}catch(Exception $e){
 		error_log($e->getMessage());
 		return -1;
 	}
-	//TODO: Optimize the DB calls
-	$clan->set('name', $clanInfo->name);
-	$clan->set('clanType', convertType($clanInfo->type));
-	$clan->set('description', $clanInfo->description);
-	$clan->set('warFrequency', convertFrequency($clanInfo->warFrequency));
-	$clan->set('minimumTrophies', $clanInfo->requiredTrophies);
-	$clan->set('members', $clanInfo->members);
-	$clan->set('clanPoints', $clanInfo->clanPoints);
-	$clan->set('clanLevel', $clanInfo->clanLevel);
-	$clan->set('warWins', $clanInfo->warWins);
-	$clan->set('badgeUrl', $clanInfo->badgeUrls->small);
-	$clan->set('location', $clanInfo->location->name);
-	$members = $clan->getCurrentMembers();
+	$clan->updateFromApi($clanInfo);
+	$members = $clan->getMembers();
 	foreach ($clanInfo->memberList as $apiMember) {
 		$count = 0;
 		foreach ($members as $key => $temp) {
@@ -300,13 +270,7 @@ function refreshClanInfo($clanId){
 			}
 		}
 		if($count==1){
-			//TODO: Optimize the DB calls
-			$clan->updatePlayerRank($member->get('id'), convertRank($apiMember->role));
-			$member->set('level', $apiMember->expLevel);
-			$member->set('trophies', $apiMember->trophies);
-			$member->set('donations', $apiMember->donations);
-			$member->set('received', $apiMember->donationsReceived);
-			$member->set('leagueUrl', $apiMember->league->iconUrls->small);
+			$member->updateFromApi($apiMember);
 		}elseif ($count==0) {
 			//TODO: The player needs to be added to the clan
 			//		Need the player tag though, which is not provided yet
@@ -315,5 +279,6 @@ function refreshClanInfo($clanId){
 	foreach ($members as $member) {
 		$member->leaveClan();
 	}
+	$clan->getMembers(true);//reload the members after some have left
 	return 0;
 }

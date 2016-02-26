@@ -55,7 +55,7 @@ if($_POST['type'] == 'single'){
 	$loot[$playerId]['darkElixir'] = $_POST['darkElixir'];
 }elseif($_POST['type'] == 'multiple'){
 	$loot = array();
-	$members = $clan->getCurrentMembers();
+	$members = $clan->getMembers();
 	foreach ($members as $member) {
 		if(userHasAccessToUpdatePlayer($member)){
 			$memberId = $member->get('id');
@@ -78,33 +78,30 @@ foreach ($loot as $playerId => $playerLoot) {
 		continue;
 	}
 	if(strlen($playerLoot['gold']) != 0){
-		$gold = $player->getGold();
-		if($playerLoot['gold'] >= $gold[0]['lootAmount']){
+		try{
 			$player->recordGold($playerLoot['gold']);
 			$updates = true;
-		}else{
+		}catch(illegalLootAmountException $e){
 			$errors = true;
-			$_SESSION['curError'] .= htmlspecialchars($player->get('name')) . ' has already stolen ' . $gold[0]['lootAmount'] . ' gold. New value must be greater than this.<br>';
+			$_SESSION['curError'] .= htmlspecialchars($player->get('name')) . ' has already stolen ' . $e->getMinimumLoot() . ' gold. New value must be greater than this.<br>';
 		}
 	}
 	if(strlen($playerLoot['elixir']) != 0){
-		$elixir = $player->getElixir();
-		if($playerLoot['elixir'] >= $elixir[0]['lootAmount']){
+		try{
 			$player->recordElixir($playerLoot['elixir']);
 			$updates = true;
-		}else{
+		}catch(illegalLootAmountException $e){
 			$errors = true;
-			$_SESSION['curError'] .= htmlspecialchars($player->get('name')) . ' has already stolen ' . $elixir[0]['lootAmount'] . ' elixir. New value must be greater than this.<br>';
+			$_SESSION['curError'] .= htmlspecialchars($player->get('name')) . ' has already stolen ' . $e->getMinimumLoot() . ' elixir. New value must be greater than this.<br>';
 		}
 	}
 	if(strlen($playerLoot['darkElixir']) != 0){
-		$darkElixir = $player->getDarkElixir();
-		if($playerLoot['darkElixir'] >= $darkElixir[0]['lootAmount']){
+		try{
 			$player->recordDarkElixir($playerLoot['darkElixir']);
 			$updates = true;
-		}else{
+		}catch(illegalLootAmountException $e){
 			$errors = true;
-			$_SESSION['curError'] .= htmlspecialchars($player->get('name')) . ' has already stolen ' . $darkElixir[0]['lootAmount'] . ' dark elixir. New value must be greater than this.<br>';
+			$_SESSION['curError'] .= htmlspecialchars($player->get('name')) . ' has already stolen ' . $e->getMinimumLoot() . ' dark elixir. New value must be greater than this.<br>';
 		}
 	}
 }

@@ -17,8 +17,7 @@ try{
 	exit;
 }
 
-$members = $clan->getCurrentMembers();
-$members = sortPlayersByTrophies($members);
+$members = $clan->getMembers();
 
 require('header.php');
 ?>

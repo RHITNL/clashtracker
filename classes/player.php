@@ -151,6 +151,25 @@ class player{
 		}
 	}
 
+	public function loadByObj($playerObj, $clan=null){
+		$this->id = $playerObj->id;
+		$this->name = $playerObj->name;
+		$this->tag = $playerObj->tag;
+		$this->dateCreated = $playerObj->date_created;
+		$this->dateModified = $playerObj->date_modified;
+		$this->accessType = $playerObj->access_type;
+		$this->minRankAccess = $playerObj->min_rank_access;
+		$this->level = $playerObj->level;
+		$this->trophies = $playerObj->trophies;
+		$this->donations = $playerObj->donations;
+		$this->received = $playerObj->received;
+		$this->leagueUrl = $playerObj->league_url;
+		$this->clan = $clan;
+		if(isset($clan)){
+			$this->clanRank = $playerObj->rank;
+		}
+	}
+
 	public function get($prpty, $clanId=null){
 		if(isset($this->id)){
 			if(in_array($prpty, $this->acceptGet)){
@@ -188,6 +207,43 @@ class player{
 		}
 	}
 
+	public function updateFromApi($apiMember){
+		global $db;
+		if(isset($this->id)){
+			if($this->clanRank == convertRank($apiMember->role)
+				&& $this->level == $apiMember->expLevel
+				&& $this->trophies == $apiMember->trophies
+				&& $this->donations == $apiMember->donations
+				&& $this->received == $apiMember->donationsReceived
+				&& $this->leagueUrl == $apiMember->league->iconUrls->small){
+				return; //no changes will be made
+			}
+			$procedure = buildProcedure('p_player_update_bulk',
+										$this->id,
+										convertRank($apiMember->role),
+										$apiMember->expLevel,
+										$apiMember->trophies,
+										$apiMember->donations, 
+										$apiMember->donationsReceived,
+										$apiMember->league->iconUrls->small);
+			if(($db->multi_query($procedure)) === TRUE){
+				while ($db->more_results()){
+					$db->next_result();
+				}
+				$this->clanRank = convertRank($apiMember->role);
+				$this->level = $apiMember->expLevel;
+				$this->trophies = $apiMember->trophies;
+				$this->donations = $apiMember->donations;
+				$this->received = $apiMember->donationsReceived;
+				$this->leagueUrl = $apiMember->league->iconUrls->small;
+			}else{
+				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set for set.');
+		}
+	}
+
 	private function recordLoot($type, $amount, $date='%'){
 		global $db;
 		if(isset($this->id)){
@@ -202,7 +258,7 @@ class player{
 					throw new illegalQueryException('The database encountered an error. ' . $db->error);
 				}
 			}else{
-				throw new illegalLootAmountException('New loot recording must be positive and more than previous recording. Player ID: ' . $this->id . ".");
+				throw new illegalLootAmountException('New loot recording must be positive and more than previous recording. Player ID: ' . $this->id . ".", $loot[0]['lootAmount']);
 			}
 		}else{
 			throw new illegalFunctionCallException('ID not set for recording loot.');
@@ -224,30 +280,42 @@ class player{
 	private function getLoot($type, $earliestDate=0){
 		global $db;
 		if(isset($this->id)){
-			$procedure = buildProcedure('p_player_get_loot', $this->id, $type);
-			if(($db->multi_query($procedure)) === TRUE){
-				$results = $db->store_result();
-				while ($db->more_results()){
-					$db->next_result();
-				}
-				$loot = array();
-				if ($results->num_rows) {
-					while ($lootObj = $results->fetch_object()) {
-						$tempLoot = array();
-						$tempLoot['playerId'] = $lootObj->player_id;
-						$tempLoot['dateRecorded'] = $lootObj->date_recorded;
-						if(strtotime($tempLoot['dateRecorded']) < $earliestDate){
-							break;
-						}
-						$tempLoot['lootType'] = $lootObj->loot_type;
-						$tempLoot['lootAmount'] = $lootObj->loot_amount;
-						$loot[] = $tempLoot;
-					}
-				}
-				return $loot;
-			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			if($earliestDate == 0 && isset($this->loot[$type])){
+				return $this->loot[$type];
 			}
+			if(!isset($this->loot[$type])){
+				$procedure = buildProcedure('p_player_get_loot', $this->id, $type);
+				if(($db->multi_query($procedure)) === TRUE){
+					$results = $db->store_result();
+					while ($db->more_results()){
+						$db->next_result();
+					}
+					$loot = array();
+					if ($results->num_rows) {
+						while ($lootObj = $results->fetch_object()) {
+							$tempLoot = array();
+							$tempLoot['playerId'] = $lootObj->player_id;
+							$tempLoot['dateRecorded'] = $lootObj->date_recorded;
+							$tempLoot['lootType'] = $lootObj->loot_type;
+							$tempLoot['lootAmount'] = $lootObj->loot_amount;
+							$loot[] = $tempLoot;
+						}
+					}
+					$this->loot[$type] = $loot;
+				}else{
+					throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				}
+			}else{
+				$loot = $this->loot[$type];
+			}
+			$length = 0;
+			foreach ($loot as $tempLoot) {
+				if(strtotime($tempLoot['dateRecorded']) < $earliestDate){
+					break;
+				}
+				$length++;
+			}
+			return array_splice($loot, 0, $length);
 		}else{
 			throw new illegalFunctionCallException('ID not set for recording loot.');
 		}
@@ -309,19 +377,24 @@ class player{
 	public function getMyClan(){
 		global $db;
 		if(isset($this->id)){
+			if(isset($this->clan)){
+				return $this->clan;
+			}
 			$procedure = buildProcedure('p_player_get_clan', $this->id);
 			if(($db->multi_query($procedure)) === TRUE){
 				$results = $db->store_result();
 				while ($db->more_results()){
 					$db->next_result();
 				}
-				$clan = null;
+				$this->clan = null;
 				if ($results->num_rows) {
-					$record = $results->fetch_object();
+					$clanObj = $results->fetch_object();
 					$results->close();
-					$clan = new clan($record->clan_id);
+					$this->clan = new clan();
+					$this->clan->loadByObj($clanObj);
+					$this->clanRank = $clanObj->rank;
 				}
-				return $clan;
+				return $this->clan;
 			}else{
 				throw new illegalQueryException('The database encountered an error. ' . $db->error);
 			}
@@ -348,7 +421,10 @@ class player{
 	}
 
 	public function getClanRank($clanId=null){
-		if($clanId==null){
+		if(!isset($clanId)){
+			if(isset($this->clanRank)){
+				return $this->clanRank;
+			}
 			$clan = $this->getMyClan();
 			if(isset($clan)){
 				$clanId = $clan->get('id');
@@ -364,7 +440,11 @@ class player{
 				}
 				$record = $results->fetch_object();
 				$results->close();
-				return $record->rank;
+				$rank = $record->rank;
+				if(isset($clan)){
+					$this->clanRank = $rank;
+				}
+				return $rank;
 			}else{
 				throw new illegalQueryException('The database encountered an error. ' . $db->error);
 			}
@@ -402,8 +482,6 @@ class player{
 	public function getMyClans(){
 		global $db;
 		if(isset($this->id)){
-			//TODO: Optimize to return all information so that
-			//		the clans can be loaded by json
 			$procedure = buildProcedure('p_player_get_clans', $this->id);
 			if(($db->multi_query($procedure)) === TRUE){
 				$results = $db->store_result();
@@ -413,7 +491,8 @@ class player{
 				$clans = array();
 				if ($results->num_rows) {
 					while ($clanObj = $results->fetch_object()) {
-						$clan = new clan($clanObj->clan_id);
+						$clan = new clan();
+						$clan->loadByObj($clanObj);
 						$clans[] = $clan;
 					}
 				}
@@ -437,7 +516,8 @@ class player{
 			$players = array();
 			if ($results->num_rows) {
 				while ($playerObj = $results->fetch_object()) {
-					$player = new player($playerObj->id);
+					$player = new player();
+					$player->loadByObj($playerObj);
 					$players[] = $player;
 				}
 			}
@@ -459,7 +539,8 @@ class player{
 				$wars = array();
 				if ($results->num_rows) {
 					while ($record = $results->fetch_object()) {
-						$war = new war($record->war_id);
+						$war = new war();
+						$war->loadByObj($record);
 						$wars[] = $war;
 					}
 				}
@@ -533,7 +614,6 @@ class player{
 					while ($defenceObj = $results->fetch_object()) {
 						$defence = array();
 						$defence['warId'] = $defenceObj->war_id;
-						$war = new war($defence['warId']);
 						$defence['attackerId'] = $defenceObj->attacker_id;
 						$defence['defenderId'] = $defenceObj->defender_id;
 						$defence['attackerClanId'] = $defenceObj->attacker_clan_id;
@@ -720,7 +800,7 @@ class player{
 			}elseif($this->accessType == 'CL'){
 				$clan = $this->getMyClan();
 				if(isset($clan)){
-					$clanMembers = $clan->getCurrentMembers();
+					$clanMembers = $clan->getMembers();
 					$users = array();
 					foreach ($clanMembers as $member) {
 						$clanRank = $member->getClanRank();

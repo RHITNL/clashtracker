@@ -43,9 +43,9 @@ if($war->isClanInWar($addClanId)){
 	exit;
 }
 
-$warPlayers = $war->getMyWarPlayers($addClan->get('id'));
+$warPlayers = $war->getMyWarPlayers($addClan);
 $limit = $war->get('size') - count($warPlayers);
-$allMembers = $addClan->getCurrentMembers();
+$allMembers = $addClan->getMembers();
 $members = array();
 foreach ($allMembers as $member) {
 	if(!$war->isPlayerInWar($member->get('id'))){

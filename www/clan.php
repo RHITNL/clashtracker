@@ -3,18 +3,17 @@ require('init.php');
 require('session.php');
 
 $clanId = $_GET['clanId'];
-refreshClanInfo($clanId);
 try{
 	$clan = new clan($clanId);
-	$clan->load();
+	$clanId = $clan->get('id');
 }catch(Exception $e){
 	$_SESSION['curError'] = 'No clan with id ' . $clanId . ' found.';
 	header('Location: /clans.php');
 	exit;
 }
+refreshClanInfo($clan);
 
-$members = $clan->getCurrentMembers();
-$members = sortPlayersByTrophies($members);
+$members = $clan->getMembers();
 $wars = $clan->getMyWars();
 $war = $wars[0];
 $userHasAccessToUpdateClan = userHasAccessToUpdateClan($clan);

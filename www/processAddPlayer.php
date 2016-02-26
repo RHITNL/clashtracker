@@ -86,8 +86,8 @@ if(isset($clan)){
 	header('Location: /player.php?playerId=' . $player->get('id'));
 }
 
-$linkedUser = $player->getLinkedUser();
 if($link){
+	$linkedUser = $player->getLinkedUser();
 	if(isset($linkedUser)){
 		$_SESSION['curError'] = 'Cannot link to player who is already linked to another account.';
 	}else{

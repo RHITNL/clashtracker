@@ -19,16 +19,17 @@ class war{
 	);
 
 	private $acceptSet = array(
-		'size' => 'size'
+		'size' => 'size',
+		'first_clan_stars' => 'firstClanStars',
+		'second_clan_stars' => 'secondClanStars',
+		'clan_stars' => 'clanStars'
 	);
 
-	public function create($clan1Id, $clan2Id, $size){
+	public function create($clan1, $clan2, $size){
 		global $db;
 		if(!isset($this->id)){
-			$clan1 = new clan($clan1Id);
-			$clan1->load();
-			$clan2 = new clan($clan2Id);
-			$clan2->load();
+			$clan1Id = $clan1->get('id');
+			$clan2Id = $clan2->get('id');
 			$procedure = buildProcedure('p_war_create', $clan1Id, $clan2Id, $size);
 			if(($db->multi_query($procedure)) === TRUE){
 				$result = $db->store_result()->fetch_object();
@@ -46,6 +47,10 @@ class war{
 	}
 
 	public function __construct($id=null){
+		$this->clanWarPlayers = array();
+		$this->clanStars = array();
+		$this->playerRanks = array();
+		$this->playerDefences = array();
 		if(isset($id)){
 			$this->id = $id;
 			$this->load();
@@ -70,6 +75,8 @@ class war{
 					$this->size = $record->size;
 					$this->dateCreated = $record->date_created;
 					$this->dateModified = $record->date_modified;
+					$this->clanStars[$this->firstClanId] = $record->first_clan_stars;
+					$this->clanStars[$this->secondClanId] = $record->second_clan_stars;
 				}else{
 					throw new noResultFoundException('No clan found with id ' . $this->id);
 				}
@@ -79,6 +86,17 @@ class war{
 		}else{
 			throw new illegalFunctionCallException('ID not set for load.');
 		}
+	}
+
+	public function loadByObj($warObj){
+		$this->id = $warObj->id;
+		$this->firstClanId = $warObj->first_clan_id;
+		$this->secondClanId = $warObj->second_clan_id;
+		$this->size = $warObj->size;
+		$this->dateCreated = $warObj->date_created;
+		$this->dateModified = $warObj->date_modified;
+		$this->clanStars[$this->firstClanId] = $warObj->first_clan_stars;
+		$this->clanStars[$this->secondClanId] = $warObj->second_clan_stars;
 	}
 
 	public function get($prpty){
@@ -107,16 +125,27 @@ class war{
 		}
 	}
 
-	public function set($prpty, $value){
+	public function set($prpty, $value, $clanId=null){
 		global $db;
 		if(isset($this->id)){
 			if(in_array($prpty, $this->acceptSet)){
+				if($prpty == 'clanStars'){
+					if($clanId == $this->firstClanId){
+						$prpty = 'firstClanStars';
+					}else{
+						$prpty = 'secondClanStars';
+					}
+				}
 				$procedure = buildProcedure('p_war_set', $this->id, array_search($prpty, $this->acceptSet), $value);
 				if(($db->multi_query($procedure)) === TRUE){
 					while ($db->more_results()){
 						$db->next_result();
 					}
-					$this->$prpty = $value;
+					if($prpty == 'clanStars'){
+						$this->clanStars[$clanId] = $value;
+					}else{
+						$this->$prpty = $value;
+					}
 				}else{
 					throw new illegalQueryException('The database encountered an error. ' . $db->error);
 				}
@@ -138,14 +167,14 @@ class war{
 			$playerId = $player->get('id');
 			$clan = $player->getMyClan();
 			if(isset($clan) && $this->isClanInWar($clan->get('id'))){
-				if(count($this->getMyWarPlayers($clan->get('id'))) < $this->size){
+				if(count($this->getMyWarPlayers($clan)) < $this->size){
 					global $db;
 					$procedure = buildProcedure('p_war_add_player', $this->id, $playerId, $clan->get('id'));
 					if(($db->multi_query($procedure)) === TRUE){
 						while ($db->more_results()){
 							$db->next_result();
 						}
-						$this->updateRanks($clan->get('id'));
+						$this->updateRanks($clan);
 					}else{
 						throw new illegalQueryException('The database encountered an error. ' . $db->error);
 					}
@@ -172,7 +201,7 @@ class war{
 					while ($db->more_results()){
 						$db->next_result();
 					}
-					$this->updateRanks($playerClan->get('id'));
+					$this->updateRanks($playerClan);
 				}else{
 					throw new illegalQueryException('The database encountered an error. ' . $db->error);
 				}
@@ -184,18 +213,23 @@ class war{
 		}
 	}
 
-	public function getMyWarPlayers($clanId='%'){
+	public function getMyWarPlayers($clan=null, $force=false){
 		global $db;
 		if(isset($this->id)){
-			if($clanId != '%'){
-				$clan = new clan($clanId);
+			if(isset($clan)){
 				$clanId = $clan->get('id');
 				if(!$this->isClanInWar($clanId)){
 					throw new illegalWarClanException('Clan not in war.');
 				}
+				if(isset($this->clanWarPlayers[$clanId]) && !$force){
+					return $this->clanWarPlayers[$clanId];
+				}
+			}else{
+				$clanId = '%';
+				if(isset($this->clanWarPlayers[$this->firstClanId]) && isset($this->clanWarPlayers[$this->secondClanId]) && !$force){
+					return array_merge($this->clanWarPlayers[$this->firstClanId], $this->clanWarPlayers[$this->secondClanId]);
+				}
 			}
-			//TODO: Optimize DB call to get information about players
-			//		so that they can be loaded from json
 			$procedure = buildProcedure('p_war_get_players', $this->id, $clanId);
 			if(($db->multi_query($procedure)) === TRUE){
 				$results = $db->store_result();
@@ -205,9 +239,13 @@ class war{
 				$players = array();
 				if ($results->num_rows) {
 					while ($playerObj = $results->fetch_object()) {
-						$player = new player($playerObj->player_id);
+						$player = new player();
+						$player->loadByObj($playerObj);
 						$players[] = $player;
 					}
+				}
+				if(isset($clan)){
+					$this->clanWarPlayers[$clanId] = $players;
 				}
 				return $players;
 			}else{
@@ -219,12 +257,6 @@ class war{
 	}
 
 	public function isPlayerInWar($playerId){
-		try{
-			$player = new player($playerId);
-			$playerId = $player->get('id');
-		}catch(Exception $e){
-			return false;
-		}
 		$warPlayers = $this->getMyWarPlayers();
 		foreach ($warPlayers as $warPlayer) {
 			if($warPlayer->get('id') == $playerId){
@@ -288,16 +320,19 @@ class war{
 		}
 	}
 
-	public function getAttacks($clanId='%'){
+	public function getAttacks($clan=null){
 		global $db;
 		if(isset($this->id)){
-			if($clanId != '%'){
-				$clan = new clan($clanId);
+			if(isset($clan)){
 				$clanId = $clan->get('id');
 				if(!$this->isClanInWar($clanId)){
 					throw new illegalWarClanException('Clan not in war.');
 				}
-
+				if(isset($this->clanAttacks[$clanId])){
+					return $this->clanAttacks[$clanId];
+				}
+			}else{
+				$clanId = '%';
 			}
 			$procedure = buildProcedure('p_war_get_attacks', $this->id, $clanId);
 			if(($db->multi_query($procedure)) === TRUE){
@@ -305,6 +340,8 @@ class war{
 				while ($db->more_results()){
 					$db->next_result();
 				}
+				$this->clanAttacks[$this->firstClanId] = array();
+				$this->clanAttacks[$this->secondClanId] = array();
 				$warAttacks = array();
 				if ($results->num_rows) {
 					while ($warAttackObj = $results->fetch_object()) {
@@ -330,7 +367,11 @@ class war{
 						$warAttack['dateCreated'] = $warAttackObj->date_created;
 						$warAttack['dateModified'] = $warAttackObj->date_modified;
 						$warAttacks[] = $warAttack;
+						$this->clanAttacks[$warAttack['attackerClanId']][] = $warAttack;
 					}
+				}
+				if(isset($clan)){
+					$this->clanAttacks[$clanId] = $warAttacks;
 				}
 				return $warAttacks;
 			}else{
@@ -437,10 +478,11 @@ class war{
 	public function getPlayerDefences($playerId){
 		global $db;
 		if(isset($this->id)){
-			$player = new player($playerId);
-			$playerId = $player->get('id');
 			if(!$this->isPlayerInWar($playerId)){
 				throw new illegalWarPlayerException('Player not in war.');
+			}
+			if(isset($this->playerDefences[$playerId])){
+				return $this->playerDefences[$playerId];
 			}
 			$procedure = buildProcedure('p_war_get_player_defences', $this->id, $playerId);
 			if(($db->multi_query($procedure)) === TRUE){
@@ -468,6 +510,7 @@ class war{
 						$warAttacks[] = $warAttack;
 					}
 				}
+				$this->playerDefences[$playerId] = $warAttacks;
 				return $warAttacks;
 			}else{
 				throw new illegalQueryException('The database encountered an error. ' . $db->error);
@@ -477,18 +520,24 @@ class war{
 		}
 	}
 
-	public function getClanStars($clanId){
-		$clanAttacks = $this->getAttacks($clanId);
+	public function getClanStars($clan, $force=false){
+		if(!$force){
+			return (int)$this->clanStars[$clan->get('id')];
+		}
+		$clanAttacks = $this->getAttacks($clan);
 		$count = 0;
 		foreach ($clanAttacks as $attack) {
 			$count += $attack['newStars'];
+		}
+		if($count != $this->clanStars[$clan->get('id')]){
+			$this->set('clanStars', $count, $clan->get('id'));
 		}
 		return $count;
 	}
 
 	public function getWinner(){
-		$clan1Stars = $this->getClanStars($this->firstClanId);
-		$clan2Stars = $this->getClanStars($this->secondClanId);
+		$clan1Stars = $this->getClanStars($this->get('clan1'));
+		$clan2Stars = $this->getClanStars($this->get('clan2'));
 		if($clan1Stars > $clan2Stars){
 			return $this->firstClanId;
 		}else if($clan2Stars > $clan1Stars){
@@ -512,8 +561,6 @@ class war{
 
 	public static function getWars($pageSize=50){
 		global $db;
-		//TODO: Optimize DB call to retrieve all information about wars
-		//		so they can be loaded by json
 		$procedure = buildProcedure('p_get_wars', $pageSize);
 		if(($db->multi_query($procedure)) === TRUE){
 			$results = $db->store_result();
@@ -523,7 +570,8 @@ class war{
 			$wars = array();
 			if ($results->num_rows) {
 				while ($warObj = $results->fetch_object()) {
-					$war = new war($warObj->id);
+					$war = new war();
+					$war->loadByObj($warObj);
 					$wars[] = $war;
 				}
 			}
@@ -597,13 +645,14 @@ class war{
 		}
 	}
 
-	public function updateRanks($clanId=null){
-		if(!$this->isClanInWar($clanId)){
-			$this->updateRanks($this->firstClanId);
-			$this->updateRanks($this->secondClanId);
+	public function updateRanks($clan=null){
+		if(!$this->isClanInWar($clan->get('id'))){
+			$this->updateRanks($this->get('clan1'));
+			$this->updateRanks($this->get('clan2'));
 			return;
 		}
-		$warPlayers = $this->getMyWarPlayers($clanId);
+		$warPlayers = $this->getMyWarPlayers($clan, true);
+		$clanId = $clan->get('id');
 		for ($i=1; $i < count($warPlayers); $i++) { 
 			$j=$i;
 			while ($j>0 && ($warPlayers[$j-1]->get('warRank', $clanId) > $warPlayers[$j]->get('warRank', $clanId))){
@@ -623,6 +672,9 @@ class war{
 	public function getPlayerRank($playerId){
 		if(isset($this->id)){
 			if($this->isPlayerInWar($playerId)){
+				if(isset($this->playerRanks[$playerId])){
+					return $this->playerRanks[$playerId];
+				}
 				global $db;
 				$procedure = buildProcedure('p_war_get_player_rank', $this->id, $playerId);
 				if(($db->multi_query($procedure)) === TRUE){
@@ -636,6 +688,7 @@ class war{
 						$results->close();
 						$rank = $record->rank;
 					}
+					$this->playerRanks[$playerId] = $rank;
 					return $rank;
 				}else{
 					throw new illegalQueryException('The database encountered an error. ' . $db->error);

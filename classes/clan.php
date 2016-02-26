@@ -174,6 +174,26 @@ class clan{
 		}
 	}
 
+	public function loadByObj($clanObj){
+		$this->id = $clanObj->id;
+		$this->name = $clanObj->name;
+		$this->tag = $clanObj->tag;
+		$this->description = $clanObj->description;
+		$this->clanType = $clanObj->clan_type;
+		$this->minimumTrophies = $clanObj->minimum_trophies;
+		$this->warFrequency = $clanObj->war_frequency;
+		$this->dateCreated = $clanObj->date_created;
+		$this->dateModified = $clanObj->date_modified;
+		$this->members = $clanObj->members;
+		$this->clanPoints = $clanObj->clan_points;
+		$this->clanLevel = $clanObj->clan_level;
+		$this->warWins = $clanObj->war_wins;
+		$this->badgeUrl = $clanObj->badge_url;
+		$this->location = $clanObj->location;
+		$this->accessType = $clanObj->access_type;
+		$this->minRankAccess = $clanObj->min_rank_access;
+	}
+
 	public function get($prpty){
 		if(isset($this->id)){
 			if(in_array($prpty, $this->acceptGet)){
@@ -207,6 +227,58 @@ class clan{
 		}
 	}
 
+	public function updateFromApi($clanInfo){
+		global $db;
+		if(isset($this->id)){
+			if($this->name == $clanInfo->name
+				&& $this->clanType == convertType($clanInfo->type)
+				&& $this->description == $clanInfo->description
+				&& $this->warFrequency == convertFrequency($clanInfo->warFrequency)
+				&& $this->minimumTrophies == $clanInfo->requiredTrophies
+				&& $this->members == $clanInfo->members
+				&& $this->clanPoints == $clanInfo->clanPoints
+				&& $this->clanLevel == $clanInfo->clanLevel
+				&& $this->warWins == $clanInfo->warWins
+				&& $this->badgeUrl == $clanInfo->badgeUrls->small
+				&& $this->location == $clanInfo->location->name){
+				return; //no changes will be made
+			}
+			$procedure = buildProcedure('p_clan_update_bulk', 
+										$this->id,
+										$clanInfo->name,
+										convertType($clanInfo->type),
+										$clanInfo->description,
+										convertFrequency($clanInfo->warFrequency),
+										$clanInfo->requiredTrophies,
+										$clanInfo->members,
+										$clanInfo->clanPoints,
+										$clanInfo->clanLevel,
+										$clanInfo->warWins,
+										$clanInfo->badgeUrls->small,
+										$clanInfo->location->name);
+			if(($db->multi_query($procedure)) === TRUE){
+				while ($db->more_results()){
+					$db->next_result();
+				}
+				$this->name = $clanInfo->name;
+				$this->clanType = convertType($clanInfo->type);
+				$this->description = $clanInfo->description;
+				$this->warFrequency = convertFrequency($clanInfo->warFrequency);
+				$this->minimumTrophies = $clanInfo->requiredTrophies;
+				$this->members = $clanInfo->members;
+				$this->clanPoints = $clanInfo->clanPoints;
+				$this->clanLevel = $clanInfo->clanLevel;
+				$this->warWins = $clanInfo->warWins;
+				$this->badgeUrl = $clanInfo->badgeUrls->small;
+				$this->location = $clanInfo->location->name;
+			}else{
+				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set for update.');
+		}
+	}
+
 	public function addPlayer($playerId, $rank='ME'){
 		global $db;
 		if(isset($this->id)){
@@ -216,7 +288,7 @@ class clan{
 				$player->leaveClan();
 			}
 			$isNewMember = true;
-			$members = $this->getMembers();
+			$members = $this->getPastAndCurrentMembers();
 			foreach ($members as $member) {
 				if($member->get('id') == $playerId){
 					$isNewMember = false;
@@ -229,6 +301,8 @@ class clan{
 					$db->next_result();
 				}
 				if($isNewMember){
+					$this->pastAndCurrentMembers[] = $player;
+					$this->currentMembers[] = $player;
 					$warRank = $this->getHighestWarRank() + 1;
 					$this->updatePlayerWarRank($playerId, $warRank);
 				}
@@ -238,6 +312,10 @@ class clan{
 		}else{
 			throw new illegalFunctionCallException('ID not set for add.');
 		}
+	}
+
+	public function updatePlayerRank($playerId, $rank){
+		$this->addPlayer($playerId, $rank);
 	}
 
 	public function getMyLeader(){
@@ -269,54 +347,56 @@ class clan{
 		return isset($leader);
 	}
 
-	public function updatePlayerRank($playerId, $rank){
-		$this->addPlayer($playerId, $rank);
-	}
-
-	public function getCurrentMembers($rank='%'){
-		//TODO: Create a proc to get current members specifically
-		$allMembers = $this->getMembers($rank);
-		$members = array();
-		foreach ($allMembers as $member) {
-			$rank = $member->get('rank', $this->id);
-			if($rank != 'KI' && $rank != 'EX'){
-				$members[] = $member;
-			}
-		}
-		return $members;
-	}
-
-	public function getPastMembers($rank='%'){
-		//TODO: Create a proc to get past members specifically
-		$allMembers = $this->getMembers($rank);
-		$members = array();
-		foreach ($allMembers as $member) {
-			$rank = $member->get('rank', $this->id);
-			if($rank == 'KI' || $rank == 'EX'){
-				$members[] = $member;
-			}
-		}
-		return $members;
-	}
-
-	public function getMembers($rank='%'){
+	public function getMembers($force=false){
 		global $db;
 		if(isset($this->id)){
-			//TODO: Create a proc to get all information about members
-			$procedure = buildProcedure('p_clan_get_members', $this->id, $rank);
+			if(isset($this->currentMembers) && !$force){
+				return $this->currentMembers;
+			}
+			$procedure = buildProcedure('p_clan_get_current_members', $this->id);
 			if(($db->multi_query($procedure)) === TRUE){
 				$results = $db->store_result();
 				while ($db->more_results()){
 					$db->next_result();
 				}
-				$members = array();
+				$this->currentMembers = array();
 				if ($results->num_rows) {
 					while ($memberObj = $results->fetch_object()) {
-						$member = new player($memberObj->player_id);
-						$members[] = $member;
+						$member = new player();
+						$member->loadByObj($memberObj, $this);
+						$this->currentMembers[] = $member;
 					}
 				}
-				return $members;
+				return $this->currentMembers;
+			}else{
+				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set for get.');
+		}
+	}
+
+	public function getPastAndCurrentMembers(){
+		global $db;
+		if(isset($this->id)){
+			if(isset($this->pastAndCurrentMembers)){
+				return $this->pastAndCurrentMembers;
+			}
+			$procedure = buildProcedure('p_clan_get_past_and_current_members', $this->id);
+			if(($db->multi_query($procedure)) === TRUE){
+				$results = $db->store_result();
+				while ($db->more_results()){
+					$db->next_result();
+				}
+				$this->pastAndCurrentMembers = array();
+				if ($results->num_rows) {
+					while ($memberObj = $results->fetch_object()) {
+						$member = new player();
+						$member->loadByObj($memberObj);
+						$this->pastAndCurrentMembers[] = $member;
+					}
+				}
+				return $this->pastAndCurrentMembers;
 			}else{
 				throw new illegalQueryException('The database encountered an error. ' . $db->error);
 			}
@@ -342,22 +422,24 @@ class clan{
 	public function getMyWars(){
 		global $db;
 		if(isset($this->id)){
-			//TODO: Optimize DB call to retrieve all information to
-			//		load the information from a json
+			if(isset($this->wars)){
+				return $this->wars;
+			}
 			$procedure = buildProcedure('p_clan_get_wars', $this->id);
 			if(($db->multi_query($procedure)) === TRUE){
 				$results = $db->store_result();
 				while ($db->more_results()){
 					$db->next_result();
 				}
-				$wars = array();
+				$this->wars = array();
 				if ($results->num_rows) {
 					while ($warObj = $results->fetch_object()) {
-						$war = new war($warObj->id);
-						$wars[] = $war;
+						$war = new war();
+						$war->loadByObj($warObj);
+						$this->wars[] = $war;
 					}
 				}
-				return $wars;
+				return $this->wars;
 			}else{
 				throw new illegalQueryException('The database encountered an error. ' . $db->error);
 			}
@@ -368,8 +450,6 @@ class clan{
 
 	public static function getClans($pageSize=50){
 		global $db;
-		//TODO: Create a the DB call to retrieve all information about all clans
-		//		And add a function to load a clan from this information
 		$procedure = buildProcedure('p_get_clans', $pageSize);
 		if(($db->multi_query($procedure)) === TRUE){
 			$results = $db->store_result();
@@ -379,7 +459,8 @@ class clan{
 			$clans = array();
 			if ($results->num_rows) {
 				while ($clanObj = $results->fetch_object()) {
-					$clan = new clan($clanObj->id);
+					$clan = new clan();
+					$clan->loadByObj($clanObj);
 					$clans[] = $clan;
 				}
 			}
@@ -507,7 +588,7 @@ class clan{
 	public function delete(){
 		if(isset($this->id)){
 			$wars = $this->getMyWars();
-			$members = $this->getMembers();
+			$members = $this->getPastAndCurrentMembers();
 			if(count($wars) + count($members)==0){
 				global $db;
 				$procedure = buildProcedure('p_clan_delete', $this->id);
@@ -568,7 +649,7 @@ class clan{
 					throw new illegalQueryException('The database encountered an error. ' . $db->error);
 				}
 			}elseif($this->accessType == 'CL'){
-				$clanMembers = $this->getCurrentMembers();
+				$clanMembers = $this->getMembers();
 				$users = array();
 				foreach ($clanMembers as $member) {
 					$clanRank = $member->getClanRank();
