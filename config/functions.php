@@ -153,6 +153,17 @@ function generateRandomPassword(){
 	return $password;
 }
 
+function randomPlayerTag(){
+	$tag = '#';
+	$chars = str_split("026789CDEGHJLPQRSUVWY");
+	$length = count($chars)-1;
+	for ($i=0; $i < rand(8,10); $i++) { 
+		$index = rand(0, $length);
+		$tag .= $chars[$index];
+	}
+	return $tag;
+}
+
 function userHasAccessToUpdatePlayer($player){
 	global $loggedInUser;
 	global $loggedInUserPlayer;
@@ -230,6 +241,14 @@ function convertType($code){
 	return $clanType[$code];
 }
 
+function convertBackType($code){
+	$clanType = array(
+		'AN' => 'open',
+		'IN' => 'inviteOnly',
+		'CL' => 'closed');
+	return $clanType[$code];
+}
+
 function convertFrequency($code){
 	$warFrequency = array(
 		'unknown' => 'NS',
@@ -238,6 +257,17 @@ function convertFrequency($code){
 		'moreThanOncePerWeek' => 'TW',
 		'oncePerWeek' => 'OW',
 		'lessThanOncePerWeek' => 'RA');
+	return $warFrequency[$code];
+}
+
+function convertBackFrequency($code){
+	$warFrequency = array(
+		'NS' => 'unknown',
+		'AL' => 'always',
+		'NE' => 'never',
+		'TW' => 'moreThanOncePerWeek',
+		'OW' => 'oncePerWeek',
+		'RA' => 'lessThanOncePerWeek');
 	return $warFrequency[$code];
 }
 
@@ -250,16 +280,29 @@ function convertRank($code){
 	return $ranks[$code];
 }
 
+function convertBackRank($code){
+	$ranks = array(
+		'ME' => 'member',
+		'EL' => 'admin',
+		'CO' => 'coLeader',
+		'LE' => 'leader');
+	return $ranks[$code];
+}
+
 function refreshClanInfo($clan){
 	try{
 		$api = new clanApi();
 		$clanInfo = $api->getClanInformation($clan->get('tag'));
+	}catch(apiException $e){
+		error_log($e->getReasonMessage());
+		return false;
 	}catch(Exception $e){
 		error_log($e->getMessage());
-		return -1;
+		return false;
 	}
 	$clan->updateFromApi($clanInfo);
 	$members = $clan->getMembers();
+	$apiMembers = array();
 	foreach ($clanInfo->memberList as $apiMember) {
 		$count = 0;
 		foreach ($members as $key => $temp) {
@@ -272,13 +315,12 @@ function refreshClanInfo($clan){
 		if($count==1){
 			$member->updateFromApi($apiMember);
 		}elseif ($count==0) {
-			//TODO: The player needs to be added to the clan
-			//		Need the player tag though, which is not provided yet
+			$apiMembers[] = $apiMember;
 		}
 	}
 	foreach ($members as $member) {
 		$member->leaveClan();
 	}
 	$clan->getMembers(true);//reload the members after some have left
-	return 0;
+	return $apiMembers;
 }

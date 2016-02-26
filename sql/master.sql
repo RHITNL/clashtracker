@@ -1,3 +1,5 @@
+drop table if exists war_edit_requests;
+drop table if exists war_allowed_users;
 drop table if exists api_keys;
 drop table if exists clan_allowed_users;
 drop table if exists player_allowed_users;

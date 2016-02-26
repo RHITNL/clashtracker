@@ -78,7 +78,7 @@ $lootAvailablePastWeek = ($goldAvailablePastWeek||$elixirAvailablePastWeek||$oil
 $playerClan = $player->getMyClan();
 $playerClans = $player->getMyClans();
 
-$largestValue = max($gold[0]['lootAmount'], $elixir[0]['lootAmount'], $oil[0]['lootAmount']);
+$largestValue = max(0, $gold[0]['lootAmount'], $elixir[0]['lootAmount'], $oil[0]['lootAmount']);
 
 $userHasAccessToUpdatePlayer = userHasAccessToUpdatePlayer($player);
 require('header.php');
@@ -95,17 +95,30 @@ require('header.php');
 		<li class="active"><?=htmlspecialchars($player->get('name'));?></li>
 	</ol>
 	<?require('showMessages.php');?>
-	<div class="col-md-12">
-		<div class="col-md-6">
-			<h1>
-				<?$url = $player->get('leagueUrl');
-				if(strlen($url)>0){?>
-					<img src="<?=$url;?>">
-				<?}?>
+	<div class="row col-md-12">
+		<?$url = $player->get('leagueUrl');
+		$xs=0;$md=0;
+		if(strlen($url)>0){
+			$xs=3;$md=1;?>
+			<div class="col-xs-3 col-md-1">
+				<img src="<?=$url;?>">
+			</div>
+		<?}?>
+		<div class="col-xs-<?=12-$xs;?> col-md-<?=8-$md;?>">
+			<h1 style="margin-bottom: 0px;">
 				<?=htmlspecialchars($player->get('name'));?>
 			</h1>
+			<div class="col-xs-12 col-md-12">
+				<h6 style="margin-top: 0px;">
+				<?if(isset($clan)){?>
+					<?=rankFromCode($player->get('rank', $clan->get('id')));?>
+				<?}else{?>
+					<?=rankFromCode($player->get('rank'));?>
+				<?}?>
+				</h6>
+			</div>
 		</div>
-		<div class="col-md-6 text-right">
+		<div class="col-xs-12 col-md-4 text-right">
 			<?if($userHasAccessToUpdatePlayer){?>
 				<div id="editNameButtonDiv">
 					<button type="button" class="btn btn-primary" onclick="showEditNameForm();">Edit Name</button>
@@ -126,36 +139,30 @@ require('header.php');
 				</div>
 			<?}?>
 		</div>
-		<div class="col-md-12">
-			<?if(isset($clan)){?>
-				<h6><?=rankFromCode($player->get('rank', $clan->get('id')));?></h6>
-			<?}else{?>
-				<h6><?=rankFromCode($player->get('rank'));?></h6>
-			<?}?>
-		</div>
 	</div>
 	<?if($warsAvailable){?>
-		<div class="col-md-12">
+		<div class="row col-md-12">
 			<h3><i class="fa fa-star" style="color: gold;"></i>&nbsp;Wars</h3>
 			<div class="col-md-12">
 				<div class="col-md-12">
-					<div class="col-md-3 text-center">
+					<div class="col-md-3 text-center" style="margin-bottom: 10px;">
 						<h4>Attacks</h4><br>
 						<canvas id="attackPie"></canvas>
 					</div>
 					<?if(count($defences)>0){?>
-						<div class="col-md-3 text-center">
+						<div class="col-md-3 text-center" style="margin-bottom: 10px;">
 							<h4>Defences</h4><br>
 							<canvas id="defencePie"></canvas>
 						</div>
 					<?}?>
-					<div class="jumbotron col-md-6">
-						<label class="col-sm-8">Average <i class="fa fa-star" style="color: gold;"></i> per attack</label>
-						<div class="col-sm-4 text-right">
+					<div class="col-md-1"></div>
+					<div class="jumbotron col-xs-12 col-md-5">
+						<label class="col-xs-8 col-sm-7">Average <i class="fa fa-star" style="color: gold;"></i> per attack</label>
+						<div class="col-xs-4 col-sm-5 text-right">
 							<p><?=round($averageAttackStars, 2);?></p>
 						</div>
-						<label class="col-sm-8">Average <i class="fa fa-star" style="color: gold;"></i> per defence</label>
-						<div class="col-sm-4 text-right">
+						<label class="col-xs-8 col-sm-7">Average <i class="fa fa-star" style="color: gold;"></i> per defence</label>
+						<div class="col-xs-4 col-sm-5 text-right">
 							<p><?=round($averageDefenceStars, 2);?></p>
 						</div>
 					</div>
@@ -163,14 +170,14 @@ require('header.php');
 			</div>
 		</div><br>
 	<?}?>
-	<div class="col-md-12">
+	<div class="row col-md-12">
 		<h3><i class="fa fa-coins" style="color: gold;"></i>&nbsp;Loot</h3>
 		<?if($userHasAccessToUpdatePlayer){?>
 			<div class="col-md-12">
 				<div id="recordLootButtonDiv" class="col-md-12">
 					<button type="button" class="btn btn-primary" onclick="showRecordLootForm();">Record Loot</button>
 				</div>
-				<div id="recordLootDiv" hidden class="col-md-12">
+				<div id="recordLootDiv" hidden class="col-md-12" style="margin-bottom: 10px;">
 					<form class="form-inline" action="/processRecordLoot.php" method="POST">
 						<input hidden name="type" value="single"></input>
 						<input hidden name="playerId" value="<?=$player->get('id');?>"></input>
@@ -178,30 +185,30 @@ require('header.php');
 							<input hidden name="clanId" value="<?=$clan->get('id');?>"></input>
 						<?}?>
 						<div class="col-md-3">
-							<div class="form-group">
+							<div class="form-group" style="margin-bottom: 10px;">
 								<label for="gold">Gold </label>
 								<input type="number" class="form-control" id="gold" name="gold" placeholder="<?=(count($gold)>0) ? $gold[0]['lootAmount'] : '0';?>">
 							</div>
 						</div>
 						<div class="col-md-3">
-							<div class="form-group">
+							<div class="form-group" style="margin-bottom: 10px;">
 								<label for="elixir">Elixir </label>
 								<input type="number" class="form-control" id="elixir" name="elixir" placeholder="<?=(count($elixir)>0) ? $elixir[0]['lootAmount'] : '0';?>">
 							</div>
 						</div>
 						<div class="col-md-3">
-							<div class="form-group">
+							<div class="form-group" style="margin-bottom: 10px;">
 								<label for="darkElixir">Dark Elixir </label>
 								<input type="number" class="form-control" id="darkElixir" name="darkElixir" placeholder="<?=(count($oil)>0) ? $oil[0]['lootAmount'] : '0';?>">
 							</div>
 						</div>
 						<div class="col-md-3">
-							<button type="cancel" class="btn btn-default text-right" onclick="return showRecordLootButton();">Cancel</button>
+							<button type="cancel" class="btn btn-default text-right" style="margin-right: 10px;" onclick="return showRecordLootButton();">Cancel</button>
 							<button type="submit" class="btn btn-primary text-right">Save</button>
 						</div>
 					</form>
 				</div>
-			</div><br><br>
+			</div>
 		<?}?>
 		<div class="col-md-12">
 			<?if($lootAvailable){?>
@@ -234,23 +241,23 @@ require('header.php');
 						<canvas id="lootLineChart" height="100px"></canvas>
 					</div>
 					<div class="col-md-1"></div>
-					<div class="jumbotron col-md-5">
+					<div class="jumbotron col-xs-12 col-md-5">
 						<div id="allTimeAverage">
 							<?if($goldAvailable){?>
-								<label class="col-sm-4">Average&nbsp;<i class="fa fa-2x fa-coins" style="color: gold;"></i></label>
-								<div class="col-sm-8 text-right">
+								<label class="col-xs-6 col-sm-6">Average&nbsp;<i class="fa fa-2x fa-coins" style="color: gold;"></i></label>
+								<div class="col-xs-6 col-sm-6 text-right">
 									<p><?=number_format($player->getAverageGold(), 0, '.', ',') . '/week';?></p>
 								</div>
 							<?}
 							if($elixirAvailable){?>
-								<label class="col-sm-4">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint" style="color: #FF09F4;"></i></label>
-								<div class="col-sm-8 text-right">
+								<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint" style="color: #FF09F4;"></i></label>
+								<div class="col-xs-6 col-sm-6 text-right">
 									<p><?=number_format($player->getAverageElixir(), 0, '.', ',') . '/week';?></p>
 								</div>
 							<?}
 							if($oilAvailable){?>
-								<label class="col-sm-4">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint"></i></label>
-								<div class="col-sm-8 text-right">
+								<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint"></i></label>
+								<div class="col-xs-6 col-sm-6 text-right">
 									<p><?=number_format($player->getAverageDarkElixir(), 0, '.', ',') . '/week';?></p>
 								</div>
 							<?}?>
@@ -258,20 +265,20 @@ require('header.php');
 						<?if($lootAvailablePastYear){?>
 							<div id="pastYearAverage" hidden>
 								<?if($goldAvailable){?>
-									<label class="col-sm-4">Average&nbsp;<i class="fa fa-2x fa-coins" style="color: gold;"></i></label>
-									<div class="col-sm-8 text-right">
+									<label class="col-xs-6 col-sm-6">Average&nbsp;<i class="fa fa-2x fa-coins" style="color: gold;"></i></label>
+									<div class="col-xs-6 col-sm-6 text-right">
 										<p><?=number_format($player->getAverageGold(yearAgo()), 0, '.', ',') . '/week';?></p>
 									</div>
 								<?}
 								if($elixirAvailable){?>
-									<label class="col-sm-4">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint" style="color: #FF09F4;"></i></label>
-									<div class="col-sm-8 text-right">
+									<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint" style="color: #FF09F4;"></i></label>
+									<div class="col-xs-6 col-sm-6 text-right">
 										<p><?=number_format($player->getAverageElixir(yearAgo()), 0, '.', ',') . '/week';?></p>
 									</div>
 								<?}
 								if($oilAvailable){?>
-									<label class="col-sm-4">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint"></i></label>
-									<div class="col-sm-8 text-right">
+									<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint"></i></label>
+									<div class="col-xs-6 col-sm-6 text-right">
 										<p><?=number_format($player->getAverageDarkElixir(yearAgo()), 0, '.', ',') . '/week';?></p>
 									</div>
 								<?}?>
@@ -280,20 +287,20 @@ require('header.php');
 						if($lootAvailablePastMonth){?>
 							<div id="pastMonthAverage" hidden>
 								<?if($goldAvailable){?>
-									<label class="col-sm-4">Average&nbsp;<i class="fa fa-2x fa-coins" style="color: gold;"></i></label>
-									<div class="col-sm-8 text-right">
+									<label class="col-xs-6 col-sm-6">Average&nbsp;<i class="fa fa-2x fa-coins" style="color: gold;"></i></label>
+									<div class="col-xs-6 col-sm-6 text-right">
 										<p><?=number_format($player->getAverageGold(monthAgo()), 0, '.', ',') . '/week';?></p>
 									</div>
 								<?}
 								if($elixirAvailable){?>
-									<label class="col-sm-4">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint" style="color: #FF09F4;"></i></label>
-									<div class="col-sm-8 text-right">
+									<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint" style="color: #FF09F4;"></i></label>
+									<div class="col-xs-6 col-sm-6 text-right">
 										<p><?=number_format($player->getAverageElixir(monthAgo()), 0, '.', ',') . '/week';?></p>
 									</div>
 								<?}
 								if($oilAvailable){?>
-									<label class="col-sm-4">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint"></i></label>
-									<div class="col-sm-8 text-right">
+									<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint"></i></label>
+									<div class="col-xs-6 col-sm-6 text-right">
 										<p><?=number_format($player->getAverageDarkElixir(monthAgo()), 0, '.', ',') . '/week';?></p>
 									</div>
 								<?}?>
@@ -302,20 +309,20 @@ require('header.php');
 						if($lootAvailablePastWeek){?>
 							<div id="pastWeekAverage" hidden>
 								<?if($goldAvailable){?>
-									<label class="col-sm-4">Average&nbsp;<i class="fa fa-2x fa-coins" style="color: gold;"></i></label>
-									<div class="col-sm-8 text-right">
+									<label class="col-xs-6 col-sm-6">Average&nbsp;<i class="fa fa-2x fa-coins" style="color: gold;"></i></label>
+									<div class="col-xs-6 col-sm-6 text-right">
 										<p><?=number_format($player->getAverageGold(weekAgo()), 0, '.', ',') . '/week';?></p>
 									</div>
 								<?}
 								if($elixirAvailable){?>
-									<label class="col-sm-4">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint" style="color: #FF09F4;"></i></label>
-									<div class="col-sm-8 text-right">
+									<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint" style="color: #FF09F4;"></i></label>
+									<div class="col-xs-6 col-sm-6 text-right">
 										<p><?=number_format($player->getAverageElixir(weekAgo()), 0, '.', ',') . '/week';?></p>
 									</div>
 								<?}
 								if($oilAvailable){?>
-									<label class="col-sm-4">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint"></i></label>
-									<div class="col-sm-8 text-right">
+									<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint"></i></label>
+									<div class="col-xs-6 col-sm-6 text-right">
 										<p><?=number_format($player->getAverageDarkElixir(weekAgo()), 0, '.', ',') . '/week';?></p>
 									</div>
 								<?}?>
@@ -333,16 +340,16 @@ require('header.php');
 		</div><br>
 	</div><br>
 	<?if(count($playerClans)>0){?>
-		<div class="col-md-12">
+		<div class="row col-md-12">
 			<?if(count($playerClans)>1){?>
 				<h3><i class="fa fa-shield"></i>&nbsp;Clans</h3>
 			<?}else{?>
 				<h3><i class="fa fa-shield"></i>&nbsp;Clan</h3>
 			<?}
 			if(isset($playerClan)){?>
-				<div class="jumbotron col-md-5">
-					<label class="col-sm-4">Current Clan</label>
-					<div class="col-sm-8 text-right" style="cursor: pointer;" onclick="clickRow('clan.php?clanId=<?=$playerClan->get("id");?>');">
+				<div class="jumbotron col-xs-12 col-md-5">
+					<label class="col-xs-4 col-md-6">Current Clan</label>
+					<div class="col-xs-8 col-md-6 text-right" style="cursor: pointer;" onclick="clickRow('clan.php?clanId=<?=$playerClan->get("id");?>');">
 						<p>
 							<?$url = $playerClan->get('badgeUrl');
 							if(strlen($url)>0){?>
@@ -351,18 +358,18 @@ require('header.php');
 							<?=htmlspecialchars($playerClan->get('name'));?>
 						</p>
 					</div>
-					<label class="col-sm-4">Current Rank</label>
-					<div class="col-sm-8 text-right">
+					<label class="col-xs-4 col-md-6">Current Rank</label>
+					<div class="col-xs-8 col-md-6 text-right">
 						<p><?=rankFromCode($player->get('rank'));?></p>
 					</div>
-					<label class="col-sm-4">Date Joined</label>
-					<div class="col-sm-8 text-right">
+					<label class="col-xs-4 col-md-6">Date Joined</label>
+					<div class="col-xs-8 col-md-6 text-right">
 						<p><?=date('j F, Y', strtotime($playerClan->playerJoined($player->get('id'))));?></p>
 					</div>
 				</div>
 			<?}
 			if((isset($playerClan)&&count($playerClans)>1)||(!isset($playerClan)&&count($playerClans)>0)){?>
-				<div class="col-md-7">
+				<div class="col-xs-12 col-md-7">
 					<?if((isset($playerClan)&&count($playerClans)>2) || (!isset($playerClan)&&count($playerClans)>1)){?>
 						<h4>Previous Clans</h4>
 					<?}else{?>
