@@ -15,11 +15,11 @@ try{
 $clanId = $_GET['clanId'];
 
 $clan1 = $war->get('clan1');
-if($clan1->get('id') != $clanId){
-	$clan2 = $clan1;
-	$clan1 = $war->get('clan2');
-}else{
-	$clan2 = $war->get('clan2');
+$clan2 = $war->get('clan2');
+if($clan2->get('id') == $clanId){
+	$temp = $clan1;
+	$clan1 = $clan2;
+	$clan2 = $temp;
 }
 
 $clan1Players = $war->getMyWarPlayers($clan1);
