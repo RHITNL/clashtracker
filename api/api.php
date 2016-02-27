@@ -67,7 +67,6 @@ class api{
 		global $db;
 		$procedure = buildProcedure('p_proxy_request_count_update', $env, $count, date('F'));
 		if(($db->multi_query($procedure)) === TRUE){
-			$result = $db->store_result()->fetch_object();
 			while ($db->more_results()){
 				$db->next_result();
 			}
