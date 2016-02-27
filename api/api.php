@@ -34,7 +34,7 @@ class api{
 
 	private function determineProxy(){
 		global $db;
-		$procedure = buildProcedure('p_proxy_request_get', $name);
+		$procedure = buildProcedure('p_proxy_request_get');
 		if(($db->multi_query($procedure)) === TRUE){
 			$results = $db->store_result();
 			while ($db->more_results()){
@@ -50,7 +50,7 @@ class api{
 						$count = $proxyObj->count;
 					}
 					$limit = $proxyObj->monthly_limit;
-					if($limit - $count > 0){
+					if($limit - $count >= 0){
 						$env = $proxyObj->env;
 						$this->updateProxyCount($env, $count+1);
 						return parse_url($env);
