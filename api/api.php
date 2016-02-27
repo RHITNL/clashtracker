@@ -51,7 +51,7 @@ class api{
 					}
 					$limit = $proxyObj->monthly_limit;
 					if($limit - $count > 0){
-						$env = $proxyObj->env
+						$env = $proxyObj->env;
 						$this->updateProxyCount($env, $count+1);
 						return parse_url($env);
 					}
