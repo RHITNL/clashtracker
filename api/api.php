@@ -34,7 +34,7 @@ class api{
 
 	private function determineProxy(){
 		global $db;
-		$procedure = buildProcedure('p_proxy_request_count', $name);
+		$procedure = buildProcedure('p_proxy_request_get', $name);
 		if(($db->multi_query($procedure)) === TRUE){
 			$results = $db->store_result();
 			while ($db->more_results()){
