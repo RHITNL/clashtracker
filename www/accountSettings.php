@@ -22,10 +22,10 @@ require('header.php');
 	<h1>Account Settings</h1><br>
 	<div class="col-md-3 sidebar">
 		<ul class="nav nav-sidebar">
-			<li id="generalTab"><a href="?tab=general">General</a></li>
-			<li id="passwordTab"><a href="?tab=password">Password</a></li>
-			<li id="playerTab"><a href="?tab=player">Player</a></li>
-			<li id="clanTab"><a href="?tab=clan">Clan</a></li>
+			<li><a href="?tab=general">General</a></li>
+			<li><a href="?tab=password">Password</a></li>
+			<li><a href="?tab=player">Player</a></li>
+			<li><a href="?tab=clan">Clan</a></li>
 		</ul>
 	</div>
 	<div class="col-md-9 main">

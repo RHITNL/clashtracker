@@ -69,7 +69,7 @@
 					</div>
 					<a type="button" class="btn btn-success" onclick="addRow();">Add</a>
 					<?if(count($allowedUsers)>0){?>
-						<a type="button" class="btn btn-danger" href="/processDisallowAllUserAccess.php">Remove All</a>
+						<a type="button" class="btn btn-danger" href="/processDisallowAllUserAccessForClan.php">Remove All</a>
 					<?}?><br><br>
 					<?if(count($allowedUsers)>0){?>
 						<div id="USTable" class="table-responsive">

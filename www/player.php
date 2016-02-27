@@ -333,7 +333,7 @@ require('header.php');
 			<?}else{?>
 				<div class="col-md-8">
 					<div class="alert alert-info" role="alert">
-						<strong>Oh no!</strong> We don't have enough records for this player's loot to display any stats. You can start by adding some above.
+						<strong>Oh no!</strong> We don't have enough records for this player's loot to display any stats. <?if($userHasAccessToUpdatePlayer){print "You can start by adding some above.";}?>
 					</div>
 				</div>
 			<?}?>
@@ -347,7 +347,7 @@ require('header.php');
 				<h3><i class="fa fa-shield"></i>&nbsp;Clan</h3>
 			<?}
 			if(isset($playerClan)){?>
-				<div class="jumbotron col-xs-12 col-md-5">
+				<div class="jumbotron col-xs-12 col-md-6">
 					<label class="col-xs-4 col-md-6">Current Clan</label>
 					<div class="col-xs-8 col-md-6 text-right" style="cursor: pointer;" onclick="clickRow('clan.php?clanId=<?=$playerClan->get("id");?>');">
 						<p>
@@ -369,7 +369,7 @@ require('header.php');
 				</div>
 			<?}
 			if((isset($playerClan)&&count($playerClans)>1)||(!isset($playerClan)&&count($playerClans)>0)){?>
-				<div class="col-xs-12 col-md-7">
+				<div class="col-xs-12 col-md-6">
 					<?if((isset($playerClan)&&count($playerClans)>2) || (!isset($playerClan)&&count($playerClans)>1)){?>
 						<h4>Previous Clans</h4>
 					<?}else{?>

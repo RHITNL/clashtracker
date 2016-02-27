@@ -139,12 +139,14 @@ require('header.php');
 			</div>
 		<?}if(count($apiMembers) > 0){?>
 			<div class="alert alert-info">
-				<strong>Oh no!</strong> The following members are not saved in our system. We need their <strong>player tag</strong> for a unique identifier. Please input them below and hit <strong>save</strong>.
+				<strong>Oh no!</strong> The following members are not saved in our system. We need their <strong>player tag</strong> for a unique identifier. <?if($userHasAccessToUpdateClan){print "Please input them below and hit <strong>save</strong>.";}?>
 			</div>
 			<form class="form-horizontal" action="/processAddMembersFromApi.php" method="POST">
-				<div class="col-md-12 text-right">
-					<button type="submit" class="btn btn-success text-right">Save</button>
-				</div>
+				<?if($userHasAccessToUpdateClan){?>
+					<div class="col-md-12 text-right">
+						<button type="submit" class="btn btn-success text-right">Save</button>
+					</div>
+				<?}?>
 				<input hidden name="clanId" value="<?=$clan->get('id');?>"></input>
 				<div class="table-responsive col-md-12">
 					<table class="table table-hover">
@@ -156,7 +158,9 @@ require('header.php');
 								<th>Trophies</th>
 								<th>Troops donated:</th>
 								<th>Troops received:</th>
-								<th class="text-right">Player Tag</th>
+								<?if($userHasAccessToUpdateClan){?>
+									<th class="text-right">Player Tag</th>
+								<?}?>
 							</tr>
 						</thead>
 						<tbody>
@@ -173,10 +177,12 @@ require('header.php');
 									<td><?=$apiMember->trophies;?></td>
 									<td><?=$apiMember->donations;?></td>
 									<td><?=$apiMember->donationsReceived;?></td>
-									<td class="text-right">
-										<input type="text" class="form-control input-sm text-right" id="playerTags[]" name="playerTags[]" placeholder="<?=randomPlayerTag();?>"></input>
-										<input hidden id="names[]" name="names[]" value="<?=$apiMember->name;?>"></input>
-									</td>
+									<?if($userHasAccessToUpdateClan){?>
+										<td class="text-right">
+											<input type="text" class="form-control input-sm text-right" id="playerTags[]" name="playerTags[]" placeholder="<?=randomPlayerTag();?>"></input>
+											<input hidden id="names[]" name="names[]" value="<?=$apiMember->name;?>"></input>
+										</td>
+									<?}?>
 								</tr>
 							<?}?>
 						</tbody>

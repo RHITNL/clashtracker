@@ -12,6 +12,12 @@ try{
 	exit;
 }
 
+if(!userHasAccessToUpdateClan($clan)){
+	$_SESSION['curError'] = NO_ACCESS;
+	header('Location: /clan.php?clanId=' . $clanId);
+	exit;	
+}
+
 $playerTags = $_POST['playerTags'];
 $names = $_POST['names'];
 
