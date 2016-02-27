@@ -1,3 +1,4 @@
+drop table if exists proxy_request_count;
 drop table if exists war_edit_requests;
 drop table if exists war_allowed_users;
 drop table if exists api_keys;
