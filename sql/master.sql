@@ -949,3 +949,28 @@ begin
 	select war.* from war_player join war on war.id = war_player.war_id where player_id = varPlayerId order by date_created desc;
 end //
 delimiter ;
+
+create table proxy_request_count(
+	count int default 0,
+	month varchar(10) not null,
+	monthly_limit int not null,
+	env varchar(200) not null,
+	ip varchar(39) not null,
+	primary key(env)
+);
+
+drop procedure if exists p_proxy_request_get;
+delimiter //
+create procedure p_proxy_request_get()
+begin
+	select * from proxy_request_count;
+end //
+delimiter ;
+
+drop procedure if exists p_proxy_request_count_update;
+delimiter //
+create procedure p_proxy_request_count_update(varEnv varchar(200), varCount int, varMonth varchar(10))
+begin
+	update proxy_request_count set count = varCount, month = varMonth where env = varEnv;
+end //
+delimiter ;

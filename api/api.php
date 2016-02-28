@@ -50,7 +50,7 @@ class api{
 						$count = $proxyObj->count;
 					}
 					$limit = $proxyObj->monthly_limit;
-					if($limit - $count >= 0){
+					if($limit - $count > 0){
 						$env = $proxyObj->env;
 						$this->updateProxyCount($env, $count+1);
 						$this->ip = $proxyObj->ip;

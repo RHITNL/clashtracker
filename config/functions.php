@@ -303,6 +303,7 @@ function refreshClanInfo($clan){
 	$clan->updateFromApi($clanInfo);
 	$members = $clan->getMembers();
 	$apiMembers = array();
+	$duplicateNames = array();
 	foreach ($clanInfo->memberList as $apiMember) {
 		$count = 0;
 		foreach ($members as $key => $temp) {
@@ -314,8 +315,12 @@ function refreshClanInfo($clan){
 		}
 		if($count==1){
 			$member->updateFromApi($apiMember);
-		}elseif ($count==0) {
-			$apiMembers[] = $apiMember;
+		}elseif($count==0) {
+			if(!in_array($apiMember->name, $duplicateNames)){
+				$apiMembers[] = $apiMember;
+			}
+		}else{
+			$duplicateNames[] = $apiMember->name;
 		}
 	}
 	foreach ($members as $member) {
