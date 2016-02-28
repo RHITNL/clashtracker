@@ -9,11 +9,8 @@ class api{
 	}
 
 	protected function request($extension){
-		$curl = curl_init();
 		$url = 'https://api.clashofclans.com/v1/' . $extension;
-		curl_setopt($curl, CURLOPT_URL, $url);
-		curl_setopt($curl, CURLOPT_HTTPHEADER, $this->headers);
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		$curl = curl_init();
 		if(!DEVELOPMENT){
 			$creds = $this->determineProxy();
 			$proxyUrl = $creds['host'].":".$creds['port'];
@@ -24,6 +21,9 @@ class api{
 		}
 		$apiKey = new apiKey($this->ip);
 		$this->headers = array('Accept: application/json', 'authorization: Bearer ' . $apiKey->get('apiKey'));
+		curl_setopt($curl, CURLOPT_URL, $url);
+		curl_setopt($curl, CURLOPT_HTTPHEADER, $this->headers);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		$result = json_decode(curl_exec($curl));
 		curl_close($curl);
 		if($result->reason){
