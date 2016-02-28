@@ -48,12 +48,12 @@ try{
 }catch(Exception $e){
 	$enemyClan = new clan();
 	$enemyClan->create($enemyClanTag);
-}
-if(refreshClanInfo($enemyClan) === false){
-	$enemyClan->delete();
-	$_SESSION['curError'] = 'Enemy Clan Tag was not found in Clash of Clans.';
-	header('Location: /addWar.php?clanId=' . $clan->get('id'));
-	exit;
+	if(refreshClanInfo($enemyClan) === false){
+		$enemyClan->delete();
+		$_SESSION['curError'] = 'Enemy Clan Tag was not found in Clash of Clans.';
+		header('Location: /addWar.php?clanId=' . $clan->get('id'));
+		exit;
+	}
 }
 
 $war = new war();

@@ -51,10 +51,3 @@ if(DEVELOPMENT){
 
 // Create connection
 $db = new mysqli(DBHOST, DBUSER, DBPASS, DBNAME);
-
-if(DEVELOPMENT){
-	$ip = trim(shell_exec("dig +short myip.opendns.com @resolver1.opendns.com"));
-}else{
-	$ip = '52.5.38.201';
-}
-define('IP', $ip);

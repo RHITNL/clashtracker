@@ -5,9 +5,7 @@ class api{
 	private $headers;
 
 	public function __construct(){
-		$apiKey = new apiKey(IP);
-		$this->key = $apiKey->get('apiKey');
-		$this->headers = array('Accept: application/json', 'authorization: Bearer ' . $this->key);
+		$this->ip = trim(shell_exec("dig +short myip.opendns.com @resolver1.opendns.com"));
 	}
 
 	protected function request($extension){
@@ -24,6 +22,8 @@ class api{
 			curl_setopt($curl, CURLOPT_PROXYAUTH, CURLAUTH_BASIC);
 			curl_setopt($curl, CURLOPT_PROXYUSERPWD, $proxyAuth);
 		}
+		$apiKey = new apiKey($this->ip);
+		$this->headers = array('Accept: application/json', 'authorization: Bearer ' . $apiKey->get('apiKey'));
 		$result = json_decode(curl_exec($curl));
 		curl_close($curl);
 		if($result->reason){
@@ -53,6 +53,7 @@ class api{
 					if($limit - $count >= 0){
 						$env = $proxyObj->env;
 						$this->updateProxyCount($env, $count+1);
+						$this->ip = $proxyObj->ip;
 						return parse_url($env);
 					}
 				}
