@@ -668,7 +668,8 @@ class player{
 				}
 				if ($results->num_rows) {
 					while ($playerObj = $results->fetch_object()) {
-						$player = new player($playerObj->id);
+						$player = new player();
+						$player->loadByObj($playerObj);
 						$players[] = $player;
 					}
 				}

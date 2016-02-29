@@ -323,9 +323,11 @@ function refreshClanInfo($clan){
 			$duplicateNames[] = $apiMember->name;
 		}
 	}
-	foreach ($members as $member) {
-		$member->leaveClan();
+	if(count($members)>0){
+		foreach ($members as $member) {
+			$member->leaveClan();
+		}
+		$clan->getMembers(true);//reload the members after some have left
 	}
-	$clan->getMembers(true);//reload the members after some have left
 	return $apiMembers;
 }

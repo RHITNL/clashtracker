@@ -566,7 +566,8 @@ class clan{
 				}
 				if ($results->num_rows) {
 					while ($clanObj = $results->fetch_object()) {
-						$clan = new clan($clanObj->id);
+						$clan = new clan();
+						$clan->loadByObj($clanObj);
 						$clans[] = $clan;
 					}
 				}
