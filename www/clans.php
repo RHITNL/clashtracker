@@ -27,7 +27,7 @@ require('header.php');
 				<div class="col-md-3">
 					<div class="form-group">
 						<label for="clanTag">Clan Tag:</label>
-						<input type="text" class="form-control" id="clanTag" name="clanTag" placeholder="#JF73JOS" value="<?=$_SESSION['clanTag'];?>"></input>
+						<input type="text" class="form-control" id="clanTag" name="clanTag" placeholder="<?=randomTag();?>" value="<?=$_SESSION['clanTag'];?>"></input>
 					</div>
 				</div>
 				<div class="col-md-9 text-left">

@@ -47,7 +47,7 @@ require('header.php');
 				<div class="form-group">
 					<label class="col-sm-4 control-lable" for="playerTag">Player Tag:</label>
 					<div class="col-sm-8">
-						<input type="text" class="form-control" id="playerTag" name="playerTag" placeholder="#JKFH83J" value="<?=$_SESSION['playerTag'];?>"></input>
+						<input type="text" class="form-control" id="playerTag" name="playerTag" placeholder="<?=randomTag();?>" value="<?=$_SESSION['playerTag'];?>"></input>
 					</div>
 				</div>
 			</div>

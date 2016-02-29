@@ -67,7 +67,7 @@ function correctTag($tag){
 }
 
 function weekAgo(){
-	return strtotime('-1 week');
+	return strtotime('-8 days');
 }
 
 function dayAgo(){
@@ -153,11 +153,12 @@ function generateRandomPassword(){
 	return $password;
 }
 
-function randomPlayerTag(){
+function randomTag(){
 	$tag = '#';
 	$chars = str_split("026789CDEGHJLPQRSUVWY");
 	$length = count($chars)-1;
-	for ($i=0; $i < rand(8,10); $i++) { 
+	$maxLen = rand(8,10);
+	for ($i=0; $i < $maxLen; $i++) { 
 		$index = rand(0, $length);
 		$tag .= $chars[$index];
 	}

@@ -726,4 +726,32 @@ class clan{
 			throw new illegalFunctionCallException('ID not set for getting linked player.');
 		}
 	}
+
+	public function getPlayersAvailableForLootReport($type, $sinceTime=null){
+		global $db;
+		if(isset($this->id)){
+			if(!isset($sinceTime)){$sinceTime=weekAgo();}
+			$date = date('Y-m-d H:m:s', $sinceTime);
+			$procedure = buildProcedure('p_clan_players_for_loot_report', $this->id, $type, $date);
+			if(($db->multi_query($procedure)) === TRUE){
+				$results = $db->store_result();
+				while ($db->more_results()){
+					$db->next_result();
+				}
+				$players = array();
+				if ($results->num_rows) {
+					while ($playerObj = $results->fetch_object()) {
+						$player = new player();
+						$player->loadByObj($playerObj);
+						$players[] = $player;
+					}
+				}
+				return $players;
+			}else{
+				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set for getting linked player.');
+		}
+	}
 }

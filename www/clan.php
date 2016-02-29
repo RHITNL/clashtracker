@@ -179,7 +179,7 @@ require('header.php');
 									<td><?=$apiMember->donationsReceived;?></td>
 									<?if($userHasAccessToUpdateClan){?>
 										<td class="text-right">
-											<input type="text" class="form-control input-sm text-right" id="playerTags[]" name="playerTags[]" placeholder="<?=randomPlayerTag();?>"></input>
+											<input type="text" class="form-control input-sm text-right" id="playerTags[]" name="playerTags[]" placeholder="<?=randomTag();?>"></input>
 											<input hidden id="names[]" name="names[]" value="<?=$apiMember->name;?>"></input>
 										</td>
 									<?}?>

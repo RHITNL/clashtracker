@@ -281,11 +281,8 @@ class player{
 	private function getLoot($type, $earliestDate=0){
 		global $db;
 		if(isset($this->id)){
-			if($earliestDate == 0 && isset($this->loot[$type])){
-				return $this->loot[$type];
-			}
 			if(!isset($this->loot[$type])){
-				$procedure = buildProcedure('p_player_get_loot', $this->id, $type);
+				$procedure = buildProcedure('p_player_get_loot', $this->id);
 				if(($db->multi_query($procedure)) === TRUE){
 					$results = $db->store_result();
 					while ($db->more_results()){
@@ -299,16 +296,22 @@ class player{
 							$tempLoot['dateRecorded'] = $lootObj->date_recorded;
 							$tempLoot['lootType'] = $lootObj->loot_type;
 							$tempLoot['lootAmount'] = $lootObj->loot_amount;
-							$loot[] = $tempLoot;
+							$lootType = $lootObj->loot_type;
+							if(!isset($loot[$lootType])){
+								$loot[$lootType] = array();
+							}
+							$loot[$lootType][] = $tempLoot;
 						}
 					}
-					$this->loot[$type] = $loot;
+					$this->loot = $loot;
 				}else{
 					throw new illegalQueryException('The database encountered an error. ' . $db->error);
 				}
-			}else{
-				$loot = $this->loot[$type];
 			}
+			if($earliestDate == 0){
+				return $this->loot[$type];
+			}
+			$loot = $this->loot[$type];
 			$length = 0;
 			foreach ($loot as $tempLoot) {
 				if(strtotime($tempLoot['dateRecorded']) < $earliestDate){
@@ -341,16 +344,7 @@ class player{
 	 * @param $perTimePeriod int Time in seconds for the average. (e.g. If you want the average loot per week, pass in 604800 or the constant WEEK)
 	 */
 	private function getAverageLoot($type, $sinceTime=0, $perTimePeriod=WEEK){
-		$allLoot = $this->getLoot($type);
-		$loot = array();
-		foreach ($allLoot as $curLoot) {
-			$date = strtotime($curLoot['dateRecorded']);
-			if($date > $sinceTime){
-				$loot[] = $curLoot;
-			}else{
-				break;
-			}
-		}
+		$loot = $this->getLoot($type, $sinceTime);
 		if(count($loot) > 1){
 			$totalLoot = $loot[0]['lootAmount'] - $loot[count($loot)-1]['lootAmount'];
 			$startDate = strtotime($loot[count($loot)-1]['dateRecorded']);
