@@ -169,177 +169,178 @@ require('header.php');
 				</div>
 			</div>
 		</div><br>
-	<?}?>
-	<div class="row col-md-12">
-		<h3><i class="fa fa-coins" style="color: gold;"></i>&nbsp;Loot</h3>
-		<?if($userHasAccessToUpdatePlayer){?>
-			<div class="col-md-12">
-				<div id="recordLootButtonDiv" class="col-md-12">
-					<button type="button" class="btn btn-primary" onclick="showRecordLootForm();">Record Loot</button>
-				</div>
-				<div id="recordLootDiv" hidden class="col-md-12" style="margin-bottom: 10px;">
-					<form class="form-inline" action="/processRecordLoot.php" method="POST">
-						<input hidden name="type" value="single"></input>
-						<input hidden name="playerId" value="<?=$player->get('id');?>"></input>
-						<?if(isset($clan)){?>
-							<input hidden name="clanId" value="<?=$clan->get('id');?>"></input>
-						<?}?>
-						<div class="col-md-3">
-							<div class="form-group" style="margin-bottom: 10px;">
-								<label for="gold">Gold </label>
-								<input type="number" class="form-control" id="gold" name="gold" placeholder="<?=(count($gold)>0) ? $gold[0]['lootAmount'] : '0';?>">
-							</div>
-						</div>
-						<div class="col-md-3">
-							<div class="form-group" style="margin-bottom: 10px;">
-								<label for="elixir">Elixir </label>
-								<input type="number" class="form-control" id="elixir" name="elixir" placeholder="<?=(count($elixir)>0) ? $elixir[0]['lootAmount'] : '0';?>">
-							</div>
-						</div>
-						<div class="col-md-3">
-							<div class="form-group" style="margin-bottom: 10px;">
-								<label for="darkElixir">Dark Elixir </label>
-								<input type="number" class="form-control" id="darkElixir" name="darkElixir" placeholder="<?=(count($oil)>0) ? $oil[0]['lootAmount'] : '0';?>">
-							</div>
-						</div>
-						<div class="col-md-3">
-							<button type="cancel" class="btn btn-default text-right" style="margin-right: 10px;" onclick="return showRecordLootButton();">Cancel</button>
-							<button type="submit" class="btn btn-primary text-right">Save</button>
-						</div>
-					</form>
-				</div>
-			</div>
-		<?}?>
-		<div class="col-md-12">
-			<?if($lootAvailable){?>
+	<?}
+	if($lootAvailable || $userHasAccessToUpdatePlayer){?>
+		<div class="row col-md-12">
+			<h3><i class="fa fa-coins" style="color: gold;"></i>&nbsp;Loot</h3>
+			<?if($userHasAccessToUpdatePlayer){?>
 				<div class="col-md-12">
-					<ul class="nav nav-pills" role="tablist">
-						<?if($lootAvailable){?>
-							<li id="allTimeTab" onclick="showLootGraph('allTime');" role="presentation" class="active">
-								<a style="cursor: pointer;">All Time</a>
-							</li>
-						<?}
-						if($lootAvailablePastYear){?>
-							<li id="pastYearTab" onclick="showLootGraph('pastYear');" role="presentation">
-								<a style="cursor: pointer;">Past Year</a>
-							</li>
-						<?}
-						if($lootAvailablePastMonth){?>
-							<li id="pastMonthTab" onclick="showLootGraph('pastMonth');" role="presentation">
-								<a style="cursor: pointer;">Past Month</a>
-							</li>
-						<?}
-						if($lootAvailablePastWeek){?>
-							<li id="pastWeekTab" onclick="showLootGraph('pastWeek');" role="presentation">
-								<a style="cursor: pointer;">Past Week</a>
-							</li>
-						<?}?>
-					</ul>
-				</div><br><br><br>
-				<div class="col-md-12">
-					<div id="lootLineChartDiv" class="col-md-6">
-						<canvas id="lootLineChart" height="100px"></canvas>
+					<div id="recordLootButtonDiv" class="col-md-12">
+						<button type="button" class="btn btn-primary" onclick="showRecordLootForm();">Record Loot</button>
 					</div>
-					<div class="col-md-1"></div>
-					<div class="jumbotron col-xs-12 col-md-5">
-						<div id="allTimeAverage">
-							<?if($goldAvailable){?>
-								<label class="col-xs-6 col-sm-6">Average&nbsp;<i class="fa fa-2x fa-coins" style="color: gold;"></i></label>
-								<div class="col-xs-6 col-sm-6 text-right">
-									<p><?=number_format($player->getAverageGold(), 0, '.', ',') . '/week';?></p>
-								</div>
-							<?}
-							if($elixirAvailable){?>
-								<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint" style="color: #FF09F4;"></i></label>
-								<div class="col-xs-6 col-sm-6 text-right">
-									<p><?=number_format($player->getAverageElixir(), 0, '.', ',') . '/week';?></p>
-								</div>
-							<?}
-							if($oilAvailable){?>
-								<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint"></i></label>
-								<div class="col-xs-6 col-sm-6 text-right">
-									<p><?=number_format($player->getAverageDarkElixir(), 0, '.', ',') . '/week';?></p>
-								</div>
+					<div id="recordLootDiv" hidden class="col-md-12" style="margin-bottom: 10px;">
+						<form class="form-inline" action="/processRecordLoot.php" method="POST">
+							<input hidden name="type" value="single"></input>
+							<input hidden name="playerId" value="<?=$player->get('id');?>"></input>
+							<?if(isset($clan)){?>
+								<input hidden name="clanId" value="<?=$clan->get('id');?>"></input>
 							<?}?>
-						</div>
-						<?if($lootAvailablePastYear){?>
-							<div id="pastYearAverage" hidden>
-								<?if($goldAvailable){?>
-									<label class="col-xs-6 col-sm-6">Average&nbsp;<i class="fa fa-2x fa-coins" style="color: gold;"></i></label>
-									<div class="col-xs-6 col-sm-6 text-right">
-										<p><?=number_format($player->getAverageGold(yearAgo()), 0, '.', ',') . '/week';?></p>
-									</div>
-								<?}
-								if($elixirAvailable){?>
-									<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint" style="color: #FF09F4;"></i></label>
-									<div class="col-xs-6 col-sm-6 text-right">
-										<p><?=number_format($player->getAverageElixir(yearAgo()), 0, '.', ',') . '/week';?></p>
-									</div>
-								<?}
-								if($oilAvailable){?>
-									<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint"></i></label>
-									<div class="col-xs-6 col-sm-6 text-right">
-										<p><?=number_format($player->getAverageDarkElixir(yearAgo()), 0, '.', ',') . '/week';?></p>
-									</div>
-								<?}?>
+							<div class="col-md-3">
+								<div class="form-group" style="margin-bottom: 10px;">
+									<label for="gold">Gold </label>
+									<input type="number" class="form-control" id="gold" name="gold" placeholder="<?=(count($gold)>0) ? $gold[0]['lootAmount'] : '0';?>">
+								</div>
 							</div>
-						<?}
-						if($lootAvailablePastMonth){?>
-							<div id="pastMonthAverage" hidden>
-								<?if($goldAvailable){?>
-									<label class="col-xs-6 col-sm-6">Average&nbsp;<i class="fa fa-2x fa-coins" style="color: gold;"></i></label>
-									<div class="col-xs-6 col-sm-6 text-right">
-										<p><?=number_format($player->getAverageGold(monthAgo()), 0, '.', ',') . '/week';?></p>
-									</div>
-								<?}
-								if($elixirAvailable){?>
-									<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint" style="color: #FF09F4;"></i></label>
-									<div class="col-xs-6 col-sm-6 text-right">
-										<p><?=number_format($player->getAverageElixir(monthAgo()), 0, '.', ',') . '/week';?></p>
-									</div>
-								<?}
-								if($oilAvailable){?>
-									<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint"></i></label>
-									<div class="col-xs-6 col-sm-6 text-right">
-										<p><?=number_format($player->getAverageDarkElixir(monthAgo()), 0, '.', ',') . '/week';?></p>
-									</div>
-								<?}?>
+							<div class="col-md-3">
+								<div class="form-group" style="margin-bottom: 10px;">
+									<label for="elixir">Elixir </label>
+									<input type="number" class="form-control" id="elixir" name="elixir" placeholder="<?=(count($elixir)>0) ? $elixir[0]['lootAmount'] : '0';?>">
+								</div>
 							</div>
-						<?}
-						if($lootAvailablePastWeek){?>
-							<div id="pastWeekAverage" hidden>
-								<?if($goldAvailable){?>
-									<label class="col-xs-6 col-sm-6">Average&nbsp;<i class="fa fa-2x fa-coins" style="color: gold;"></i></label>
-									<div class="col-xs-6 col-sm-6 text-right">
-										<p><?=number_format($player->getAverageGold(weekAgo()), 0, '.', ',') . '/week';?></p>
-									</div>
-								<?}
-								if($elixirAvailable){?>
-									<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint" style="color: #FF09F4;"></i></label>
-									<div class="col-xs-6 col-sm-6 text-right">
-										<p><?=number_format($player->getAverageElixir(weekAgo()), 0, '.', ',') . '/week';?></p>
-									</div>
-								<?}
-								if($oilAvailable){?>
-									<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint"></i></label>
-									<div class="col-xs-6 col-sm-6 text-right">
-										<p><?=number_format($player->getAverageDarkElixir(weekAgo()), 0, '.', ',') . '/week';?></p>
-									</div>
-								<?}?>
+							<div class="col-md-3">
+								<div class="form-group" style="margin-bottom: 10px;">
+									<label for="darkElixir">Dark Elixir </label>
+									<input type="number" class="form-control" id="darkElixir" name="darkElixir" placeholder="<?=(count($oil)>0) ? $oil[0]['lootAmount'] : '0';?>">
+								</div>
 							</div>
-						<?}?>
-					</div>
-				</div>
-			<?}else{?>
-				<div class="col-md-8">
-					<div class="alert alert-info" role="alert">
-						<strong>Oh no!</strong> We don't have enough records for this player's loot to display any stats. <?if($userHasAccessToUpdatePlayer){print "You can start by adding some above.";}?>
+							<div class="col-md-3">
+								<button type="cancel" class="btn btn-default text-right" style="margin-right: 10px;" onclick="return showRecordLootButton();">Cancel</button>
+								<button type="submit" class="btn btn-primary text-right">Save</button>
+							</div>
+						</form>
 					</div>
 				</div>
 			<?}?>
+			<div class="col-md-12">
+				<?if($lootAvailable){?>
+					<div class="col-md-12">
+						<ul class="nav nav-pills" role="tablist">
+							<?if($lootAvailable){?>
+								<li id="allTimeTab" onclick="showLootGraph('allTime');" role="presentation" class="active">
+									<a style="cursor: pointer;">All Time</a>
+								</li>
+							<?}
+							if($lootAvailablePastYear){?>
+								<li id="pastYearTab" onclick="showLootGraph('pastYear');" role="presentation">
+									<a style="cursor: pointer;">Past Year</a>
+								</li>
+							<?}
+							if($lootAvailablePastMonth){?>
+								<li id="pastMonthTab" onclick="showLootGraph('pastMonth');" role="presentation">
+									<a style="cursor: pointer;">Past Month</a>
+								</li>
+							<?}
+							if($lootAvailablePastWeek){?>
+								<li id="pastWeekTab" onclick="showLootGraph('pastWeek');" role="presentation">
+									<a style="cursor: pointer;">Past Week</a>
+								</li>
+							<?}?>
+						</ul>
+					</div><br><br><br>
+					<div class="col-md-12">
+						<div id="lootLineChartDiv" class="col-md-6">
+							<canvas id="lootLineChart" height="100px"></canvas>
+						</div>
+						<div class="col-md-1"></div>
+						<div class="jumbotron col-xs-12 col-md-5">
+							<div id="allTimeAverage">
+								<?if($goldAvailable){?>
+									<label class="col-xs-6 col-sm-6">Average&nbsp;<i class="fa fa-2x fa-coins" style="color: gold;"></i></label>
+									<div class="col-xs-6 col-sm-6 text-right">
+										<p><?=number_format($player->getAverageGold(), 0, '.', ',') . '/week';?></p>
+									</div>
+								<?}
+								if($elixirAvailable){?>
+									<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint" style="color: #FF09F4;"></i></label>
+									<div class="col-xs-6 col-sm-6 text-right">
+										<p><?=number_format($player->getAverageElixir(), 0, '.', ',') . '/week';?></p>
+									</div>
+								<?}
+								if($oilAvailable){?>
+									<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint"></i></label>
+									<div class="col-xs-6 col-sm-6 text-right">
+										<p><?=number_format($player->getAverageDarkElixir(), 0, '.', ',') . '/week';?></p>
+									</div>
+								<?}?>
+							</div>
+							<?if($lootAvailablePastYear){?>
+								<div id="pastYearAverage" hidden>
+									<?if($goldAvailable){?>
+										<label class="col-xs-6 col-sm-6">Average&nbsp;<i class="fa fa-2x fa-coins" style="color: gold;"></i></label>
+										<div class="col-xs-6 col-sm-6 text-right">
+											<p><?=number_format($player->getAverageGold(yearAgo()), 0, '.', ',') . '/week';?></p>
+										</div>
+									<?}
+									if($elixirAvailable){?>
+										<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint" style="color: #FF09F4;"></i></label>
+										<div class="col-xs-6 col-sm-6 text-right">
+											<p><?=number_format($player->getAverageElixir(yearAgo()), 0, '.', ',') . '/week';?></p>
+										</div>
+									<?}
+									if($oilAvailable){?>
+										<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint"></i></label>
+										<div class="col-xs-6 col-sm-6 text-right">
+											<p><?=number_format($player->getAverageDarkElixir(yearAgo()), 0, '.', ',') . '/week';?></p>
+										</div>
+									<?}?>
+								</div>
+							<?}
+							if($lootAvailablePastMonth){?>
+								<div id="pastMonthAverage" hidden>
+									<?if($goldAvailable){?>
+										<label class="col-xs-6 col-sm-6">Average&nbsp;<i class="fa fa-2x fa-coins" style="color: gold;"></i></label>
+										<div class="col-xs-6 col-sm-6 text-right">
+											<p><?=number_format($player->getAverageGold(monthAgo()), 0, '.', ',') . '/week';?></p>
+										</div>
+									<?}
+									if($elixirAvailable){?>
+										<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint" style="color: #FF09F4;"></i></label>
+										<div class="col-xs-6 col-sm-6 text-right">
+											<p><?=number_format($player->getAverageElixir(monthAgo()), 0, '.', ',') . '/week';?></p>
+										</div>
+									<?}
+									if($oilAvailable){?>
+										<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint"></i></label>
+										<div class="col-xs-6 col-sm-6 text-right">
+											<p><?=number_format($player->getAverageDarkElixir(monthAgo()), 0, '.', ',') . '/week';?></p>
+										</div>
+									<?}?>
+								</div>
+							<?}
+							if($lootAvailablePastWeek){?>
+								<div id="pastWeekAverage" hidden>
+									<?if($goldAvailable){?>
+										<label class="col-xs-6 col-sm-6">Average&nbsp;<i class="fa fa-2x fa-coins" style="color: gold;"></i></label>
+										<div class="col-xs-6 col-sm-6 text-right">
+											<p><?=number_format($player->getAverageGold(weekAgo()), 0, '.', ',') . '/week';?></p>
+										</div>
+									<?}
+									if($elixirAvailable){?>
+										<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint" style="color: #FF09F4;"></i></label>
+										<div class="col-xs-6 col-sm-6 text-right">
+											<p><?=number_format($player->getAverageElixir(weekAgo()), 0, '.', ',') . '/week';?></p>
+										</div>
+									<?}
+									if($oilAvailable){?>
+										<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint"></i></label>
+										<div class="col-xs-6 col-sm-6 text-right">
+											<p><?=number_format($player->getAverageDarkElixir(weekAgo()), 0, '.', ',') . '/week';?></p>
+										</div>
+									<?}?>
+								</div>
+							<?}?>
+						</div>
+					</div>
+				<?}else{?>
+					<div class="col-md-8">
+						<div class="alert alert-info" role="alert">
+							<strong>Oh no!</strong> We don't have enough records for this player's loot to display any stats. <?if($userHasAccessToUpdatePlayer){print "You can start by adding some above.";}?>
+						</div>
+					</div>
+				<?}?>
+			</div><br>
 		</div><br>
-	</div><br>
-	<?if(count($playerClans)>0){?>
+	<?}if(count($playerClans)>0){?>
 		<div class="row col-md-12">
 			<?if(count($playerClans)>1){?>
 				<h3><i class="fa fa-shield"></i>&nbsp;Clans</h3>
