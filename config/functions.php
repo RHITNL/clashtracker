@@ -305,6 +305,7 @@ function refreshClanInfo($clan){
 	$members = $clan->getMembers();
 	$apiMembers = array();
 	$duplicateNames = array();
+	$membersUpdated = false;
 	foreach ($clanInfo->memberList as $apiMember) {
 		$count = 0;
 		foreach ($members as $key => $temp) {
@@ -315,7 +316,7 @@ function refreshClanInfo($clan){
 			}
 		}
 		if($count==1){
-			$member->updateFromApi($apiMember);
+			$membersUpdated = $membersUpdated || $member->updateFromApi($apiMember);
 		}elseif($count==0) {
 			if(!in_array($apiMember->name, $duplicateNames)){
 				$apiMembers[] = $apiMember;
@@ -328,7 +329,15 @@ function refreshClanInfo($clan){
 		foreach ($members as $member) {
 			$member->leaveClan();
 		}
+		$membersUpdated = true;
+	}
+	if($membersUpdated){
 		$clan->getMembers(true);//reload the members after some have left
 	}
 	return $apiMembers;
+}
+
+function notice($subject, $message){
+	$email = 'alexinmann@gmail.com';
+	mail($email, $subject, $message, $headers);
 }

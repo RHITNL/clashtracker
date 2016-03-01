@@ -217,7 +217,7 @@ class player{
 				&& $this->donations == $apiMember->donations
 				&& $this->received == $apiMember->donationsReceived
 				&& $this->leagueUrl == $apiMember->league->iconUrls->small){
-				return; //no changes will be made
+				return false; //no changes will be made
 			}
 			$procedure = buildProcedure('p_player_update_bulk',
 										$this->id,
@@ -237,6 +237,7 @@ class player{
 				$this->donations = $apiMember->donations;
 				$this->received = $apiMember->donationsReceived;
 				$this->leagueUrl = $apiMember->league->iconUrls->small;
+				return true;
 			}else{
 				throw new illegalQueryException('The database encountered an error. ' . $db->error);
 			}
