@@ -118,9 +118,13 @@ foreach ($gold as $id => $loot) {
 	$loot = array_reverse($loot);
 	$diff = count($goldDates) - count($loot);
 	$player = new player($id);
+	$removed = false;
 	foreach ($loot as $i => $value) {
 		if($value != 0){
-			$player->removeAllGoldValues($goldDates[$i+$diff]);
+			if(!$removed){
+				$player->removeAllGoldValues($goldDates[$i+$diff]);
+				$removed = true;
+			}
 			$player->recordGold($value, $goldDates[$i+$diff]);		
 		}
 	}
@@ -133,9 +137,13 @@ foreach ($elixir as $id => $loot) {
 	$loot = array_reverse($loot);
 	$diff = count($elixirDates) - count($loot);
 	$player = new player($id);
+	$removed = false;
 	foreach ($loot as $i => $value) {
 		if($value != 0){
-			$player->removeAllElixirValues($elixirDates[$i+$diff]);
+			if(!$removed){
+				$player->removeAllElixirValues($elixirDates[$i+$diff]);
+				$removed = true;
+			}
 			$player->recordElixir($value, $elixirDates[$i+$diff]);		
 		}
 	}
@@ -148,9 +156,13 @@ foreach ($darkElixir as $id => $loot) {
 	$loot = array_reverse($loot);
 	$diff = count($darkElixirDates) - count($loot);
 	$player = new player($id);
+	$removed = false;
 	foreach ($loot as $i => $value) {
 		if($value != 0){
-			$player->removeAllDarkElixirValues($darkElixirDates[$i+$diff]);
+			if(!$removed){
+				$player->removeAllDarkElixirValues($darkElixirDates[$i+$diff]);
+				$removed = true;
+			}
 			$player->recordDarkElixir($value, $darkElixirDates[$i+$diff]);		
 		}
 	}
