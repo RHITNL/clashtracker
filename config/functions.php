@@ -316,7 +316,7 @@ function refreshClanInfo($clan){
 			}
 		}
 		if($count==1){
-			$membersUpdated = $membersUpdated || $member->updateFromApi($apiMember);
+			$membersUpdated = $membersUpdated | $member->updateFromApi($apiMember);
 		}elseif($count==0) {
 			if(!in_array($apiMember->name, $duplicateNames)){
 				$apiMembers[] = $apiMember;
