@@ -112,7 +112,7 @@ foreach ($darkElixirRawData as $i => $darkElixirPlayerRow) {
 
 $goldDates = array_reverse($goldDates);
 foreach ($goldDates as $i => $date) {
-	$goldDates[$i] = date('Y-m-d', strtotime($date));
+	$goldDates[$i] = date('Y-m-d H:m:s', strtotime($date + " 20:00:00"));
 }
 foreach ($gold as $id => $loot) {
 	$loot = array_reverse($loot);
@@ -127,7 +127,7 @@ foreach ($gold as $id => $loot) {
 }
 $elixirDates = array_reverse($elixirDates);
 foreach ($elixirDates as $i => $date) {
-	$elixirDates[$i] = date('Y-m-d', strtotime($date));
+	$elixirDates[$i] = date('Y-m-d H:m:s', strtotime($date + " 20:00:00"));
 }
 foreach ($elixir as $id => $loot) {
 	$loot = array_reverse($loot);
@@ -142,7 +142,7 @@ foreach ($elixir as $id => $loot) {
 }
 $darkElixirDates = array_reverse($darkElixirDates);
 foreach ($darkElixirDates as $i => $date) {
-	$darkElixirDates[$i] = date('Y-m-d', strtotime($date));
+	$darkElixirDates[$i] = date('Y-m-d H:m:s', strtotime($date + " 20:00:00"));
 }
 foreach ($darkElixir as $id => $loot) {
 	$loot = array_reverse($loot);
