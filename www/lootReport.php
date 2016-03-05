@@ -61,6 +61,9 @@ require('header.php');
 	</div>
 	<?if($previousLootReports){?>
 		<a type="button" class="btn btn-success" href="/lootReports.php?clanId=<?=$clan->get('id');?>">Previous Loot Reports</a>
+	<?}
+	if(userHasAccessToUpdateClan($clan)){?>
+		<a type="button" class="btn btn-danger" onclick="return confirm('This action cannot be undone. Are you sure you\'d like to delete it?');" href="/processDeleteLootReport.php?lootReportId=<?=$lootReport->get('id');?>">Delete Report</a>
 	<?}?>
 </div>
 <script type="text/javascript">

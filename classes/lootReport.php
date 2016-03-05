@@ -170,7 +170,7 @@ class lootReport{
 		}
 	}
 
-	private function delete(){
+	public function delete(){
 		if(isset($this->id)){
 			global $db;
 			$procedure = buildProcedure('p_loot_report_delete', $this->id);
