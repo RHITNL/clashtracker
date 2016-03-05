@@ -250,7 +250,7 @@ require('header.php');
 					<?}
 					if(count($clan1Players) > 0){?>
 						<div class="alert alert-warning" role="alert">
-							There's not enough players in the war for this clan yet. You can add more by clicking the button above.
+							There's not enough players in the war for this clan yet. <?if($userCanEdit){ print "You can add more by clicking the button above.";}?>
 						</div>
 					<?}
 				}?>
@@ -384,7 +384,7 @@ require('header.php');
 					</div>
 				<?}else{?>
 					<div class="alert alert-info" role="alert">
-						<strong>On no!</strong> There's no players in the war for this clan. You can start by adding some above.
+						<strong>On no!</strong> There's no players in the war for this clan. <?if($userCanEdit){ print "You can start by adding some above.";}?>
 					</div>
 				<?}?>
 			</div>
@@ -400,7 +400,7 @@ require('header.php');
 					<?}
 					if(count($clan2Players) > 0){?>
 						<div class="alert alert-warning" role="alert">
-							There's not enough players in the war for this clan yet. You can add more by clicking the button above.
+							There's not enough players in the war for this clan yet. <?if($userCanEdit){ print "You can add more by clicking the button above.";}?>
 						</div>
 					<?}
 				}?>
@@ -534,7 +534,7 @@ require('header.php');
 					</div>
 				<?}else{?>
 					<div class="alert alert-info" role="alert">
-						<strong>On no!</strong> There's no players in the war for this clan. You can start by adding some above.
+						<strong>On no!</strong> There's no players in the war for this clan. <?if($userCanEdit){ print "You can start by adding some above.";}?>
 					</div>
 				<?}?>
 			</div>

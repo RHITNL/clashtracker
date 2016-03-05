@@ -279,8 +279,9 @@ class player{
 		$this->recordLoot('DE', $amount, $date);
 	}
 
-	private function getLoot($type, $earliestDate=0){
+	public function getLoot($type, $sinceTime=null){
 		global $db;
+		$sinceTime = isset($sinceTime) ? $sinceTime : 0;
 		if(isset($this->id)){
 			if(!isset($this->loot[$type])){
 				$procedure = buildProcedure('p_player_get_loot', $this->id);
@@ -290,6 +291,7 @@ class player{
 						$db->next_result();
 					}
 					$loot = array();
+					$loot[$type] = array();
 					if ($results->num_rows) {
 						while ($lootObj = $results->fetch_object()) {
 							$tempLoot = array();
@@ -309,13 +311,13 @@ class player{
 					throw new illegalQueryException('The database encountered an error. ' . $db->error);
 				}
 			}
-			if($earliestDate == 0){
+			if($sinceTime == 0){
 				return $this->loot[$type];
 			}
 			$loot = $this->loot[$type];
 			$length = 0;
 			foreach ($loot as $tempLoot) {
-				if(strtotime($tempLoot['dateRecorded']) < $earliestDate){
+				if(strtotime($tempLoot['dateRecorded']) < $sinceTime){
 					break;
 				}
 				$length++;
@@ -326,16 +328,16 @@ class player{
 		}
 	}
 
-	public function getGold($earliestDate=0){
-		return $this->getLoot('GO', $earliestDate);
+	public function getGold($sinceTime=0){
+		return $this->getLoot('GO', $sinceTime);
 	}
 
-	public function getElixir($earliestDate=0){
-		return $this->getLoot('EL', $earliestDate);
+	public function getElixir($sinceTime=0){
+		return $this->getLoot('EL', $sinceTime);
 	}
 
-	public function getDarkElixir($earliestDate=0){
-		return $this->getLoot('DE', $earliestDate);
+	public function getDarkElixir($sinceTime=0){
+		return $this->getLoot('DE', $sinceTime);
 	}
 
 	/**
@@ -655,21 +657,23 @@ class player{
 		$queries = array_unique($queries);
 		$players = array();
 		foreach ($queries as $query) {
-			$procedure = buildProcedure('p_player_search', '%'.$query.'%');
-			if(($db->multi_query($procedure)) === TRUE){
-				$results = $db->store_result();
-				while ($db->more_results()){
-					$db->next_result();
-				}
-				if ($results->num_rows) {
-					while ($playerObj = $results->fetch_object()) {
-						$player = new player();
-						$player->loadByObj($playerObj);
-						$players[] = $player;
+			if(strlen($query)>1 || count($queries)==1){
+				$procedure = buildProcedure('p_player_search', '%'.$query.'%');
+				if(($db->multi_query($procedure)) === TRUE){
+					$results = $db->store_result();
+					while ($db->more_results()){
+						$db->next_result();
 					}
+					if ($results->num_rows) {
+						while ($playerObj = $results->fetch_object()) {
+							$player = new player();
+							$player->loadByObj($playerObj);
+							$players[] = $player;
+						}
+					}
+				}else{
+					throw new illegalQueryException('The database encountered an error. ' . $db->error);
 				}
-			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
 			}	
 		}
 		$foundIds = array();
@@ -678,6 +682,9 @@ class player{
 				unset($players[$i]);
 			}else{
 				$foundIds[] = $player->get('id');
+			}
+			if($i>50){
+				unset($players[$i]);
 			}
 		}
 		return $players;

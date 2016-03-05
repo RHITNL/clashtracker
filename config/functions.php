@@ -290,6 +290,14 @@ function convertBackRank($code){
 	return $ranks[$code];
 }
 
+function convertLocation($location){
+	if(isset($location)){
+		return $location;
+	}else{
+		return 'Not Set';
+	}
+}
+
 function refreshClanInfo($clan){
 	try{
 		$api = new clanApi();
@@ -335,9 +343,4 @@ function refreshClanInfo($clan){
 		$clan->getMembers(true);//reload the members after some have left
 	}
 	return $apiMembers;
-}
-
-function notice($subject, $message){
-	$email = 'alexinmann@gmail.com';
-	mail($email, $subject, $message, $headers);
 }

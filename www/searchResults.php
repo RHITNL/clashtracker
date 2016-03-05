@@ -86,6 +86,8 @@ require('header.php');
 					<tr>
 						<th></th>
 						<th>Name</th>
+						<th>Level</th>
+						<th>Trophies</th>
 						<th>Clan Name</th>
 						<th>Clan Rank</th>
 						<th class="text-right">Player Tag</th>
@@ -101,6 +103,8 @@ require('header.php');
 								<?}?>
 							</td>
 							<td onclick="clickRow('player.php?playerId=<?=$player->get("id");?>');"><?=htmlspecialchars($player->get('name'));?></td>
+							<td onclick="clickRow('player.php?playerId=<?=$player->get("id");?>');"><?=$player->get('level');?></td>
+							<td onclick="clickRow('player.php?playerId=<?=$player->get("id");?>');"><?=$player->get('trophies');?></td>
 							<?$clan = $player->getMyClan();
 							if(isset($clan)){?>
 								<td onclick="clickRow('clan.php?clanId=<?=$clan->get("id");?>');">

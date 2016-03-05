@@ -31,7 +31,6 @@ try{
 	}catch(Exception $e){
 		$user = new user();
 		$user->create($email, $password);
-		notice('New User on Clash Tracker!', 'Someone created a new account on Clash Tracker. Their email address is ' . $email . ". Welcome them to Clash Tracker!\n\nCheers,\n\tClash Tracker Team (a.k.a. Solo Espero)");
 	}
 }catch(Exception $e){
 	$_SESSION['curError'] = $e->getMessage();

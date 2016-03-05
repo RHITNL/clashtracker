@@ -365,7 +365,7 @@ require('header.php');
 					</div>
 					<label class="col-xs-4 col-md-6">Date Joined</label>
 					<div class="col-xs-8 col-md-6 text-right">
-						<p><?=date('j F, Y', strtotime($playerClan->playerJoined($player->get('id'))));?></p>
+						<p><?=date('F j, Y', strtotime($playerClan->playerJoined($player->get('id'))));?></p>
 					</div>
 				</div>
 			<?}

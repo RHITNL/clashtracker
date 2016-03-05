@@ -240,7 +240,7 @@ class clan{
 				&& $this->clanLevel == $clanInfo->clanLevel
 				&& $this->warWins == $clanInfo->warWins
 				&& $this->badgeUrl == $clanInfo->badgeUrls->small
-				&& $this->location == $clanInfo->location->name){
+				&& $this->location == convertLocation($clanInfo->location->name)){
 				return; //no changes will be made
 			}
 			$procedure = buildProcedure('p_clan_update_bulk', 
@@ -255,7 +255,7 @@ class clan{
 										$clanInfo->clanLevel,
 										$clanInfo->warWins,
 										$clanInfo->badgeUrls->small,
-										$clanInfo->location->name);
+										convertLocation($clanInfo->location->name));
 			if(($db->multi_query($procedure)) === TRUE){
 				while ($db->more_results()){
 					$db->next_result();
@@ -270,7 +270,7 @@ class clan{
 				$this->clanLevel = $clanInfo->clanLevel;
 				$this->warWins = $clanInfo->warWins;
 				$this->badgeUrl = $clanInfo->badgeUrls->small;
-				$this->location = $clanInfo->location->name;
+				$this->location = convertLocation($clanInfo->location->name);
 			}else{
 				throw new illegalQueryException('The database encountered an error. ' . $db->error);
 			}
@@ -558,21 +558,23 @@ class clan{
 		$queries = array_unique($queries);
 		$clans = array();
 		foreach ($queries as $query) {
-			$procedure = buildProcedure('p_clan_search', '%'.$query.'%');
-			if(($db->multi_query($procedure)) === TRUE){
-				$results = $db->store_result();
-				while ($db->more_results()){
-					$db->next_result();
-				}
-				if ($results->num_rows) {
-					while ($clanObj = $results->fetch_object()) {
-						$clan = new clan();
-						$clan->loadByObj($clanObj);
-						$clans[] = $clan;
+			if(strlen($query)>1 || count($queries)==1){
+				$procedure = buildProcedure('p_clan_search', '%'.$query.'%');
+				if(($db->multi_query($procedure)) === TRUE){
+					$results = $db->store_result();
+					while ($db->more_results()){
+						$db->next_result();
 					}
+					if ($results->num_rows) {
+						while ($clanObj = $results->fetch_object()) {
+							$clan = new clan();
+							$clan->loadByObj($clanObj);
+							$clans[] = $clan;
+						}
+					}
+				}else{
+					throw new illegalQueryException('The database encountered an error. ' . $db->error);
 				}
-			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
 			}
 		}
 		$foundIds = array();
@@ -581,6 +583,9 @@ class clan{
 				unset($clans[$i]);
 			}else{
 				$foundIds[] = $clan->get('id');
+			}
+			if($i>50){
+				unset($clans[$i]);
 			}
 		}
 		return $clans;
@@ -751,7 +756,73 @@ class clan{
 				throw new illegalQueryException('The database encountered an error. ' . $db->error);
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set for getting linked player.');
+			throw new illegalFunctionCallException('ID not set for getting players available for loot report.');
+		}
+	}
+
+	public function getPlayersAvailableForGoldReport($sinceTime=null){
+		return $this->getPlayersAvailableForLootReport('GO', $sinceTime);
+	}
+
+	public function getPlayersAvailableForElixirReport($sinceTime=null){
+		return $this->getPlayersAvailableForLootReport('EL', $sinceTime);
+	}
+
+	public function getPlayersAvailableForDarkElixirReport($sinceTime=null){
+		return $this->getPlayersAvailableForLootReport('DE', $sinceTime);
+	}
+
+	public function canGenerateLootReport($sinceTime=null){
+		$lootReports = $this->getLootReports();
+		if(count($lootReports)>0){
+			$lootReport = $lootReports[0];
+			$date = strtotime($lootReport->get('dateCreated'));
+			if($date > dayAgo()){
+				return false;
+			}
+		}
+		$playersAvailableForLootReport = $this->getPlayersAvailableForGoldReport($sinceTime);
+		$playersAvailableForLootReport = array_merge($playersAvailableForLootReport, $this->getPlayersAvailableForElixirReport($sinceTime));
+		$playersAvailableForLootReport = array_merge($playersAvailableForLootReport, $this->getPlayersAvailableForDarkElixirReport($sinceTime));
+		return count($playersAvailableForLootReport)>0;
+	}
+
+	public function generateLootReport($sinceTime=null){
+		if(isset($this->id)){
+			$lootReport = new lootReport();
+			$lootReport->create($this, $sinceTime);
+			return $lootReport;
+		}else{
+			throw new illegalFunctionCallException('ID not set for generating loot report.');
+		}
+	}
+
+	public function getLootReports(){
+		global $db;
+		if(isset($this->id)){
+			if(isset($this->lootReports)){
+				return $this->lootReports;
+			}
+			$procedure = buildProcedure('p_clan_get_loot_reports', $this->id);
+			if(($db->multi_query($procedure)) === TRUE){
+				$results = $db->store_result();
+				while ($db->more_results()){
+					$db->next_result();
+				}
+				$this->lootReports = array();
+				if ($results->num_rows) {
+					while ($lootReportObj = $results->fetch_object()) {
+						$lootReport = new lootReport();
+						$lootReport->loadByObj($lootReportObj);
+						$this->lootReports[] = $lootReport;
+					}
+				}
+				return $this->lootReports;
+			}else{
+				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set to getloot Reports.');
 		}
 	}
 }
