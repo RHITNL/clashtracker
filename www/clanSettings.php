@@ -85,7 +85,7 @@
 										<tr>
 											<td><?=$user->get('email');?></td>
 											<td class="text-right">
-												<a type="button" class="btn btn-xs btn-danger" href="/processDisallowUserAccess.php?userId=<?=$user->get('id');?>">Revoke Access</a>
+												<a type="button" class="btn btn-xs btn-danger" href="/processDisallowUserAccessForClan.php?userId=<?=$user->get('id');?>">Revoke Access</a>
 											</td>
 										</tr>
 									<?}?>
