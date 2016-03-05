@@ -70,6 +70,11 @@ require('header.php');
 				<thead>
 					<tr>
 						<th>War</th>
+						<?if(isset($playerId)){?>
+							<th>First Attack</th>
+							<th>Second Attack</th>
+							<th>Defence</th>
+						<?}?>
 						<th>Size</th>
 						<th>Score</th>
 					</tr>
@@ -80,11 +85,8 @@ require('header.php');
 							$clan = $war->getPlayerWarClan($playerId);
 							$clanId = $clan->get('id');
 						}
-						if(isset($clanId)){?>
-							<tr style="cursor: pointer;" onclick="clickRow('war.php?warId=<?=$war->get("id");?>&clanId=<?=$clanId;?>');">
-						<?}else{?>
-							<tr style="cursor: pointer;" onclick="clickRow('war.php?warId=<?=$war->get("id");?>');">
-						<?}?>
+						$clanUrl = (isset($clanId)) ? '&clanId=' . $clanId : '';?>
+						<tr style="cursor: pointer;" onclick="clickRow('war.php?warId=<?=$war->get("id") . $clanUrl;?>');">
 							<?if(isset($clanId)){
 								$clan1 = $clan;
 								$clan2 = new clan($war->getEnemy($clanId));
@@ -93,9 +95,57 @@ require('header.php');
 								$clan2 = $war->get('clan2');
 							}
 							$name = htmlspecialchars($clan1->get('name')) . ' vs. ' . htmlspecialchars($clan2->get('name'));
-							$score = $war->getClanStars($clan1) . ' - ' . $war->getClanStars($clan2);
-							?>
+							$score = $war->getClanStars($clan1) . ' - ' . $war->getClanStars($clan2);?>
 							<td><?=$name;?></td>
+							<?if(isset($playerId)){
+								$playerAttacks = $war->getPlayerAttacks($playerId);
+								$firstAttack = $playerAttacks[0];
+								$secondAttack = $playerAttacks[1];
+								$playerDefences = $war->getPlayerDefences($playerId);
+								$starsAgainst = -1;
+								foreach ($playerDefences as $defence) {
+									if($defence['totalStars'] > $starsAgainst){
+										$starsAgainst = $defence['totalStars'];
+									}
+								}?>
+								<td>
+									<?if(isset($firstAttack)){
+										for($i=$firstAttack['totalStars']-$firstAttack['newStars'];$i>0;$i--){?>
+											<i class="fa fa-star" style="color: silver;"></i>
+										<?}
+										for($i=$firstAttack['newStars'];$i>0;$i--){?>
+											<i class="fa fa-star" style="color: gold;"></i>
+										<?}
+										for($i=$firstAttack['totalStars'];$i<3;$i++){?>
+											<i class="fa fa-star-o" style="color: silver;"></i>
+										<?}
+									}?>
+								</td>
+								<td>
+									<?if(isset($secondAttack)){
+										for($i=$secondAttack['totalStars']-$secondAttack['newStars'];$i>0;$i--){?>
+											<i class="fa fa-star" style="color: silver;"></i>
+										<?}
+										for($i=$secondAttack['newStars'];$i>0;$i--){?>
+											<i class="fa fa-star" style="color: gold;"></i>
+										<?}
+										for($i=$secondAttack['totalStars'];$i<3;$i++){?>
+											<i class="fa fa-star-o" style="color: silver;"></i>
+										<?}
+									}?>
+								</td>
+								<td>
+									<?if($starsAgainst==3){?>
+										<i class="fa fa-star" style="color: gold;"></i> <i class="fa fa-star" style="color: gold;"></i> <i class="fa fa-star" style="color: gold;"></i>
+									<?}elseif($starsAgainst==2){?>
+										<i class="fa fa-star" style="color: gold;"></i> <i class="fa fa-star" style="color: gold;"></i> <i class="fa fa-star-o" style="color: silver;"></i>
+									<?}elseif($starsAgainst==1){?>
+										<i class="fa fa-star" style="color: gold;"></i> <i class="fa fa-star-o" style="color: silver;"></i> <i class="fa fa-star-o" style="color: silver;"></i>
+									<?}elseif($starsAgainst==0){?>
+										<i class="fa fa-star-o" style="color: silver;"></i> <i class="fa fa-star-o" style="color: silver;"></i> <i class="fa fa-star-o" style="color: silver;"></i>
+									<?}?>
+								</td>
+							<?}?>
 							<td><?=$war->get('size');?>v<?=$war->get('size');?></td>
 							<td><i class="fa fa-star" style="color: gold;"></i> <?=$score;?> <i class="fa fa-star" style="color: gold;"></i></td>
 						</tr>
