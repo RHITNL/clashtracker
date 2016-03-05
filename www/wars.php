@@ -10,6 +10,16 @@ try{
 	$clanId = null;
 }
 
+if(!isset($clanId)){
+	$playerId = $_GET['playerId'];
+	try{
+		$player = new player($playerId);
+		$playerId = $player->get('id');
+	}catch(Exception $e){
+		$playerId = null;
+	}
+}
+
 $title = 'Wars';
 try{
 	if(isset($clanId)){
@@ -21,6 +31,15 @@ try{
 			$clanName .= "'s";
 		}
 		$title = $clanName . ' ' . $title;
+	}elseif(isset($playerId)){
+		$wars = $player->getWars();
+		$playerName = $player->get('name');
+		if($playerName[strlen($playerName)-1] == 's'){
+			$playerName .= "'";
+		}else{
+			$playerName .= "'s";
+		}
+		$title = $playerName . ' ' . $title;
 	}else{
 		$wars = war::getWars();
 	}
@@ -34,7 +53,10 @@ require('header.php');
 <div class="col-md-12">
 	<ol class="breadcrumb">
 		<li><a href="/home.php">Home</a></li>
-		<?if(isset($clanId)){?>
+		<?if(isset($playerId)){?>
+			<li><a href="/players.php">Players</a></li>
+			<li><a href="/player.php?playerId=<?=$playerId?>"><?=htmlspecialchars($player->get('name'));?></a></li>
+		<?}elseif(isset($clanId)){?>
 			<li><a href="/clans.php">Clans</a></li>
 			<li><a href="/clan.php?clanId=<?=$clanId?>"><?=htmlspecialchars($clan->get('name'));?></a></li>
 		<?}?>
@@ -54,6 +76,10 @@ require('header.php');
 				</thead>
 				<tbody>
 					<?foreach ($wars as $war) {
+						if(isset($playerId)){
+							$clan = $war->getPlayerWarClan($playerId);
+							$clanId = $clan->get('id');
+						}
 						if(isset($clanId)){?>
 							<tr style="cursor: pointer;" onclick="clickRow('war.php?warId=<?=$war->get("id");?>&clanId=<?=$clanId;?>');">
 						<?}else{?>
@@ -81,6 +107,8 @@ require('header.php');
 		<div class="alert alert-info" role="alert">
 			<?if(isset($clanId)){?>
 				<strong>Oh no!</strong> There's no wars in our records for this clan. You can start by adding one on the clan's page.
+			<?}elseif(isset($playerId)){?>
+				<strong>Oh no!</strong> There's no wars in our records for this player.
 			<?}else{?>
 				<strong>Oh no!</strong> There's no wars in our records. You can start by adding one on a clan's page.
 			<?}?>

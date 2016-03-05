@@ -172,7 +172,7 @@
 			<div class="col-md-6">
 				<div class="form-group">
 					<label for="clanTag">Clan Tag:</label>
-					<input type="text" class="form-control" id="clanTag" name="clanTag" placeholder="#JKFH83J">
+					<input type="text" class="form-control" id="clanTag" name="clanTag" placeholder="<?=randomTag();?>">
 				</div>
 				<button type="cancel" class="btn btn-default text-right" onclick="return showLinkClanButton();">Cancel</button>
 				<button type="submit" class="btn btn-primary text-right">Link</button>

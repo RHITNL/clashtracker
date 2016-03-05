@@ -142,7 +142,10 @@ require('header.php');
 	</div>
 	<?if($warsAvailable){?>
 		<div class="row col-md-12">
-			<h3><i class="fa fa-star" style="color: gold;"></i>&nbsp;Wars</h3>
+			<h3 style="cursor: pointer;" onclick="clickRow('wars.php?playerId=<?=$player->get("id");?>');">
+				<i class="fa fa-star" style="color: gold;"></i>
+				&nbsp;Wars
+				</h3>
 			<div class="col-md-12">
 				<div class="col-md-12">
 					<div class="col-md-3 text-center" style="margin-bottom: 10px;">

@@ -134,8 +134,16 @@ require('header.php');
 	</ol>
 	<?require('showMessages.php');?>
 	<div class="visible-lg-block">
-		<div class="col-sm-6 text-center"><h1><?=htmlspecialchars($clan1->get('name'));?></h1></div>
-		<div class="col-sm-6 text-center"><h1><?=htmlspecialchars($clan2->get('name'));?></h1></div>
+		<div class="col-sm-6 text-center">
+			<h1 style="cursor: pointer;" onclick="clickRow('clan.php?clanId=<?=$clan1->get("id");?>');">
+				<?=htmlspecialchars($clan1->get('name'));?>
+			</h1>
+		</div>
+		<div class="col-sm-6 text-center">
+			<h1 style="cursor: pointer;" onclick="clickRow('clan.php?clanId=<?=$clan2->get("id");?>');">
+				<?=htmlspecialchars($clan2->get('name'));?>
+			</h1>
+		</div>
 	</div>
 	<div class="col-sm-12 text-center"><h2><i class="fa fa-star" style="color: gold;"></i> <?=$clan1Stars;?> - <?=$clan2Stars;?> <i class="fa fa-star" style="color: gold;"></i></h2></div>
 	<?if(!$userCanEdit){?>

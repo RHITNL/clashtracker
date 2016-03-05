@@ -172,7 +172,7 @@
 			<div class="col-md-6">
 				<div class="form-group">
 					<label for="playerTag">Player Tag:</label>
-					<input type="text" class="form-control" id="playerTag" name="playerTag" placeholder="#JKFH83J">
+					<input type="text" class="form-control" id="playerTag" name="playerTag" placeholder="<?=randomTag();?>">
 				</div>
 				<button type="cancel" class="btn btn-default text-right" onclick="return showLinkPlayerButton();">Cancel</button>
 				<button type="submit" class="btn btn-primary text-right">Link</button>
