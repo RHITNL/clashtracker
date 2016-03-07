@@ -38,6 +38,8 @@ class war{
 				}
 				$this->id = $result->id;
 				$this->load();
+				$this->updateClanWarStats($clan1);
+				$this->updateClanWarStats($clan2);
 			}else{
 				throw new illegalQueryException('The database encountered an error. ' . $db->error);
 			}
@@ -308,9 +310,11 @@ class war{
 		$this->addAttack($attackerId, $defenderId, $stars);
 	}
 
-	public function removeAttack($attackerId, $defenderId){
+	public function removeAttack($attacker, $defender){
 		global $db;
 		if(isset($this->id)){
+			$attackerId = $attacker->get('id');
+			$defenderId = $defender->get('id');
 			$procedure = buildProcedure('p_war_remove_attack', $this->id, $attackerId, $defenderId);
 			if(($db->multi_query($procedure)) === TRUE){
 				while ($db->more_results()){
@@ -336,17 +340,25 @@ class war{
 					return $this->clanAttacks[$clanId];
 				}
 			}else{
-				$clanId = '%';
+				if(isset($this->warAttacks)){
+					return $this->warAttacks;
+				}
 			}
-			$procedure = buildProcedure('p_war_get_attacks', $this->id, $clanId);
+			$procedure = buildProcedure('p_war_get_attacks', $this->id);
 			if(($db->multi_query($procedure)) === TRUE){
 				$results = $db->store_result();
 				while ($db->more_results()){
 					$db->next_result();
 				}
+				if(!isset($this->clanAttacks)){
+					$this->clanAttacks = array();
+				}
 				$this->clanAttacks[$this->firstClanId] = array();
 				$this->clanAttacks[$this->secondClanId] = array();
-				$warAttacks = array();
+				if(!isset($this->playerAttacks)){
+					$this->playerAttacks = array();
+				}
+				$this->warAttacks = array();
 				if ($results->num_rows) {
 					while ($warAttackObj = $results->fetch_object()) {
 						$warAttack = array();
@@ -370,14 +382,16 @@ class war{
 						$warAttack['newStars'] = $newStars;
 						$warAttack['dateCreated'] = $warAttackObj->date_created;
 						$warAttack['dateModified'] = $warAttackObj->date_modified;
-						$warAttacks[] = $warAttack;
+						$this->warAttacks[] = $warAttack;
+						$this->playerAttacks[$warAttack['attackerId']][] = $warAttack;
 						$this->clanAttacks[$warAttack['attackerClanId']][] = $warAttack;
 					}
 				}
 				if(isset($clan)){
-					$this->clanAttacks[$clanId] = $warAttacks;
+					return $this->clanAttacks[$clanId];
+				}else{
+					return $this->warAttacks;
 				}
-				return $warAttacks;
 			}else{
 				throw new illegalQueryException('The database encountered an error. ' . $db->error);
 			}
@@ -429,13 +443,15 @@ class war{
 		}
 	}
 
-	public function getPlayerAttacks($playerId){
+	public function getPlayerAttacks($player){
 		global $db;
 		if(isset($this->id)){
-			$player = new player($playerId);
 			$playerId = $player->get('id');
 			if(!$this->isPlayerInWar($playerId)){
 				throw new illegalWarPlayerException('Player not in war.');
+			}
+			if(isset($this->playerAttacks[$playerId])){
+				return $this->playerAttacks[$playerId];
 			}
 			$procedure = buildProcedure('p_war_get_player_attacks', $this->id, $playerId);
 			if(($db->multi_query($procedure)) === TRUE){
@@ -470,6 +486,7 @@ class war{
 						$warAttacks[] = $warAttack;
 					}
 				}
+				$this->playerAttacks[$playerId] = $warAttacks;
 				return $warAttacks;
 			}else{
 				throw new illegalQueryException('The database encountered an error. ' . $db->error);
@@ -899,5 +916,36 @@ class war{
 			}
 		}
 		return false;
+	}
+
+	private function updateClanWarStats($clan){
+		$wars = $clan->getMyWars();
+		if(count($wars)>1){
+			$war = $wars[1];
+			$war->getAttacks();
+			$players = $war->getMyWarPlayers($clan);
+			foreach ($players as $player) {
+				$attacks = $war->getPlayerAttacks($player);
+				$player->set('attacksUsed', $player->get('attacksUsed') + count($attacks));
+				$firstAttack = $attacks[0];
+				if(isset($firstAttack)){
+					$player->set('firstAttackTotalStars', $player->get('firstAttackTotalStars') + $firstAttack['totalStars']);
+					$player->set('firstAttackNewStars', $player->get('firstAttackNewStars') + $firstAttack['newStars']);
+				}
+				$secondAttack = $attacks[1];
+				if(isset($secondAttack)){
+					$player->set('secondAttackTotalStars', $player->get('secondAttackTotalStars') + $secondAttack['totalStars']);
+					$player->set('secondAttackNewStars', $player->get('secondAttackNewStars') + $secondAttack['newStars']);
+				}
+				$defences = $war->getPlayerDefences($player->get('id'));
+				$stars = 0;
+				foreach ($defences as $defence) {
+					$stars += $defence['newStars'];
+				}
+				$player->set('numberOfDefences', $player->get('numberOfDefences') + count($defences));
+				$player->set('starsOnDefence', $player->get('starsOnDefence') + $stars);
+				$player->set('numberOfWars', $player->get('numberOfWars') + 1);
+			}
+		}
 	}
 }

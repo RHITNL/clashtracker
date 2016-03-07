@@ -82,6 +82,24 @@ function yearAgo(){
 	return strtotime('-1 year');
 }
 
+function sortPlayersByWarScore($players){
+	for ($i=1; $i < count($players); $i++) { 
+		$j=$i;
+		while ($j>0 && $players[$j-1]->getScore() < $players[$j]->getScore()){
+			$temp = $players[$j];
+			$players[$j] = $players[$j-1];
+			$players[$j-1] = $temp;
+			$j--;
+		}
+	}
+	foreach ($players as $key => $player) {
+		if($player->get('numberOfDefences') == 0){
+			unset($players[$key]);
+		}
+	}
+	return $players;
+}
+
 function sortPlayersByRank($players, $order='desc'){
 	for ($i=1; $i < count($players); $i++) { 
 		$j=$i;

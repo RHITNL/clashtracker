@@ -87,7 +87,7 @@ require('header.php');
 	</div>
 	<?if((count($members)>0 && $userHasAccessToUpdateClan) || count($wars)>0){?>
 		<div class="col-md-12">
-			<div class="col-md-6">
+			<div class="col-md-12">
 				<?if(count($members)>0 && $userHasAccessToUpdateClan){?>
 					<a type="button" class="btn btn-success" href="/recordClanLoot.php?clanId=<?=$clan->get('id');?>">Record Loot</a>
 				<?}
@@ -102,6 +102,9 @@ require('header.php');
 				<?}
 				if(isset($war)){?>
 					<a type="button" class="btn btn-success" href="/war.php?warId=<?=$war->get('id');?>&clanId=<?=$clan->get('id');?>">Most Recent War</a>
+				<?}
+				if(count($wars)>1){?>
+					<a type="button" class="btn btn-success" href="/warStats.php?clanId=<?=$clan->get('id');?>">War Stats</a>
 				<?}
 				if(count($wars)>1){?>
 					<a type="button" class="btn btn-success" href="/wars.php?clanId=<?=$clan->get('id');?>">War Log</a>

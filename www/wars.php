@@ -98,7 +98,7 @@ require('header.php');
 							$score = $war->getClanStars($clan1) . ' - ' . $war->getClanStars($clan2);?>
 							<td><?=$name;?></td>
 							<?if(isset($playerId)){
-								$playerAttacks = $war->getPlayerAttacks($playerId);
+								$playerAttacks = $war->getPlayerAttacks($player);
 								$firstAttack = $playerAttacks[0];
 								$secondAttack = $playerAttacks[1];
 								$playerDefences = $war->getPlayerDefences($playerId);

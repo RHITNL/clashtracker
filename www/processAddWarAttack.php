@@ -104,7 +104,7 @@ if($attackerClan->get('id') == $defenderClan->get('id')){
 	exit;
 }
 
-$attackerAttacks = $war->getPlayerAttacks($attacker->get('id'));
+$attackerAttacks = $war->getPlayerAttacks($attacker);
 if(count($attackerAttacks) >= 2){
 	$_SESSION['curError'] = htmlspecialchars($attacker->get('name')) . ' has already used both attacks.';
 	if(isset($clanId)){

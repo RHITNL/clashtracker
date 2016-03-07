@@ -72,7 +72,7 @@ if(count($defenders) == 0){
 	exit;
 }
 
-$attackerAttacks = $war->getPlayerAttacks($attacker->get('id'));
+$attackerAttacks = $war->getPlayerAttacks($attacker);
 if(count($attackerAttacks) >= 2){
 	$_SESSION['curError'] = 'Attacker has already used both attacks.';
 	if(isset($clanId)){

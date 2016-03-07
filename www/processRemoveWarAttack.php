@@ -81,7 +81,7 @@ if(!isset($attack)){
 	exit;
 }
 
-$war->removeAttack($attackerId, $defenderId);
+$war->removeAttack($attacker, $defender);
 $_SESSION['curMessage'] = 'War attack successfully removed.';
 if(isset($clanId)){
 	header('Location: /war.php?warId=' . $war->get('id') . '&clanId=' . $clanId);

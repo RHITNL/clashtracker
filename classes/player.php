@@ -13,6 +13,14 @@ class player{
 	private $donations;
 	private $received;
 	private $leagueUrl;
+	private $firstAttackTotalStars;
+	private $firstAttackNewStars;
+	private $secondAttackTotalStars;
+	private $secondAttackNewStars;
+	private $starsOnDefence;
+	private $numberOfDefences;
+	private $attacksUsed;
+	private $numberOfWars;
 
 	private $acceptGet = array(
 		'id' => 'id',
@@ -26,7 +34,16 @@ class player{
 		'donations' => 'donations',
 		'received' => 'received',
 		'league_url' => 'leagueUrl',
-		'level' => 'level'
+		'score' => 'score',
+		'level' => 'level',
+		'first_attack_total_stars' => 'firstAttackTotalStars',
+		'first_attack_new_stars' => 'firstAttackNewStars',
+		'second_attack_total_stars' => 'secondAttackTotalStars',
+		'second_attack_new_stars' => 'secondAttackNewStars',
+		'stars_on_defence' => 'starsOnDefence',
+		'number_of_defences' => 'numberOfDefences',
+		'attacks_used' => 'attacksUsed',
+		'number_of_wars' => 'numberOfWars'
 	);
 
 	private $acceptSet = array(
@@ -38,7 +55,16 @@ class player{
 		'donations' => 'donations',
 		'received' => 'received',
 		'league_url' => 'leagueUrl',
-		'min_rank_access' => 'minRankAccess'
+		'score' => 'score',
+		'min_rank_access' => 'minRankAccess',
+		'first_attack_total_stars' => 'firstAttackTotalStars',
+		'first_attack_new_stars' => 'firstAttackNewStars',
+		'second_attack_total_stars' => 'secondAttackTotalStars',
+		'second_attack_new_stars' => 'secondAttackNewStars',
+		'stars_on_defence' => 'starsOnDefence',
+		'number_of_defences' => 'numberOfDefences',
+		'attacks_used' => 'attacksUsed',
+		'number_of_wars' => 'numberOfWars'
 	);
 
 	public function create($name, $tag){
@@ -102,6 +128,14 @@ class player{
 					$this->donations = $record->donations;
 					$this->received = $record->received;
 					$this->leagueUrl = $record->league_url;
+					$this->firstAttackTotalStars = $record->first_attack_total_stars;
+					$this->firstAttackNewStars = $record->first_attack_new_stars;
+					$this->secondAttackTotalStars = $record->second_attack_total_stars;
+					$this->secondAttackNewStars = $record->second_attack_new_stars;
+					$this->starsOnDefence = $record->stars_on_defence;
+					$this->numberOfDefences = $record->number_of_defences;
+					$this->attacksUsed = $record->attacks_used;
+					$this->numberOfWars = $record->number_of_wars;
 				}else{
 					throw new noResultFoundException('No player found with id ' . $this->id);
 				}
@@ -141,6 +175,14 @@ class player{
 					$this->donations = $record->donations;
 					$this->received = $record->received;
 					$this->leagueUrl = $record->league_url;
+					$this->firstAttackTotalStars = $record->first_attack_total_stars;
+					$this->firstAttackNewStars = $record->first_attack_new_stars;
+					$this->secondAttackTotalStars = $record->second_attack_total_stars;
+					$this->secondAttackNewStars = $record->second_attack_new_stars;
+					$this->starsOnDefence = $record->stars_on_defence;
+					$this->numberOfDefences = $record->number_of_defences;
+					$this->attacksUsed = $record->attacks_used;
+					$this->numberOfWars = $record->number_of_wars;
 				}else{
 					throw new noResultFoundException('No player found with tag ' . $tag);
 				}
@@ -165,6 +207,14 @@ class player{
 		$this->donations = $playerObj->donations;
 		$this->received = $playerObj->received;
 		$this->leagueUrl = $playerObj->league_url;
+		$this->firstAttackTotalStars = $playerObj->first_attack_total_stars;
+		$this->firstAttackNewStars = $playerObj->first_attack_new_stars;
+		$this->secondAttackTotalStars = $playerObj->second_attack_total_stars;
+		$this->secondAttackNewStars = $playerObj->second_attack_new_stars;
+		$this->starsOnDefence = $playerObj->stars_on_defence;
+		$this->numberOfDefences = $playerObj->number_of_defences;
+		$this->attacksUsed = $playerObj->attacks_used;
+		$this->numberOfWars = $playerObj->number_of_wars;
 		$this->clan = $clan;
 		if(isset($clan)){
 			$this->clanRank = $playerObj->rank;
@@ -539,6 +589,9 @@ class player{
 	}
 
 	public function getWars(){
+		if(isset($this->wars)){
+			return $this->wars;
+		}
 		global $db;
 		if(isset($this->id)){
 			$procedure = buildProcedure('p_player_get_wars', $this->id);
@@ -547,15 +600,15 @@ class player{
 				while ($db->more_results()){
 					$db->next_result();
 				}
-				$wars = array();
+				$this->wars = array();
 				if ($results->num_rows) {
 					while ($record = $results->fetch_object()) {
 						$war = new war();
 						$war->loadByObj($record);
-						$wars[] = $war;
+						$this->wars[] = $war;
 					}
 				}
-				return $wars;
+				return $this->wars;
 			}else{
 				throw new illegalQueryException('The database encountered an error. ' . $db->error);
 			}
@@ -889,5 +942,33 @@ class player{
 		}else{
 			throw new illegalFunctionCallException('ID not set for revoke.');
 		}	
+	}
+
+	public function getScore(){
+		if(isset($this->score)){
+			return $this->score;
+		}
+		if($this->numberOfWars == 0){
+			$this->score = 0;
+			return $this->score;
+		}
+		$fat = $this->firstAttackTotalStars / $this->numberOfWars;
+		$fan = $this->firstAttackNewStars / $this->numberOfWars;
+		$sat = $this->secondAttackTotalStars / $this->numberOfWars;
+		$san = $this->secondAttackNewStars / $this->numberOfWars;
+		$sa = $this->starsOnDefence / $this->numberOfWars;
+		$aa = $this->numberOfDefences / $this->numberOfWars;
+		$aa = ($aa == 0) ? 1 : $aa;
+		$au = $this->attacksUsed / $this->numberOfWars;
+		$wslp = $this->warsSinceLastParticipated();
+		$wslp = ($wslp == INF) ? 0 : $wslp;
+
+		$this->score = array_sum(array($fat, $fan, $sat, $san));
+		$this->score *= $au / 2;
+		$this->score -= $sa / $aa;
+		$this->score -= (2 - $au) * 2;
+		$this->score *= min(1, $this->numberOfWars/4);
+		$this->score *= (100-$wslp)/100;
+		return $this->score;
 	}
 }
