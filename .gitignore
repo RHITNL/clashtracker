@@ -1,7 +1,5 @@
 www/.DS_Store
 .DS_Store
 vendor/
-composer.lock
-composer.phar
 connect to heroku db
 clash.sublime-workspace
