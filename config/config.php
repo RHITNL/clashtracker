@@ -12,7 +12,7 @@ define('NO_ACCESS', 'You do not have access to that page.');
 $dir = str_replace('/config', '', __DIR__);
 define('APPROOT', $dir);
 
-date_default_timezone_set('UTC');
+date_default_timezone_set('America/Halifax');
 session_start();
 
 $classes = scandir(APPROOT . '/classes');
