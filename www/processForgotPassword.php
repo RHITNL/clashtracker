@@ -1,5 +1,6 @@
 <?
 require('init.php');
+require('sendgrid-php.php');
 
 if($_POST['cancel']){
 	header('Location: /login.php');
@@ -23,11 +24,11 @@ $user->changePassword($newPassword);
 $link = "http://" . $_SERVER['HTTP_HOST'] . "/login.php";
 $subject = "Forgotten Password";
 $message = "Hello,\n\n\tWe have received a request to reset the password on your Clash Tracker account. Your new password is " . $newPassword . ". We recommend changing you password immediately after using this one to sign in. You can click on the below link to sign in now:\n\n\t" . $link . "\n\nClash on,\nClash Tracker Account Support\n";
-if(mail($email, $subject, $message, $headers)){
+if(email($email, $subject, $message, $headers)){
 	$_SESSION['curMessage'] = 'Password reset email successfully sent.';
 	header('Location: /login.php');
 }else{
-	$_SESSION['curError'] = 'There was an error trying to reset your password. Please email freetacosclash@gmail.com for help.';
+	$_SESSION['curError'] = 'There was an error trying to reset your password. Please email alexinmann@gmail.com for help.';
 	header('Location: /forgotPassword.php');
 }
 exit;

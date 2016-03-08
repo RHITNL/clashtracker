@@ -122,37 +122,23 @@ function sortPlayersByRank($players, $order='desc'){
 }
 
 function rankIsHigher($rank1, $rank2){
-	switch ($rank1) {
-		case 'LE':
-			return $rank2 != 'LE';
-			break;
-		case 'CO':
-			return $rank2 != 'LE' && $rank2 != 'CO';
-			break;
-		case 'EL':
-			return $rank2 == 'ME';
-			break;
-		default:
-			return false;
-			break;
-	}
+	$ranks = array('LE' => 4,
+		'CO' => 3,
+		'EL' => 2,
+		'ME' => 1,
+		'EX' => 0,
+		'KI' => -1);
+	return $ranks[$rank1] > $ranks[$rank2];
 }
 
 function rankIsLower($rank1, $rank2){
-	switch ($rank1) {
-		case 'CO':
-			return $rank2 == 'LE';
-			break;
-		case 'EL':
-			return $rank2 != 'ME' && $rank2 != 'EL';
-			break;
-		case 'ME':
-			return $rank2 != 'ME';
-			break;
-		default:
-			return false;
-			break;
-	}
+	$ranks = array('LE' => 4,
+		'CO' => 3,
+		'EL' => 2,
+		'ME' => 1,
+		'EX' => 0,
+		'KI' => -1);
+	return $ranks[$rank1] < $ranks[$rank2];
 }
 
 function validPassword($password){
@@ -368,4 +354,13 @@ function refreshClanInfo($clan){
 		$clan->getMembers(true);//reload the members after some have left
 	}
 	return $apiMembers;
+}
+
+function email($email, $subject, $message, $headers){
+	try{
+		throw new Exception("Email not implemented yet!");
+	}catch(Exception $e){
+		error_log($e->getMessage());
+		return false;
+	}
 }
