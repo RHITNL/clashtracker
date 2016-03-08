@@ -12,6 +12,12 @@ try{
 	exit;
 }
 
+if(!userHasAccessToUpdateClan($clan)){
+	$_SESSION['curError'] = NO_ACCESS;
+    header('Location: /clan.php?clanId=' . $clanId);
+    exit;
+}
+
 try{
 	$lootReport = $clan->generateLootReport(weekAgo());
 	$_SESSION['curMessage'] = 'Loot Report Successfully Generated.';

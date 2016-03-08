@@ -299,6 +299,7 @@ class player{
 	private function recordLoot($type, $amount, $date='%'){
 		global $db;
 		if(isset($this->id)){
+			$date = ($date == '%') ? date('Y-m-d H:m:s', time()) : $date;
 			$loot = $this->getLoot($type);
 			if((count($loot) == 0 || $loot[0]['lootAmount'] <= $amount) && $amount >= 0){
 				$procedure = buildProcedure('p_player_record_loot', $this->id, $type, $amount, $date);
