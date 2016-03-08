@@ -74,6 +74,10 @@ function dayAgo(){
 	return strtotime('-1 day');
 }
 
+function hourAgo(){
+	return strtotime('-1 hour');
+}
+
 function monthAgo(){
 	return strtotime('-1 month');
 }
@@ -317,6 +321,9 @@ function convertLocation($location){
 }
 
 function refreshClanInfo($clan){
+	if(hourAgo() < strtotime($clan->get('dateModified'))){
+		return;
+	}
 	try{
 		$api = new clanApi();
 		$clanInfo = $api->getClanInformation($clan->get('tag'));

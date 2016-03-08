@@ -255,7 +255,8 @@ class clan{
 										$clanInfo->clanLevel,
 										$clanInfo->warWins,
 										$clanInfo->badgeUrls->small,
-										convertLocation($clanInfo->location->name));
+										convertLocation($clanInfo->location->name),
+										date('Y-m-d H:m:s', time()));
 			if(($db->multi_query($procedure)) === TRUE){
 				while ($db->more_results()){
 					$db->next_result();
@@ -488,7 +489,7 @@ class clan{
 	public function updatePlayerWarRank($playerId, $warRank){
 		if(isset($this->id)){
 			global $db;
-			$procedure = buildProcedure('p_clan_update_player_war_rank', $this->id, $playerId, $warRank);
+			$procedure = buildProcedure('p_clan_update_player_war_rank', $this->id, $playerId, $warRank, date('Y-m-d H:m:s', time()));
 			if(($db->multi_query($procedure)) === TRUE){
 				while ($db->more_results()){
 					$db->next_result();
