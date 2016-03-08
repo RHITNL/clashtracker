@@ -1,5 +1,6 @@
 <?
 require('config.php');
+require('../vendor/autoload.php');
 
 function rankFromCode($code){
 	$ranks = array('LE' => 'Leader',
@@ -356,9 +357,20 @@ function refreshClanInfo($clan){
 	return $apiMembers;
 }
 
-function email($email, $subject, $message, $headers){
+function email($to, $subject, $message){
 	try{
-		throw new Exception("Email not implemented yet!");
+		$sendgrid_username = $_ENV['SENDGRID_USERNAME'];
+		$sendgrid_password = $_ENV['SENDGRID_PASSWORD'];
+		$sendgrid = new SendGrid($sendgrid_username, $sendgrid_password, array("turn_off_ssl_verification" => true));
+		$email    = new SendGrid\Email();
+		$email->addTo($to)->
+			   setFrom($to)->
+			   setSubject($subject)->
+			   setText($message)->
+			   addHeader('X-Sent-Using', 'SendGrid-API')->
+			   addHeader('X-Transport', 'web');
+		$response = $sendgrid->send($email);
+		error_log(print_r($response, true));
 	}catch(Exception $e){
 		error_log($e->getMessage());
 		return false;
