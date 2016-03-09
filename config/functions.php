@@ -307,9 +307,9 @@ function convertLocation($location){
 	}
 }
 
-function refreshClanInfo($clan){
+function refreshClanInfo($clan, $force=false){
 	try{
-		if(hourAgo() > strtotime($clan->get('dateModified'))){
+		if(hourAgo() > strtotime($clan->get('dateModified')) || $force){
 			$api = new clanApi();
 			$clanInfo = $api->getClanInformation($clan->get('tag'));
 			$apiInfo = gzcompress(json_encode($clanInfo));
@@ -321,10 +321,10 @@ function refreshClanInfo($clan){
 				if($json !== false){
 					$clanInfo = json_decode($json);
 				}else{
-					return true;
+					return array();
 				}
 			}else{
-				return true;
+				return array();
 			}
 		}
 	}catch(apiException $e){

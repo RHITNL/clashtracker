@@ -3,17 +3,18 @@ require('init.php');
 require('session.php');
 
 $clanId = $_GET['clanId'];
+$force = $_GET['force'];
 try{
 	$clan = new clan($clanId);
 	$clanId = $clan->get('id');
-	$apiMembers = refreshClanInfo($clan);
+	$apiMembers = refreshClanInfo($clan, isset($force));
 	if($apiMembers === false){
 		$apiMembers = array();
 	}
 }catch(Exception $e){
 	$clan = new clan();
 	$clan->create($clanId);
-	$apiMembers = refreshClanInfo($clan);
+	$apiMembers = refreshClanInfo($clan, isset($force));
 	if($apiMembers === false){
 		$clan->delete();
 		$_SESSION['curError'] = 'Clan Tag was not found in Clash of Clans.';
