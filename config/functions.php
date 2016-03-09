@@ -363,7 +363,7 @@ function refreshClanInfo($clan, $force=false){
 		$membersUpdated = true;
 	}
 	if($membersUpdated){
-		$clan->getMembers(true);//reload the members after some have left
+		$clan->getMembers(true);//reload the members after some have left or changed trophies
 	}
 	return $apiMembers;
 }

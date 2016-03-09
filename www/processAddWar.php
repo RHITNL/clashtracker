@@ -56,6 +56,12 @@ try{
 	}
 }
 
+if($enemyClan->get('id') == $clan->get('id')){
+	$_SESSION['curError'] = 'Clan cannot war against itself.';
+	header('Location: /addWar.php?clanId=' . $clan->get('id'));
+	exit;
+}
+
 $war = new war();
 $war->create($clan, $enemyClan, $size);
 $_SESSION['curMessage'] = 'Clan War created successully.';
