@@ -1106,3 +1106,5 @@ begin
 	update clan_member set war_rank = varWarRank, date_modified = varDateModified where clan_id = varClanId and player_id = varPlayerId;
 end //
 delimiter ;
+
+alter table clan add api_info varchar(2000) default null;
