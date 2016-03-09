@@ -308,12 +308,20 @@ function convertLocation($location){
 }
 
 function refreshClanInfo($clan){
-	if(hourAgo() < strtotime($clan->get('dateModified'))){
-		return;
-	}
 	try{
-		$api = new clanApi();
-		$clanInfo = $api->getClanInformation($clan->get('tag'));
+		if(hourAgo() > strtotime($clan->get('dateModified'))){
+			$api = new clanApi();
+			$clanInfo = $api->getClanInformation($clan->get('tag'));
+			$apiInfo = gzcompress(json_encode($clanInfo));
+			$clan->set('apiInfo', $apiInfo);
+		}else{
+			$apiInfo = $clan->get('apiInfo');
+			if(isset($apiInfo)){
+				$clanInfo = json_decode(gzuncompress($apiInfo));
+			}else{
+				return;
+			}
+		}
 	}catch(apiException $e){
 		error_log($e->getReasonMessage());
 		return false;
@@ -364,7 +372,6 @@ function email($to, $subject, $message){
 		$sendgrid = new SendGrid($sendgrid_username, $sendgrid_password, array("turn_off_ssl_verification" => true));
 		$email = new SendGrid\Email();
 		$email->addTo($to)->
-			   setFrom('alexinmann@gmail.com')->
 			   setSubject($subject)->
 			   setText($message)->
 			   addHeader('X-Sent-Using', 'SendGrid-API')->

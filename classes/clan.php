@@ -17,6 +17,7 @@ class clan{
 	private $location;
 	private $accessType;
 	private $minRankAccess;
+	private $apiInfo;
 
 	private $acceptGet = array(
 		'id' => 'id',
@@ -35,6 +36,7 @@ class clan{
 		'clan_points' => 'clanPoints',
 		'war_wins' => 'warWins',
 		'location' => 'location',
+		'api_info' => 'apiInfo',
 		'badge_url' => 'badgeUrl'
 	);
 
@@ -51,6 +53,7 @@ class clan{
 		'location' => 'location',
 		'access_type' => 'accessType',
 		'min_rank_access' => 'minRankAccess',
+		'api_info' => 'apiInfo',
 		'badge_url' => 'badgeUrl'
 	);
 
@@ -119,6 +122,7 @@ class clan{
 					$this->location = $record->location;
 					$this->accessType = $record->access_type;
 					$this->minRankAccess = $record->min_rank_access;
+					$this->apiInfo = $record->api_info;
 				}else{
 					throw new noResultFoundException('No clan found with id ' . $this->id);
 				}
@@ -163,6 +167,7 @@ class clan{
 					$this->location = $record->location;
 					$this->accessType = $record->access_type;
 					$this->minRankAccess = $record->min_rank_access;
+					$this->apiInfo = $record->api_info;
 				}else{
 					throw new noResultFoundException('No clan found with tag ' . $tag);
 				}
@@ -192,6 +197,7 @@ class clan{
 		$this->location = $clanObj->location;
 		$this->accessType = $clanObj->access_type;
 		$this->minRankAccess = $clanObj->min_rank_access;
+		$this->apiInfo = $clanObj->api_info;
 	}
 
 	public function get($prpty){
