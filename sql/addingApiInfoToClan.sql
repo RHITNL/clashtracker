@@ -1,1 +1,1 @@
-alter table clan add api_info varchar(2000) default null;
+alter table clan add api_info varchar(50000) default null;

@@ -312,15 +312,13 @@ function refreshClanInfo($clan, $force=false){
 		if(hourAgo() > strtotime($clan->get('dateModified')) || $force){
 			$api = new clanApi();
 			$clanInfo = $api->getClanInformation($clan->get('tag'));
-			$apiInfo = gzcompress(json_encode($clanInfo));
+			$apiInfo = json_encode($clanInfo);
 			$clan->set('apiInfo', $apiInfo);
 		}else{
 			$apiInfo = $clan->get('apiInfo');
 			if(isset($apiInfo)){
-				$json = gzuncompress($apiInfo);
-				if($json !== false){
-					$clanInfo = json_decode($json);
-				}else{
+				$clanInfo = json_decode($apiInfo);
+				if(!isset($clanInfo)){
 					return array();
 				}
 			}else{
