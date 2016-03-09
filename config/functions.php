@@ -370,7 +370,7 @@ function email($to, $subject, $message){
 			   addHeader('X-Sent-Using', 'SendGrid-API')->
 			   addHeader('X-Transport', 'web');
 		$response = $sendgrid->send($email);
-		error_log($response);
+		error_log(print_r($response, true));
 		return isset($response->body) && $response->body->message == 'success';
 	}catch(Exception $e){
 		error_log($e->getMessage());
