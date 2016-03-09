@@ -362,7 +362,7 @@ function email($to, $subject, $message){
 		$sendgrid_username = $_ENV['SENDGRID_USERNAME'];
 		$sendgrid_password = $_ENV['SENDGRID_PASSWORD'];
 		$sendgrid = new SendGrid($sendgrid_username, $sendgrid_password, array("turn_off_ssl_verification" => true));
-		$email    = new SendGrid\Email();
+		$email = new SendGrid\Email();
 		$email->addTo($to)->
 			   setFrom('alexinmann@gmail.com')->
 			   setSubject($subject)->
@@ -370,6 +370,7 @@ function email($to, $subject, $message){
 			   addHeader('X-Sent-Using', 'SendGrid-API')->
 			   addHeader('X-Transport', 'web');
 		$response = $sendgrid->send($email);
+		error_log($response);
 		return isset($response->body) && $response->body->message == 'success';
 	}catch(Exception $e){
 		error_log($e->getMessage());
