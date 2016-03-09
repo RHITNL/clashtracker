@@ -21,7 +21,7 @@ $moreInfo[] = "The average number of total stars the player got with their first
 $moreInfo[] = "The average number of stars that counted towards the war that the player got with their first attack.";
 $moreInfo[] = "The average number of total stars the player got with their second attack.";
 $moreInfo[] = "The average number of stars that counted towards the war that the player got with their second attack.";
-$moreInfo[] = "The average number of stars the player lost per defence.";
+$moreInfo[] = "The average number of stars the player lost per war.";
 $moreInfo[] = "The average number of times the player was attacked per war.";
 $moreInfo[] = "The average number of times the player attacked per war.";
 
@@ -42,7 +42,6 @@ require('header.php');
 				<thead>
 					<tr>
 						<th></th>
-						<!-- <th><div data-toggle="popover" data-trigger="hover" data-placement="top" data-content="Player's Name">Name</div></th> -->
 						<th>Name</th>
 						<th><div data-toggle="popover" data-trigger="hover" data-placement="top" data-content="<?=$moreInfo[0];?>">Score</div></th>
 						<th><div data-toggle="popover" data-trigger="hover" data-placement="top" data-content="<?=$moreInfo[1];?>">1<sup>st</sup> Attack Stars</div></th>

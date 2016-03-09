@@ -39,6 +39,7 @@ try{
 }
 
 $_SESSION['user_id'] = $user->get('id');
+email('alexinmann@gmail.com', 'New Clash Tracker User!', 'There is a new user using Clash Tracker! Their email is ' . $email . ". Welcome them to the site!\n\nClash on!");
 unsetAll();
 header('Location: /home.php');
 exit;
