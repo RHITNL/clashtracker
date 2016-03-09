@@ -16,7 +16,7 @@ $members = $clan->getMembers();
 $members = sortPlayersByWarScore($members);
 
 $moreInfo = array();
-$moreInfo[] = "A score calculated by the player's performance in wars.";
+$moreInfo[] = "A score calculated from the player's offensive and defensive performance in wars.";
 $moreInfo[] = "The average number of total stars the player got with their first attack.";
 $moreInfo[] = "The average number of stars that counted towards the war that the player got with their first attack.";
 $moreInfo[] = "The average number of total stars the player got with their second attack.";
