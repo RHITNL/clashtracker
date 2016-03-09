@@ -140,7 +140,7 @@ require('header.php');
 								</td>
 								<td><?=htmlspecialchars($member->get('name'));?></td>
 								<td><?=rankFromCode($member->get('rank'));?></td>
-								<td><?=$member->get('trophies');?></td>
+								<td><i class="fa fa-trophy" style="color: gold;"></i>&nbsp;<?=$member->get('trophies');?></td>
 								<td><?=$member->get('donations');?></td>
 								<td><?=$member->get('received');?></td>
 								<td class="text-right"><?=$member->get('tag');?></td>
@@ -186,7 +186,7 @@ require('header.php');
 									</td>
 									<td><?=htmlspecialchars($apiMember->name);?></td>
 									<td><?=rankFromCode(convertRank($apiMember->role));?></td>
-									<td><?=$apiMember->trophies;?></td>
+									<td><i class="fa fa-trophy" style="color: gold;"></i>&nbsp;<?=$apiMember->trophies;?></td>
 									<td><?=$apiMember->donations;?></td>
 									<td><?=$apiMember->donationsReceived;?></td>
 									<?if($userHasAccessToUpdateClan){?>
