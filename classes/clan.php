@@ -246,7 +246,8 @@ class clan{
 				&& $this->clanLevel == $clanInfo->clanLevel
 				&& $this->warWins == $clanInfo->warWins
 				&& $this->badgeUrl == $clanInfo->badgeUrls->small
-				&& $this->location == convertLocation($clanInfo->location->name)){
+				&& $this->location == convertLocation($clanInfo->location->name)
+				&& $this->apiInfo == json_encode($clanInfo)){
 				return; //no changes will be made
 			}
 			$procedure = buildProcedure('p_clan_update_bulk', 
@@ -262,7 +263,8 @@ class clan{
 										$clanInfo->warWins,
 										$clanInfo->badgeUrls->small,
 										convertLocation($clanInfo->location->name),
-										date('Y-m-d H:m:s', time()));
+										date('Y-m-d H:m:s', time()),
+										json_encode($apiInfo));
 			if(($db->multi_query($procedure)) === TRUE){
 				while ($db->more_results()){
 					$db->next_result();
@@ -278,6 +280,7 @@ class clan{
 				$this->warWins = $clanInfo->warWins;
 				$this->badgeUrl = $clanInfo->badgeUrls->small;
 				$this->location = convertLocation($clanInfo->location->name);
+				$this->apiInfo = json_encode($apiInfo);
 			}else{
 				throw new illegalQueryException('The database encountered an error. ' . $db->error);
 			}

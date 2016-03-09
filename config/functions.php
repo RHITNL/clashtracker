@@ -312,8 +312,6 @@ function refreshClanInfo($clan, $force=false){
 		if(hourAgo() > strtotime($clan->get('dateModified')) || $force){
 			$api = new clanApi();
 			$clanInfo = $api->getClanInformation($clan->get('tag'));
-			$apiInfo = json_encode($clanInfo);
-			$clan->set('apiInfo', $apiInfo);
 		}else{
 			$apiInfo = $clan->get('apiInfo');
 			if(isset($apiInfo)){
