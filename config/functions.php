@@ -317,9 +317,14 @@ function refreshClanInfo($clan){
 		}else{
 			$apiInfo = $clan->get('apiInfo');
 			if(isset($apiInfo)){
-				$clanInfo = json_decode(gzuncompress($apiInfo));
+				$json = gzuncompress($apiInfo);
+				if($json !== false){
+					$clanInfo = json_decode($json);
+				}else{
+					return true;
+				}
 			}else{
-				return;
+				return true;
 			}
 		}
 	}catch(apiException $e){

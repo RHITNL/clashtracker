@@ -22,7 +22,7 @@ $newPassword = generateRandomPassword();
 $user->changePassword($newPassword);
 $link = "http://" . $_SERVER['HTTP_HOST'] . "/login.php";
 $subject = "Forgotten Password";
-$message = "Hello,\n\n\tWe have received a request to reset the password on your Clash Tracker account. Your new password is " . $newPassword . ". We recommend changing you password immediately after using this one to sign in. You can click on the below link to sign in now:\n\n\t" . $link . "\n\nClash on,\nClash Tracker Account Support\n";
+$message = "Hello,\n\n\tWe have received a request to reset the password on your Clash Tracker account. Your new password is " . $newPassword . ". We recommend changing you password immediately after using this one to sign in. You can click on the below link to sign in now: " . $link . "\n\nClash on,\n\nClash Tracker Account Support\n";
 if(email($email, $subject, $message)){
 	$_SESSION['curMessage'] = 'Password reset email successfully sent.';
 	header('Location: /login.php');
