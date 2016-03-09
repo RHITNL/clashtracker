@@ -372,7 +372,7 @@ function email($to, $subject, $message){
 		$sendgrid = new SendGrid($sendgrid_username, $sendgrid_password, array("turn_off_ssl_verification" => true));
 		$email = new SendGrid\Email();
 		$email->addTo($to)->
-				addFrom('password@clashtracker.ca')->
+				setFrom('password@clashtracker.ca')->
 				setSubject($subject)->
 				setText($message)->
 				addHeader('X-Sent-Using', 'SendGrid-API')->
