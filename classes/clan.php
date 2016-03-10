@@ -264,7 +264,7 @@ class clan{
 										$clanInfo->badgeUrls->small,
 										convertLocation($clanInfo->location->name),
 										date('Y-m-d H:m:s', time()),
-										json_encode($apiInfo));
+										json_encode($clanInfo));
 			if(($db->multi_query($procedure)) === TRUE){
 				while ($db->more_results()){
 					$db->next_result();
@@ -280,7 +280,7 @@ class clan{
 				$this->warWins = $clanInfo->warWins;
 				$this->badgeUrl = $clanInfo->badgeUrls->small;
 				$this->location = convertLocation($clanInfo->location->name);
-				$this->apiInfo = json_encode($apiInfo);
+				$this->apiInfo = json_encode($clanInfo);
 			}else{
 				throw new illegalQueryException('The database encountered an error. ' . $db->error);
 			}
