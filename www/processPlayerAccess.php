@@ -32,7 +32,8 @@ switch ($accessType){
 				if(strlen($email)>0){
 					if(filter_var($email, FILTER_VALIDATE_EMAIL)){
 						try{
-							$loggedInUserPlayer->grantUserAccess($email);
+							$user = new user($email);
+							$loggedInUserPlayer->grantUserAccess($user);
 						}catch(Exception $e){
 							$errors = true;
 							$_SESSION['curError'] .= $email . " is not associated to any users.<br>";

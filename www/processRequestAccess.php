@@ -25,7 +25,7 @@ if(userHasAccessToUpdateClan($war->get('clan2'))
 		&& !userHasAccessToUpdateWar($war)
 		&& isset($loggedInUser)
 		&& !$war->userHasRequested($loggedInUser->get('id'))){
-	$war->requestAccess($loggedInUser->get('id'), $message);
+	$war->requestAccess($loggedInUser, $message);
 	$_SESSION['curMessage'] = 'Successfully requested access to edit war. Please wait for their response.';
 }else{
 	$_SESSION['curError'] = NO_ACCESS;

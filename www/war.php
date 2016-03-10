@@ -724,7 +724,7 @@ require('header.php');
 	<div id="requestAccess" class="col-md-12 hidden">
 		<div class="col-md-12"><br>
 			<div class="alert alert-info" role="alert">
-				<?=$war->get('clan1')->get('name');?> has restricted access to updating their war information, but you can request access to edit this war below.
+				<?=htmlspecialchars($war->get('clan1')->get('name');)?> has restricted access to updating their war information, but you can request access to edit this war below.
 			</div>
 			<form class="form-horizontal" action="/processRequestAccess.php" method="POST">
 				<div class="col-md-12">

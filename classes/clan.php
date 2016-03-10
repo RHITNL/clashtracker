@@ -685,10 +685,9 @@ class clan{
 		}
 	}
 
-	public function grantUserAccess($userId){
+	public function grantUserAccess($user){
 		global $db;
 		if(isset($this->id)){
-			$user = new user($userId);
 			$procedure = buildProcedure('p_clan_allow_user', $this->id, $user->get('id'));
 			if(($db->multi_query($procedure)) === TRUE){
 				while ($db->more_results()){
@@ -834,5 +833,86 @@ class clan{
 		}else{
 			throw new illegalFunctionCallException('ID not set to getloot Reports.');
 		}
+	}
+
+	public function canRequestAccess(){
+		global $loggedInUser;
+		return $this->accessType == 'US' && !userHasAccessToUpdateClan($this) && !$this->userHasRequested($loggedInUser);
+	}
+
+	public function requestAccess($user, $message=""){
+		global $db;
+		if(isset($this->id)){
+			$procedure = buildProcedure('p_clan_edit_request_create', $this->id, $user->get('id'), $message);
+			if(($db->multi_query($procedure)) === TRUE){
+				while ($db->more_results()){
+					$db->next_result();
+				}
+			}else{
+				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set for request.');
+		}
+	}
+
+	public function deleteRequest($user){
+		global $db;
+		if(isset($this->id)){
+			$procedure = buildProcedure('p_clan_edit_request_delete', $this->id, $user->get('id'));
+			if(($db->multi_query($procedure)) === TRUE){
+				while ($db->more_results()){
+					$db->next_result();
+				}
+			}else{
+				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set for delete request.');
+		}
+	}
+
+	public function getRequests(){
+		global $db;
+		if(isset($this->id)){
+			$procedure = buildProcedure('p_clan_get_edit_requests', $this->id);
+			if(($db->multi_query($procedure)) === TRUE){
+				$results = $db->store_result();
+				while ($db->more_results()){
+					$db->next_result();
+				}
+				$editRequests = array();
+				if ($results->num_rows) {
+					while ($editRequestObj = $results->fetch_object()) {
+						$editRequest = new stdClass();
+						$editRequest->clan = $this;
+						$user = new user();
+						$user->loadByObj($editRequestObj);
+						$editRequest->user = $user;
+						$editRequest->message = $editRequestObj->message;
+						$editRequests[] = $editRequest;
+					}
+				}
+				return $editRequests;
+			}else{
+				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set to get requests.');
+		}
+	}
+
+	public function userHasRequested($user){
+		$requests = $this->getRequests();
+		if(!isset($user)){
+			return false;
+		}
+		$userId = $user->get('id');
+		foreach ($requests as $request) {
+			if($request->user->get('id') == $userId){
+				return true;
+			}
+		}
+		return false;
 	}
 }

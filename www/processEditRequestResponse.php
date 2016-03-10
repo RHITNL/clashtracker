@@ -47,11 +47,11 @@ if(!$requestExists){
 	exit;
 }
 
-$war->deleteRequest($user->get('id'));
+$war->deleteRequest($user);
 
 $response = $_GET['response'];
 if($response == 'accept'){
-	$war->grantUserAccess($user->get('id'));
+	$war->grantUserAccess($user);
 	$_SESSION['curMessage'] = 'Successfully granted access to ' . $user->get('email') . '.';
 }elseif($response == 'decline'){
 	$_SESSION['curMessage'] = 'Successfully declined access to ' . $user->get('email') . '.';

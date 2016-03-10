@@ -895,10 +895,9 @@ class player{
 		}		
 	}
 
-	public function grantUserAccess($userId){
+	public function grantUserAccess($user){
 		global $db;
 		if(isset($this->id)){
-			$user = new user($userId);
 			$procedure = buildProcedure('p_player_allow_user', $this->id, $user->get('id'));
 			if(($db->multi_query($procedure)) === TRUE){
 				while ($db->more_results()){

@@ -810,10 +810,9 @@ class war{
 		}
 	}
 
-	public function grantUserAccess($userId){
+	public function grantUserAccess($user){
 		global $db;
 		if(isset($this->id)){
-			$user = new user($userId);
 			$procedure = buildProcedure('p_war_allow_user', $this->id, $user->get('id'));
 			if(($db->multi_query($procedure)) === TRUE){
 				while ($db->more_results()){
@@ -844,10 +843,9 @@ class war{
 		}
 	}
 
-	public function requestAccess($userId, $message=""){
+	public function requestAccess($user, $message=""){
 		global $db;
 		if(isset($this->id)){
-			$user = new user($userId);
 			$procedure = buildProcedure('p_war_edit_request_create', $this->id, $user->get('id'), $message);
 			if(($db->multi_query($procedure)) === TRUE){
 				while ($db->more_results()){
@@ -861,10 +859,9 @@ class war{
 		}
 	}
 
-	public function deleteRequest($userId){
+	public function deleteRequest($user){
 		global $db;
 		if(isset($this->id)){
-			$user = new user($userId);
 			$procedure = buildProcedure('p_war_edit_request_delete', $this->id, $user->get('id'));
 			if(($db->multi_query($procedure)) === TRUE){
 				while ($db->more_results()){

@@ -1,3 +1,4 @@
+drop table if exists clan_edit_requests;
 drop table if exists loot_report_player_result;
 drop table if exists loot_report;
 drop table if exists proxy_request_count;
@@ -1114,5 +1115,38 @@ delimiter //
 create procedure p_clan_update_bulk(varId int, varName varchar(50), varType varchar(2), varDescription varchar(256), varFrequency varchar(2), varMinTrophies int, varMembers int, varClanPoints int, varClanLevel int, varWarWins int, varBadgeUrl varchar(200), varLocation varchar(50), varDateModified datetime, varApiInfo varchar(50000))
 begin
 	update clan set name=varName, clan_type=varType, description=varDescription, war_frequency=varFrequency, minimum_trophies=varMinTrophies, members=varMembers, clan_points=varClanPoints, clan_level=varClanLevel, war_wins=varWarWins, badge_url=varBadgeUrl, location=varLocation, date_modified=varDateModified, api_info=varApiInfo where id = varId;
+end //
+delimiter ;
+
+create table clan_edit_requests(
+	clan_id int not null,
+	user_id int not null,
+	message varchar(256),
+	primary key(clan_id, user_id),
+	foreign key(clan_id) references clan(id) on delete cascade,
+	foreign key(user_id) references user(id) on delete cascade
+);
+
+drop procedure if exists p_clan_edit_request_create;
+delimiter //
+create procedure p_clan_edit_request_create(varClanId int, varUserId int, varMessage varchar(256))
+begin
+	insert into clan_edit_requests values(varClanId, varUserId, varMessage);
+end //
+delimiter ;
+
+drop procedure if exists p_clan_edit_request_delete;
+delimiter //
+create procedure p_clan_edit_request_delete(varClanId int, varUserId int)
+begin
+	delete from clan_edit_requests where clan_id = varClanId and user_id = varUserId;
+end //
+delimiter ;
+
+drop procedure if exists p_clan_get_edit_requests;
+delimiter //
+create procedure p_clan_get_edit_requests(varClanId int)
+begin
+	select user.*, clan_edit_requests.message from user join clan_edit_requests on id = user_id where clan_edit_requests.clan_id = varClanId;
 end //
 delimiter ;

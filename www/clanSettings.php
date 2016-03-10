@@ -25,7 +25,7 @@
 	<div class="col-md-12">
 		<div class="col-md-12">
 			<div class="alert alert-info" role="alert">
-				Below you can control who has access to update war stats for <strong><?=$loggedInUserClan->get("name");?></strong>.
+				Below you can control who has access to update the information for <strong><?=$loggedInUserClan->get("name");?></strong>.
 			</div>
 		</div>
 		<form class="form-horizontal" action="/processClanAccess.php" method="POST">
@@ -44,12 +44,12 @@
 			<div class="col-md-12">
 				<div id="ANDiv" <?=($accessType != 'AN') ? 'hidden' : '';?>>
 					<div class="alert alert-warning" role="alert">
-						<strong>Um..</strong> This gives access to everyone to update war stats on your clan. You should consider choosing a more restrictive setting.
+						<strong>Um..</strong> This gives access to everyone to update the information for your clan. You should consider choosing a more restrictive setting.
 					</div>
 				</div>
 				<div id="CLDiv" <?=($accessType != 'CL') ? 'hidden' : '';?>>
 					<div class="alert alert-info" role="alert">
-						This setting allows only clan mates of a certain rank have access to update the war stats on your clan. You can choose the minimum rank that has access below.
+						This setting allows only clan mates of a certain rank have access to update the information for your clan. You can choose the minimum rank that has access below.
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-lable" for="minRank">Minimum Rank:</label>
@@ -65,7 +65,7 @@
 				</div>
 				<div id="USDiv" <?=($accessType != 'US') ? 'hidden' : '';?>>
 					<div class="alert alert-info" role="alert">
-						This setting allows only users that you choose have access to update the war stats on your clan. If you want to be the only one that can, choose this setting and do <strong>not</strong> give access to anyone.
+						This setting allows only users that you choose have access to update the information for your clan. If you want to be the only one that can, choose this setting and do <strong>not</strong> give access to anyone.
 					</div>
 					<a type="button" class="btn btn-success" onclick="addRow();">Add</a>
 					<?if(count($allowedUsers)>0){?>
@@ -94,7 +94,7 @@
 						</div>
 					<?}else{?>
 						<div id="noRows" class="alert alert-info" role="alert">
-							You haven't granted access to any other user, this means you are the only one that can update your clan's war stats. If you'd like to give access to other users, you can do so by clicking 'Add' above and then 'Update' below.
+							You haven't granted access to any other user, this means you are the only one that can update your clan's information. If you'd like to give access to other users, you can do so by clicking 'Add' above and then 'Update' below.
 						</div>
 					<?}?>
 				</div>

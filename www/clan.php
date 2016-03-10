@@ -12,6 +12,7 @@ try{
 		$apiMembers = array();
 	}
 }catch(Exception $e){
+	error_log(print_r($e, true));
 	$clan = new clan();
 	$clan->create($clanId);
 	$apiMembers = refreshClanInfo($clan, isset($force));
@@ -30,6 +31,12 @@ $war = $wars[0];
 $lootReport = $clan->getLootReports()[0];
 $userHasAccessToUpdateClan = userHasAccessToUpdateClan($clan);
 $canGenerateLootReport = $userHasAccessToUpdateClan && $clan->canGenerateLootReport(weekAgo());
+if(isset($loggedInUserClan) && $loggedInUserClan->get('id') == $clanId){
+	$requests = $clan->getRequests();
+}else{
+	$requests = array();
+}
+$canRequest = $clan->canRequestAccess();
 
 require('header.php');
 ?>
@@ -109,6 +116,12 @@ require('header.php');
 				<?}
 				if(count($wars)>1){?>
 					<a type="button" class="btn btn-success" href="/wars.php?clanId=<?=$clan->get('id');?>">War Log</a>
+				<?}
+				if(count($requests)>0){?>
+					<a type="button" class="btn btn-success" href="/clanRequests.php?clanId=<?=$clan->get('id');?>">Clan Requests</a>
+				<?}
+				if($canRequest){?>
+					<a type="button" class="btn btn-success" href="/requestClanAccess.php?clanId=<?=$clan->get('id');?>">Request Access</a>
 				<?}?>
 				<br><br>
 			</div>
