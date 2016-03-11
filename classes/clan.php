@@ -837,7 +837,7 @@ class clan{
 
 	public function canRequestAccess(){
 		global $loggedInUser;
-		return $this->accessType == 'US' && !userHasAccessToUpdateClan($this) && !$this->userHasRequested($loggedInUser);
+		return $this->accessType == 'US' && isset($loggedInUser) && !userHasAccessToUpdateClan($this) && !$this->userHasRequested($loggedInUser);
 	}
 
 	public function requestAccess($user, $message=""){

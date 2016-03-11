@@ -97,31 +97,31 @@ require('header.php');
 		<div class="col-md-12">
 			<div class="col-md-12">
 				<?if(count($members)>0 && $userHasAccessToUpdateClan){?>
-					<a type="button" class="btn btn-success" href="/recordClanLoot.php?clanId=<?=$clan->get('id');?>">Record Loot</a>
+					<a type="button" class="btn btn-success" href="/recordClanLoot.php?clanId=<?=$clanId;?>">Record Loot</a>
 				<?}
 				if($canGenerateLootReport){?>
-					<a type="button" class="btn btn-success" href="/processGenerateLootReport.php?clanId=<?=$clan->get('id');?>">Generate Loot Report</a>
+					<a type="button" class="btn btn-success" href="/processGenerateLootReport.php?clanId=<?=$clanId;?>">Generate Loot Report</a>
 				<?}
 				if(isset($lootReport)){?>
 					<a type="button" class="btn btn-success" href="/lootReport.php?lootReportId=<?=$lootReport->get('id');?>">Loot Report</a>
 				<?}
 				if(count($members)>=10 && $userHasAccessToUpdateClan){?>
-					<a type="button" class="btn btn-success" href="/addWar.php?clanId=<?=$clan->get('id');?>">Add War</a>
+					<a type="button" class="btn btn-success" href="/addWar.php?clanId=<?=$clanId;?>">Add War</a>
 				<?}
 				if(isset($war)){?>
-					<a type="button" class="btn btn-success" href="/war.php?warId=<?=$war->get('id');?>&clanId=<?=$clan->get('id');?>">Most Recent War</a>
+					<a type="button" class="btn btn-success" href="/war.php?warId=<?=$war->get('id');?>&clanId=<?=$clanId;?>">Most Recent War</a>
 				<?}
 				if(count($wars)>1){?>
-					<a type="button" class="btn btn-success" href="/warStats.php?clanId=<?=$clan->get('id');?>">War Stats</a>
+					<a type="button" class="btn btn-success" href="/warStats.php?clanId=<?=$clanId;?>">War Stats</a>
 				<?}
 				if(count($wars)>1){?>
-					<a type="button" class="btn btn-success" href="/wars.php?clanId=<?=$clan->get('id');?>">War Log</a>
+					<a type="button" class="btn btn-success" href="/wars.php?clanId=<?=$clanId;?>">War Log</a>
 				<?}
 				if(count($requests)>0){?>
-					<a type="button" class="btn btn-success" href="/clanRequests.php?clanId=<?=$clan->get('id');?>">Clan Requests</a>
+					<a type="button" class="btn btn-success" href="/clanRequests.php?clanId=<?=$clanId;?>">Clan Requests</a>
 				<?}
 				if($canRequest){?>
-					<a type="button" class="btn btn-success" href="/requestClanAccess.php?clanId=<?=$clan->get('id');?>">Request Access</a>
+					<a type="button" class="btn btn-success" href="/requestClanAccess.php?clanId=<?=$clanId;?>">Request Access</a>
 				<?}?>
 				<br><br>
 			</div>
@@ -144,7 +144,7 @@ require('header.php');
 					</thead>
 					<tbody>
 						<?foreach ($members as $member) {?>
-							<tr style="cursor: pointer;" onclick="clickRow('player.php?playerId=<?=$member->get("id");?>&clanId=<?=$clan->get('id');?>');">
+							<tr style="cursor: pointer;" onclick="clickRow('player.php?playerId=<?=$member->get("id");?>&clanId=<?=$clanId;?>');">
 								<td width="20">
 									<?$url = $member->get('leagueUrl');
 									if(strlen($url)>0){?>
@@ -172,7 +172,7 @@ require('header.php');
 						<button type="submit" class="btn btn-success text-right">Save</button>
 					</div>
 				<?}?>
-				<input hidden name="clanId" value="<?=$clan->get('id');?>"></input>
+				<input hidden name="clanId" value="<?=$clanId;?>"></input>
 				<div class="table-responsive col-md-12">
 					<table class="table table-hover">
 						<thead>
