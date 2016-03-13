@@ -64,7 +64,7 @@ class api{
 		}
 	}
 
-	private function updateProxyCount($env, $count){
+	public function updateProxyCount($env, $count){
 		global $db;
 		$procedure = buildProcedure('p_proxy_request_count_update', $env, $count, date('F'));
 		if(($db->multi_query($procedure)) === TRUE){
@@ -96,7 +96,8 @@ class api{
 					if($proxy->month != $currentMonth){
 						$proxy->month = $currentMonth;
 						$proxy->count = 0;
-						$this->updateProxyCount($proxy->env, $proxy->count);
+						$api = new api();
+						$api->updateProxyCount($proxy->env, $proxy->count);
 					}else{
 						$proxy->count = $proxyObj->count;
 					}
