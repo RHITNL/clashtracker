@@ -26,13 +26,14 @@ foreach ($playerTags as $key => $playerTag) {
 	if(strlen($playerTag)>0){
 		try{
 			$player = new player($playerTag);
+			$player->set('name', $names[$key]);
 		}catch(Exception $e){
 			$player = new player();
 			$player->create($names[$key], $playerTag);
 		}
 		$playerClan = $player->getMyClan();
 		if(isset($playerClan) && $playerClan->get('id') == $clan->get('id')){
-			$_SESSION['curError'] .= $player->get('name') . ' already in ' . htmlspecialchars($clan->get('name')) . '.<br>';
+			$_SESSION['curError'] .= htmlspecialchars($player->get('name')) . ' already in ' . htmlspecialchars($clan->get('name')) . '.<br>';
 		}else{
 			$count++;
 			$clan->addPlayer($player->get('id'));

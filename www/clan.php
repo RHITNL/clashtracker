@@ -205,7 +205,7 @@ require('header.php');
 									<?if($userHasAccessToUpdateClan){?>
 										<td class="text-right">
 											<input type="text" class="form-control input-sm text-right" id="playerTags[]" name="playerTags[]" placeholder="<?=randomTag();?>"></input>
-											<input hidden id="names[]" name="names[]" value="<?=$apiMember->name;?>"></input>
+											<input hidden id="names[]" name="names[]" value="<?=htmlspecialchars($apiMember->name);?>"></input>
 										</td>
 									<?}?>
 								</tr>
