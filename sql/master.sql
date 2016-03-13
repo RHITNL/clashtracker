@@ -966,7 +966,7 @@ drop procedure if exists p_proxy_request_get;
 delimiter //
 create procedure p_proxy_request_get()
 begin
-	select * from proxy_request_count;
+	select * from proxy_request_count order by count / monthly_limit;
 end //
 delimiter ;
 

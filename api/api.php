@@ -89,16 +89,17 @@ class api{
 			if ($results->num_rows) {
 				while ($proxyObj = $results->fetch_object()) {
 					$proxy = new StdClass();
+					$proxy->env = $proxyObj->env;
 					$proxy->month = $proxyObj->month;
+					$proxy->limit = $proxyObj->monthly_limit;
+					$proxy->ip = $proxyObj->ip;
 					if($proxy->month != $currentMonth){
 						$proxy->month = $currentMonth;
 						$proxy->count = 0;
+						$this->updateProxyCount($proxy->env, $proxy->count);
 					}else{
 						$proxy->count = $proxyObj->count;
 					}
-					$proxy->limit = $proxyObj->monthly_limit;
-					$proxy->ip = $proxyObj->ip;
-					$proxy->env = $proxyObj->env;
 					$proxies[] = $proxy;
 				}
 			}
