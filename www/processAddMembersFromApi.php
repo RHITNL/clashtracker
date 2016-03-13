@@ -26,7 +26,9 @@ foreach ($playerTags as $key => $playerTag) {
 	if(strlen($playerTag)>0){
 		try{
 			$player = new player($playerTag);
-			$player->set('name', $names[$key]);
+			if($player->get('name') != $names[$key]){
+				$player->set('name', $names[$key]);
+			}
 		}catch(Exception $e){
 			$player = new player();
 			$player->create($names[$key], $playerTag);

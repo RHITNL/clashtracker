@@ -73,6 +73,38 @@ class api{
 			}
 		}else{
 			throw new illegalQueryException('The database encountered an error. ' . $db->error);
-		}	
+		}
+	}
+
+	public static function getProxyInformation(){
+		global $db;
+		$procedure = buildProcedure('p_proxy_request_get');
+		if(($db->multi_query($procedure)) === TRUE){
+			$results = $db->store_result();
+			while ($db->more_results()){
+				$db->next_result();
+			}
+			$currentMonth = date('F');
+			$proxies = array();
+			if ($results->num_rows) {
+				while ($proxyObj = $results->fetch_object()) {
+					$proxy = new StdClass();
+					$proxy->month = $proxyObj->month;
+					if($proxy->month != $currentMonth){
+						$proxy->month = $currentMonth;
+						$proxy->count = 0;
+					}else{
+						$proxy->count = $proxyObj->count;
+					}
+					$proxy->limit = $proxyObj->monthly_limit;
+					$proxy->ip = $proxyObj->ip;
+					$proxy->env = $proxyObj->env;
+					$proxies[] = $proxy;
+				}
+			}
+			return $proxies;
+		}else{
+			throw new illegalQueryException('The database encountered an error. ' . $db->error);
+		}
 	}
 }
