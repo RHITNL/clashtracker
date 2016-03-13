@@ -42,7 +42,7 @@ require('header.php');
 						<td>
 							<?if($requestsPerDay != 0){
 								$daysUntilExhaustion = $proxy->limit / $requestsPerDay;
-								print date('F j, Y', strtotime(date('01-m-Y')) + $daysUntilExhaustion*DAY);
+								print date('F j, Y g:m:s A', strtotime(date('01-m-Y h:m:s')) + $daysUntilExhaustion*DAY);
 							}?>
 						</td>
 						<td class="text-right"><?=$proxy->ip;?></td>
@@ -57,7 +57,7 @@ require('header.php');
 					<td>
 						<?if($requestsPerDay != 0){
 							$daysUntilExhaustion = $totalLimit / $requestsPerDay;
-							print date('F j, Y', strtotime(date('01-m-Y')) + $daysUntilExhaustion*DAY);
+							print date('F j, Y g:m:s A', strtotime(date('01-m-Y h:m:s')) + $daysUntilExhaustion*DAY);
 						}?>
 					</td>
 					<td></td>
