@@ -1150,3 +1150,11 @@ begin
 	select user.*, clan_edit_requests.message from user join clan_edit_requests on id = user_id where clan_edit_requests.clan_id = varClanId;
 end //
 delimiter ;
+
+drop procedure if exists p_get_api_keys;
+delimiter //
+create procedure p_get_api_keys()
+begin
+	select * from api_keys order by ip;
+end //
+delimiter ;
