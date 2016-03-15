@@ -11,12 +11,14 @@
 		<link href="css/bootstrap.min.css" rel="stylesheet">
 		<link href="css/bootstrap-theme.min.css" rel="stylesheet">
 		<link href="css/sticky-footer.css" rel="stylesheet">
-		<link rel="stylesheet" type="text/css" href="/css/font-awesome.css">
-		<link rel="stylesheet" type="text/css" href="/css/custom-font-icons.css"></link>
+		<link href="/css/font-awesome.css" rel="stylesheet" type="text/css">
+		<link href="/css/custom-font-icons.css" rel="stylesheet" type="text/css"></link>
+		<link href="css/bootstrap-slider.min.css" rel="stylesheet">
 		<script src="js/jquery-1.11.3.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
 		<script src="js/Chart.js"></script>
 		<script src="js/Chart.Scatter.js"></script>
+		<script src="js/bootstrap-slider.js"></script>
 	</head>
 	<body role="document">
 		<nav class="navbar navbar-inverse navbar-fixed-top">

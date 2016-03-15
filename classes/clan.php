@@ -559,7 +559,7 @@ class clan{
 		}
 	}
 
-	public static function searchClans($query){
+	public static function searchClans($query, $warFrequency=null, $minMembers=null, $maxMembers=null, $minClanLevel=null, $minClanPoints=null){
 		global $db;
 		$query = trim($query);
 		$queries = explode(' ', $query);
