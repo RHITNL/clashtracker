@@ -575,7 +575,7 @@ class clan{
 		if(!is_null($minClanPoints)) 	$where .= " and clan_points >= '" . $db->escape_string($minClanPoints) . "'";
 		foreach ($queries as $query) {
 			if(strlen($query)>1 || count($queries)==1){
-				$procedure = "select * from clan where (lower(name) like lower('%".$query."%') or lower(tag) like lower('%".$query."%'))" . $where . ';';
+				$procedure = "select * from clan where (lower(name) like lower('%".$query."%') or lower(tag) like lower('%".$query."%'))" . $where . ' limit 50;';
 				error_log($procedure);
 				if(($db->multi_query($procedure)) === TRUE){
 					$results = $db->store_result();
@@ -601,10 +601,8 @@ class clan{
 			}else{
 				$foundIds[] = $clan->get('id');
 			}
-			if($i>50){
-				unset($clans[$i]);
-			}
 		}
+		$clans = array_splice($clans, 0, 50);
 		return $clans;
 	}
 

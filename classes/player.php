@@ -711,7 +711,7 @@ class player{
 		$queries = array_unique($queries);
 		$players = array();
 		foreach ($queries as $query) {
-			if(strlen($query)>1 || count($queries)==1){
+			if((strlen($query)>1 || count($queries)==1) && strlen($query)>0){
 				$procedure = buildProcedure('p_player_search', '%'.$query.'%');
 				if(($db->multi_query($procedure)) === TRUE){
 					$results = $db->store_result();
@@ -737,10 +737,8 @@ class player{
 			}else{
 				$foundIds[] = $player->get('id');
 			}
-			if($i>50){
-				unset($players[$i]);
-			}
 		}
+		$players = array_splice($players, 0, 50);
 		return $players;
 	}
 
