@@ -12,23 +12,23 @@ try{
 	$_SESSION['curError'] .= $e->getMessage();
 }
 
-
 $apiClans = array();
+$warFrequency = (strlen($_GET['warFrequency'])>0) ? $_GET['warFrequency'] : null;
+$members = explode(',', $_GET['members']);
+if(isset($members) && count($members)==2){
+	$minMembers = (min($members)>1) ? min($members) : null;
+	$maxMembers = max($members);
+}else{
+	$minMembers = null;
+	$maxMembers = null;
+}
+$minClanLevel = (strlen($_GET['minClanLevel'])>0) ? $_GET['minClanLevel'] : null;
+$minClanLevel = ($minClanLevel > 1) ? $minClanLevel : null;
+$minClanPoints = (strlen($_GET['minClanPoints'])>0) ? $_GET['minClanPoints'] : null;
+$minClanPoints = ($minClanPoints > 0) ? $minClanPoints : 1;
+
 if(isset($api)){
 	$query = strlen($query)>3 ? $query : null;
-	$warFrequency = (strlen($_GET['warFrequency'])>0) ? $_GET['warFrequency'] : null;
-	$members = explode(',', $_GET['members']);
-	if(isset($members) && count($members)==2){
-		$minMembers = (min($members)>1) ? min($members) : null;
-		$maxMembers = max($members);
-	}else{
-		$minMembers = null;
-		$maxMembers = null;
-	}
-	$minClanLevel = (strlen($_GET['minClanLevel'])>0) ? $_GET['minClanLevel'] : null;
-	$minClanLevel = ($minClanLevel > 1) ? $minClanLevel : null;
-	$minClanPoints = (strlen($_GET['minClanPoints'])>0) ? $_GET['minClanPoints'] : null;
-	$minClanPoints = ($minClanPoints > 0) ? $minClanPoints : 1;
 	$clanApi = new clanApi();
 	try{
 		$apiClans = $clanApi->searchClans($query, $warFrequency, $minMembers, $maxMembers, $minClanLevel, $minClanPoints);
@@ -54,57 +54,58 @@ require('header.php');
 	<?require('showMessages.php');?>
 	<h1 style="margin-bottom: 0px;">Search Results</h1>
 	<h5 style="margin-top: 0px;">Search for "<?=$query;?>"...</h5><br>
-	<?if(isset($api)){?>
-		<form class="form-horizontal" action="/searchResults.php" method="GET">
-			<div class="col-sm-6">
+	<form class="form-horizontal" action="/searchResults.php" method="GET">
+		<div class="col-sm-6">
+			<?if(isset($api)){?>
 				<input hidden id="api" name="api" value="api"></input>
-				<input hidden id="query" name="query" value="<?=$query;?>"></input>
-				<div class="form-group">
-					<label class="col-sm-4 control-lable" for="query">Clan Name:</label>
-					<div class="col-sm-8">
-						<input type="text" class="form-control" id="query" name="query" value="<?=$query;?>"></input>
-					</div>
-				</div>
-				<div class="form-group">
-					<label class="col-sm-4 control-lable" for="description">War Frequency:</label>
-					<div class="col-sm-8">
-						<select class="form-control" id="warFrequency" name="warFrequency">
-							<option value=""></option>
-							<option  <?=($warFrequency == 'always') ? 'selected' : '';?> value="always">Always</option>
-							<option  <?=($warFrequency == 'never') ? 'selected' : '';?> value="never">Never</option>
-							<option  <?=($warFrequency == 'moreThanOncePerWeek') ? 'selected' : '';?> value="moreThanOncePerWeek">Twice a week</option>
-							<option  <?=($warFrequency == 'oncePerWeek') ? 'selected' : '';?> value="oncePerWeek">Once a week</option>
-							<option  <?=($warFrequency == 'lessThanOncePerWeek') ? 'selected' : '';?> value="lessThanOncePerWeek">Rarely</option>
-						</select>
-					</div>
+			<?}?>
+			<div class="form-group">
+				<label class="col-sm-4 control-lable" for="query">Name:</label>
+				<div class="col-sm-8">
+					<input type="text" class="form-control" id="query" name="query" value="<?=$query;?>"></input>
 				</div>
 			</div>
-			<div class="col-sm-6">
-				<div class="form-group">
-					<label class="col-sm-4 control-lable" for="minMembers">Members:</label>
-					<div class="col-sm-8">
-						<input style="width: 100%;" name="members" class="span2" id="ex1" data-slider-id='ex1Slider' type="text" data-slider-min="1" data-slider-max="50" data-slider-step="1" data-slider-value="[<?=isset($minMembers) ? $minMembers : 0;?>,<?=isset($maxMembers) ? $maxMembers : 50;?>]"/>
-					</div>
-				</div>
-				<div class="form-group">
-					<label class="col-sm-4 control-lable" for="minMembers">Minimum Clan Level:</label>
-					<div class="col-sm-8">
-						<input style="width: 100%;" name="minClanLevel" id="ex2" data-slider-id='ex2Slider' type="text" data-slider-min="1" data-slider-max="15" data-slider-step="1" data-slider-value="<?=isset($minClanLevel) ? $minClanLevel : 1;?>"/>
-					</div>
-				</div>
-				<div class="form-group">
-					<label class="col-sm-4 control-lable" for="minMembers">Minimum Clan Points:</label>
-					<div class="col-sm-8">
-						<input style="width: 100%;" name="minClanPoints" id="ex3" data-slider-id='ex3Slider' type="text" data-slider-min="1" data-slider-max="60000" data-slider-step="1" data-slider-value="<?=isset($minClanPoints) ? $minClanPoints : 1;?>"/>
-					</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-lable" for="description">War Frequency:</label>
+				<div class="col-sm-8">
+					<select class="form-control" id="warFrequency" name="warFrequency">
+						<option value=""></option>
+						<option  <?=($warFrequency == 'always') ? 'selected' : '';?> value="always">Always</option>
+						<option  <?=($warFrequency == 'never') ? 'selected' : '';?> value="never">Never</option>
+						<option  <?=($warFrequency == 'moreThanOncePerWeek') ? 'selected' : '';?> value="moreThanOncePerWeek">Twice a week</option>
+						<option  <?=($warFrequency == 'oncePerWeek') ? 'selected' : '';?> value="oncePerWeek">Once a week</option>
+						<option  <?=($warFrequency == 'lessThanOncePerWeek') ? 'selected' : '';?> value="lessThanOncePerWeek">Rarely</option>
+					</select>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-sm-12 btn-actions">
-					<button type="submit" class="btn btn-success">Search</button><br><br>
+		</div>
+		<div class="col-sm-6">
+			<div class="form-group">
+				<label class="col-sm-4 control-lable" for="minMembers">Members:</label>
+				<div class="col-sm-8">
+					<input style="width: 100%;" name="members" class="span2" id="ex1" data-slider-id='ex1Slider' type="text" data-slider-min="1" data-slider-max="50" data-slider-step="1" data-slider-value="[<?=isset($minMembers) ? $minMembers : 0;?>,<?=isset($maxMembers) ? $maxMembers : 50;?>]"/>
 				</div>
 			</div>
-		</form>
+			<div class="form-group">
+				<label class="col-sm-4 control-lable" for="minMembers">Minimum Clan Level:</label>
+				<div class="col-sm-8">
+					<input style="width: 100%;" name="minClanLevel" id="ex2" data-slider-id='ex2Slider' type="text" data-slider-min="1" data-slider-max="15" data-slider-step="1" data-slider-value="<?=isset($minClanLevel) ? $minClanLevel : 1;?>"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-lable" for="minMembers">Minimum Clan Points:</label>
+				<div class="col-sm-8">
+					<input style="width: 100%;" name="minClanPoints" id="ex3" data-slider-id='ex3Slider' data-slider-tooltip-position='bottom' type="text" data-slider-min="1" data-slider-max="60000" data-slider-step="1" data-slider-value="<?=isset($minClanPoints) ? $minClanPoints : 1;?>"/>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12 btn-actions">
+				<button type="submit" class="btn btn-success">Search</button><br><br>
+			</div>
+		</div>
+	</form>
+	<?if(isset($api)){?>
 		<?if(count($apiClans)==0 && (count($clans)>0 || count($players)>0)){?>
 			<? error_log(count($clans)); ?>
 			<? error_log(count($players)); ?>
@@ -262,7 +263,7 @@ require('header.php');
 			<strong>Oh no!</strong> We couldn't find anything in our records matching your search<?if(!isset($api)){?>.<?}?>
 			<?if(!isset($api)){?>
 				Search Clash of Clans instead:&nbsp;
-				<a type="button" class="btn btn-xs btn-success" href="/searchResults.php?query=<?=$query;?>&api=api">Search Clash of Clans</a>
+				<a type="button" class="btn btn-xs btn-success" href="/searchResults.php?<?=http_build_query($_GET);?>&api=api">Search Clash of Clans</a>
 			<?}else{?>
 				or in Clash of Clans.
 			<?}?>
@@ -270,7 +271,7 @@ require('header.php');
 	<?}elseif(!isset($api)){?>
 		<div class="alert alert-info" role="alert">
 			Couldn't find what you're looking for? Search Clash of Clans instead:&nbsp;
-			<a type="button" class="btn btn-xs btn-success" href="/searchResults.php?query=<?=$query;?>&api=api">Search Clash of Clans</a>
+			<a type="button" class="btn btn-xs btn-success" href="/searchResults.php?<?=http_build_query($_GET);?>&api=api">Search Clash of Clans</a>
 		</div>
 	<?}?>
 </div>

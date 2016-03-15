@@ -567,9 +567,16 @@ class clan{
 		array_unshift($queries, $query);
 		$queries = array_unique($queries);
 		$clans = array();
+		$where = '';
+		if(!is_null($warFrequency)) 	$where .= " and war_frequency = '" . $db->escape_string(convertFrequency($warFrequency)) . "'";
+		if(!is_null($minMembers)) 		$where .= " and members >= '" . $db->escape_string($minMembers) . "'";
+		if(!is_null($maxMembers)) 		$where .= " and members <= '" . $db->escape_string($maxMembers) . "'";
+		if(!is_null($minClanLevel)) 	$where .= " and clan_level >= '" . $db->escape_string($minClanLevel) . "'";
+		if(!is_null($minClanPoints)) 	$where .= " and clan_points >= '" . $db->escape_string($minClanPoints) . "'";
 		foreach ($queries as $query) {
 			if(strlen($query)>1 || count($queries)==1){
-				$procedure = buildProcedure('p_clan_search', '%'.$query.'%');
+				$procedure = "select * from clan where (lower(name) like lower('%".$query."%') or lower(tag) like lower('%".$query."%'))" . $where . ';';
+				error_log($procedure);
 				if(($db->multi_query($procedure)) === TRUE){
 					$results = $db->store_result();
 					while ($db->more_results()){
