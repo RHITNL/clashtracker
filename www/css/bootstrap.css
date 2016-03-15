@@ -6798,3 +6798,7 @@ button.close {
   }
 }
 /*# sourceMappingURL=bootstrap.css.map */
+
+#ex1Slider .slider-selection {
+  background: #BABABA;
+}
