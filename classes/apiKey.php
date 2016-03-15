@@ -63,6 +63,11 @@ class apiKey{
 		}
 	}
 
+	public function loadByObj($record){
+		$this->ip = $record->ip;
+		$this->apiKey = $record->api_key;
+	}
+
 	public function get($prpty){
 		if(isset($this->ip)){
 			if(in_array($prpty, $this->acceptGet)){
@@ -88,6 +93,28 @@ class apiKey{
 			}
 		}else{
 			throw new illegalFunctionCallException('ID not set for delete.');
+		}
+	}
+
+	public static function getKeys(){
+		global $db;
+		$procedure = buildProcedure('p_get_api_keys');
+		if(($db->multi_query($procedure)) === TRUE){
+			$results = $db->store_result();
+			while ($db->more_results()){
+				$db->next_result();
+			}
+			$apiKeys = array();
+			if ($results->num_rows) {
+				while ($apiKeyObj = $results->fetch_object()) {
+					$apiKey = new apiKey();
+					$apiKey->loadByObj($apiKeyObj);
+					$apiKeys[] = $apiKey;
+				}
+			}
+			return $apiKeys;
+		}else{
+			throw new illegalQueryException('The database encountered an error. ' . $db->error);
 		}
 	}
 }
