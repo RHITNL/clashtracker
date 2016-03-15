@@ -68,7 +68,7 @@ function correctTag($tag){
 }
 
 function weekAgo(){
-	return strtotime('-8 days');
+	return strtotime('-174 hours');
 }
 
 function dayAgo(){
