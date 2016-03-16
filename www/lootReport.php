@@ -35,29 +35,31 @@ require('header.php');
 	<h5 style="margin-top: 0px;"><?=date('F j, Y', strtotime($lootReport->get('dateCreated')));?></h5>
 	<div class="col-md-12">
 		<?foreach($types as $type => $symbol){
-			$result = $results[$type];?>
-			<div class="col-md-<?=$colSize;?>">
-				<h3><?=lootTypeFromCode($type);?>&nbsp;<?=$symbol;?></h3>
-				<div class="table-responsive">
-					<table class="table table-hover">
-						<thead>
-							<tr>
-								<th>Name</th>
-								<th class="text-right">Amount</th>
-							</tr>
-						</thead>
-						<tbody>
-							<?foreach($result as $rank => $playerResult){?>
-								<tr style="cursor: pointer;" onclick="clickRow('player.php?playerId=<?=$playerResult['player']->get("id");?>&clanId=<?=$clan->get('id');?>');">
-									<td><?=$rank+1 . '. ' . htmlspecialchars($playerResult['player']->get('name'));?></td>
-									<td class="text-right"><?=number_format($playerResult['amount'], 0, '.', ',');?></td>
+			$result = $results[$type];
+			if(isset($result)){?>
+				<div class="col-md-<?=$colSize;?>">
+					<h3><?=lootTypeFromCode($type);?>&nbsp;<?=$symbol;?></h3>
+					<div class="table-responsive">
+						<table class="table table-hover">
+							<thead>
+								<tr>
+									<th>Name</th>
+									<th class="text-right">Amount</th>
 								</tr>
-							<?}?>
-						</tbody>
-					</table>
+							</thead>
+							<tbody>
+								<?foreach($result as $rank => $playerResult){?>
+									<tr style="cursor: pointer;" onclick="clickRow('player.php?playerId=<?=$playerResult['player']->get("id");?>&clanId=<?=$clan->get('id');?>');">
+										<td><?=$rank+1 . '. ' . htmlspecialchars($playerResult['player']->get('name'));?></td>
+										<td class="text-right"><?=number_format($playerResult['amount'], 0, '.', ',');?></td>
+									</tr>
+								<?}?>
+							</tbody>
+						</table>
+					</div>
 				</div>
-			</div>
-		<?}?>
+			<?}
+		}?>
 	</div>
 	<?if($previousLootReports){?>
 		<a type="button" class="btn btn-success" href="/lootReports.php?clanId=<?=$clan->get('id');?>">Previous Loot Reports</a>
