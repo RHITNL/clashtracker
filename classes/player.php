@@ -269,6 +269,7 @@ class player{
 				&& $this->leagueUrl == $apiMember->league->iconUrls->small){
 				return false; //no changes will be made
 			}
+			$date = date('Y-m-d H:m:s', time());
 			$procedure = buildProcedure('p_player_update_bulk',
 										$this->id,
 										convertRank($apiMember->role),
@@ -276,7 +277,8 @@ class player{
 										$apiMember->trophies,
 										$apiMember->donations, 
 										$apiMember->donationsReceived,
-										$apiMember->league->iconUrls->small);
+										$apiMember->league->iconUrls->small,
+										$date);
 			if(($db->multi_query($procedure)) === TRUE){
 				while ($db->more_results()){
 					$db->next_result();
@@ -348,9 +350,9 @@ class player{
 							$tempLoot = array();
 							$tempLoot['playerId'] = $lootObj->player_id;
 							$tempLoot['dateRecorded'] = $lootObj->date_recorded;
-							$tempLoot['lootType'] = $lootObj->loot_type;
-							$tempLoot['lootAmount'] = $lootObj->loot_amount;
-							$lootType = $lootObj->loot_type;
+							$tempLoot['lootType'] = $lootObj->stat_type;
+							$tempLoot['lootAmount'] = $lootObj->stat_amount;
+							$lootType = $tempLoot['lootType'];
 							if(!isset($loot[$lootType])){
 								$loot[$lootType] = array();
 							}
