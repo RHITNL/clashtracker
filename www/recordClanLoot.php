@@ -48,19 +48,19 @@ require('header.php');
 				<div class="col-md-3">
 					<div class="form-group">
 						<label for="gold<?=$member->get('id');?>">Gold</label>
-						<input type="number" class="form-control" id="gold<?=$member->get('id');?>" name="gold<?=$member->get('id');?>" placeholder="<?=(count($gold)>0) ? $gold[0]['lootAmount'] : '0';?>">
+						<input type="number" class="form-control" id="gold<?=$member->get('id');?>" name="gold<?=$member->get('id');?>" placeholder="<?=(count($gold)>0) ? $gold[0]['statAmount'] : '0';?>">
 					</div>
 				</div>
 				<div class="col-md-3">
 					<div class="form-group">
 						<label for="elixir<?=$member->get('id');?>">Elixir</label>
-						<input type="number" class="form-control" id="elixir<?=$member->get('id');?>" name="elixir<?=$member->get('id');?>" placeholder="<?=(count($elixir)>0) ? $elixir[0]['lootAmount'] : '0';?>">
+						<input type="number" class="form-control" id="elixir<?=$member->get('id');?>" name="elixir<?=$member->get('id');?>" placeholder="<?=(count($elixir)>0) ? $elixir[0]['statAmount'] : '0';?>">
 					</div>
 				</div>
 				<div class="col-md-3">
 					<div class="form-group">
 						<label for="darkElixir<?=$member->get('id');?>">Dark Elixir</label>
-						<input type="number" class="form-control" id="darkElixir<?=$member->get('id');?>" name="darkElixir<?=$member->get('id');?>" placeholder="<?=(count($darkElixir)>0) ? $darkElixir[0]['lootAmount'] : '0';?>">
+						<input type="number" class="form-control" id="darkElixir<?=$member->get('id');?>" name="darkElixir<?=$member->get('id');?>" placeholder="<?=(count($darkElixir)>0) ? $darkElixir[0]['statAmount'] : '0';?>">
 					</div>
 				</div><br><br><br>
 			<?}

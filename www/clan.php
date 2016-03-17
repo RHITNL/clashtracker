@@ -12,6 +12,7 @@ try{
 		$apiMembers = array();
 	}
 }catch(Exception $e){
+	error_log($e->getMessage());
 	$clan = new clan();
 	$clan->create($clanId);
 	$apiMembers = refreshClanInfo($clan, isset($force));

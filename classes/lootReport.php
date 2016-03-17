@@ -48,8 +48,8 @@ class lootReport{
 			foreach ($types as $type) {
 				$players = $this->clan->getPlayersAvailableForLootReport($type, $sinceTime);
 				foreach ($players as $player) {
-					$loot = $player->getLoot($type, $sinceTime);
-					$amount = $loot[0]['lootAmount'] - $loot[count($loot)-1]['lootAmount'];
+					$loot = $player->getStat($type, $sinceTime);
+					$amount = $loot[0]['statAmount'] - $loot[count($loot)-1]['statAmount'];
 					$this->recordPlayerResult($player, $type, $amount);
 				}
 			}

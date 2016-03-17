@@ -302,8 +302,8 @@ class player{
 		global $db;
 		if(isset($this->id)){
 			$date = ($date == '%') ? date('Y-m-d H:m:s', time()) : $date;
-			$loot = $this->getLoot($type);
-			if((count($loot) == 0 || $loot[0]['lootAmount'] <= $amount) && $amount >= 0){
+			$loot = $this->getStat($type);
+			if((count($loot) == 0 || $loot[0]['statAmount'] <= $amount) && $amount >= 0){
 				$procedure = buildProcedure('p_player_record_loot', $this->id, $type, $amount, $date);
 				if(($db->multi_query($procedure)) === TRUE){
 					while ($db->more_results()){
@@ -313,7 +313,7 @@ class player{
 					throw new illegalQueryException('The database encountered an error. ' . $db->error);
 				}
 			}else{
-				throw new illegalLootAmountException('New loot recording must be positive and more than previous recording. Player ID: ' . $this->id . ".", $loot[0]['lootAmount']);
+				throw new illegalLootAmountException('New loot recording must be positive and more than previous recording. Player ID: ' . $this->id . ".", $loot[0]['statAmount']);
 			}
 		}else{
 			throw new illegalFunctionCallException('ID not set for recording loot.');
@@ -332,7 +332,7 @@ class player{
 		$this->recordLoot('DE', $amount, $date);
 	}
 
-	public function getLoot($type, $sinceTime=null){
+	public function getStat($type, $sinceTime=null){
 		global $db;
 		$sinceTime = isset($sinceTime) ? $sinceTime : 0;
 		if(isset($this->id)){
@@ -350,13 +350,13 @@ class player{
 							$tempLoot = array();
 							$tempLoot['playerId'] = $lootObj->player_id;
 							$tempLoot['dateRecorded'] = $lootObj->date_recorded;
-							$tempLoot['lootType'] = $lootObj->stat_type;
-							$tempLoot['lootAmount'] = $lootObj->stat_amount;
-							$lootType = $tempLoot['lootType'];
-							if(!isset($loot[$lootType])){
-								$loot[$lootType] = array();
+							$tempLoot['statType'] = $lootObj->stat_type;
+							$tempLoot['statAmount'] = $lootObj->stat_amount;
+							$statType = $tempLoot['statType'];
+							if(!isset($loot[$statType])){
+								$loot[$statType] = array();
 							}
-							$loot[$lootType][] = $tempLoot;
+							$loot[$statType][] = $tempLoot;
 						}
 					}
 					$this->loot = $loot;
@@ -382,15 +382,15 @@ class player{
 	}
 
 	public function getGold($sinceTime=0){
-		return $this->getLoot('GO', $sinceTime);
+		return $this->getStat('GO', $sinceTime);
 	}
 
 	public function getElixir($sinceTime=0){
-		return $this->getLoot('EL', $sinceTime);
+		return $this->getStat('EL', $sinceTime);
 	}
 
 	public function getDarkElixir($sinceTime=0){
-		return $this->getLoot('DE', $sinceTime);
+		return $this->getStat('DE', $sinceTime);
 	}
 
 	/**
@@ -400,9 +400,9 @@ class player{
 	 * @param $perTimePeriod int Time in seconds for the average. (e.g. If you want the average loot per week, pass in 604800 or the constant WEEK)
 	 */
 	private function getAverageLoot($type, $sinceTime=0, $perTimePeriod=WEEK){
-		$loot = $this->getLoot($type, $sinceTime);
+		$loot = $this->getStat($type, $sinceTime);
 		if(count($loot) > 1){
-			$totalLoot = $loot[0]['lootAmount'] - $loot[count($loot)-1]['lootAmount'];
+			$totalLoot = $loot[0]['statAmount'] - $loot[count($loot)-1]['statAmount'];
 			$startDate = strtotime($loot[count($loot)-1]['dateRecorded']);
 			$endDate = strtotime($loot[0]['dateRecorded']);
 			$totalTime = $endDate - $startDate;

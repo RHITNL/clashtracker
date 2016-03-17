@@ -250,6 +250,7 @@ class clan{
 				&& $this->apiInfo == json_encode($clanInfo)){
 				return; //no changes will be made
 			}
+			$date = date('Y-m-d H:m:s', time());
 			$procedure = buildProcedure('p_clan_update_bulk', 
 										$this->id,
 										$clanInfo->name,
@@ -264,7 +265,8 @@ class clan{
 										$clanInfo->badgeUrls->small,
 										convertLocation($clanInfo->location->name),
 										date('Y-m-d H:m:s', time()),
-										json_encode($clanInfo));
+										json_encode($clanInfo),
+										$date);
 			if(($db->multi_query($procedure)) === TRUE){
 				while ($db->more_results()){
 					$db->next_result();

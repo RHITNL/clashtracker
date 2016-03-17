@@ -78,7 +78,7 @@ $lootAvailablePastWeek = ($goldAvailablePastWeek||$elixirAvailablePastWeek||$oil
 $playerClan = $player->getMyClan();
 $playerClans = $player->getMyClans();
 
-$largestValue = max(0, $gold[0]['lootAmount'], $elixir[0]['lootAmount'], $oil[0]['lootAmount']);
+$largestValue = max(0, $gold[0]['statAmount'], $elixir[0]['statAmount'], $oil[0]['statAmount']);
 
 $userHasAccessToUpdatePlayer = userHasAccessToUpdatePlayer($player);
 require('header.php');
@@ -191,19 +191,19 @@ require('header.php');
 							<div class="col-md-3">
 								<div class="form-group" style="margin-bottom: 10px;">
 									<label for="gold">Gold </label>
-									<input type="number" class="form-control" id="gold" name="gold" placeholder="<?=(count($gold)>0) ? $gold[0]['lootAmount'] : '0';?>">
+									<input type="number" class="form-control" id="gold" name="gold" placeholder="<?=(count($gold)>0) ? $gold[0]['statAmount'] : '0';?>">
 								</div>
 							</div>
 							<div class="col-md-3">
 								<div class="form-group" style="margin-bottom: 10px;">
 									<label for="elixir">Elixir </label>
-									<input type="number" class="form-control" id="elixir" name="elixir" placeholder="<?=(count($elixir)>0) ? $elixir[0]['lootAmount'] : '0';?>">
+									<input type="number" class="form-control" id="elixir" name="elixir" placeholder="<?=(count($elixir)>0) ? $elixir[0]['statAmount'] : '0';?>">
 								</div>
 							</div>
 							<div class="col-md-3">
 								<div class="form-group" style="margin-bottom: 10px;">
 									<label for="darkElixir">Dark Elixir </label>
-									<input type="number" class="form-control" id="darkElixir" name="darkElixir" placeholder="<?=(count($oil)>0) ? $oil[0]['lootAmount'] : '0';?>">
+									<input type="number" class="form-control" id="darkElixir" name="darkElixir" placeholder="<?=(count($oil)>0) ? $oil[0]['statAmount'] : '0';?>">
 								</div>
 							</div>
 							<div class="col-md-3">
@@ -523,7 +523,7 @@ function showAllTimeGraph(){
 					pointStrokeColor: '#fff',
 					data: [
 						<?foreach ($gold as $loot) {
-							echo "{ x: " . (strtotime($loot['dateRecorded'])*1000) . ", y: " . $loot['lootAmount'] . " },\n\t\t\t\t\t";
+							echo "{ x: " . (strtotime($loot['dateRecorded'])*1000) . ", y: " . $loot['statAmount'] . " },\n\t\t\t\t\t";
 						}?>
 					]
 				},
@@ -535,7 +535,7 @@ function showAllTimeGraph(){
 					pointStrokeColor: '#fff',
 					data: [
 						<?foreach ($elixir as $loot) {
-							echo "{ x: " . (strtotime($loot['dateRecorded'])*1000) . ", y: " . $loot['lootAmount'] . " },\n\t\t\t\t\t";
+							echo "{ x: " . (strtotime($loot['dateRecorded'])*1000) . ", y: " . $loot['statAmount'] . " },\n\t\t\t\t\t";
 						}?>
 					]
 				},
@@ -547,7 +547,7 @@ function showAllTimeGraph(){
 					pointStrokeColor: '#fff',
 					data: [
 						<?foreach ($oil as $loot) {
-							echo "{ x: " . (strtotime($loot['dateRecorded'])*1000) . ", y: " . ($loot['lootAmount']*100) . " },\n\t\t\t\t\t";
+							echo "{ x: " . (strtotime($loot['dateRecorded'])*1000) . ", y: " . ($loot['statAmount']*100) . " },\n\t\t\t\t\t";
 						}?>
 					]
 				}
@@ -569,7 +569,7 @@ function showPastYearGraph(){
 					pointStrokeColor: '#fff',
 					data: [
 						<?foreach ($goldPastYear as $loot) {
-							echo "{ x: " . (strtotime($loot['dateRecorded'])*1000) . ", y: " . $loot['lootAmount'] . " },\n\t\t\t\t\t";
+							echo "{ x: " . (strtotime($loot['dateRecorded'])*1000) . ", y: " . $loot['statAmount'] . " },\n\t\t\t\t\t";
 						}?>
 					]
 				},
@@ -581,7 +581,7 @@ function showPastYearGraph(){
 					pointStrokeColor: '#fff',
 					data: [
 						<?foreach ($elixirPastYear as $loot) {
-							echo "{ x: " . (strtotime($loot['dateRecorded'])*1000) . ", y: " . $loot['lootAmount'] . " },\n\t\t\t\t\t";
+							echo "{ x: " . (strtotime($loot['dateRecorded'])*1000) . ", y: " . $loot['statAmount'] . " },\n\t\t\t\t\t";
 						}?>
 					]
 				},
@@ -593,7 +593,7 @@ function showPastYearGraph(){
 					pointStrokeColor: '#fff',
 					data: [
 						<?foreach ($oilPastYear as $loot) {
-							echo "{ x: " . (strtotime($loot['dateRecorded'])*1000) . ", y: " . ($loot['lootAmount']*100) . " },\n\t\t\t\t\t";
+							echo "{ x: " . (strtotime($loot['dateRecorded'])*1000) . ", y: " . ($loot['statAmount']*100) . " },\n\t\t\t\t\t";
 						}?>
 					]
 				}
@@ -615,7 +615,7 @@ function showPastMonthGraph(){
 					pointStrokeColor: '#fff',
 					data: [
 						<?foreach ($goldPastMonth as $loot) {
-							echo "{ x: " . (strtotime($loot['dateRecorded'])*1000) . ", y: " . $loot['lootAmount'] . " },\n\t\t\t\t\t";
+							echo "{ x: " . (strtotime($loot['dateRecorded'])*1000) . ", y: " . $loot['statAmount'] . " },\n\t\t\t\t\t";
 						}?>
 					]
 				},
@@ -627,7 +627,7 @@ function showPastMonthGraph(){
 					pointStrokeColor: '#fff',
 					data: [
 						<?foreach ($elixirPastMonth as $loot) {
-							echo "{ x: " . (strtotime($loot['dateRecorded'])*1000) . ", y: " . $loot['lootAmount'] . " },\n\t\t\t\t\t";
+							echo "{ x: " . (strtotime($loot['dateRecorded'])*1000) . ", y: " . $loot['statAmount'] . " },\n\t\t\t\t\t";
 						}?>
 					]
 				},
@@ -639,7 +639,7 @@ function showPastMonthGraph(){
 					pointStrokeColor: '#fff',
 					data: [
 						<?foreach ($oilPastMonth as $loot) {
-							echo "{ x: " . (strtotime($loot['dateRecorded'])*1000) . ", y: " . ($loot['lootAmount']*100) . " },\n\t\t\t\t\t";
+							echo "{ x: " . (strtotime($loot['dateRecorded'])*1000) . ", y: " . ($loot['statAmount']*100) . " },\n\t\t\t\t\t";
 						}?>
 					]
 				}
@@ -661,7 +661,7 @@ function showPastWeekGraph(){
 					pointStrokeColor: '#fff',
 					data: [
 						<?foreach ($goldPastWeek as $loot) {
-							echo "{ x: " . (strtotime($loot['dateRecorded'])*1000) . ", y: " . $loot['lootAmount'] . " },\n\t\t\t\t\t";
+							echo "{ x: " . (strtotime($loot['dateRecorded'])*1000) . ", y: " . $loot['statAmount'] . " },\n\t\t\t\t\t";
 						}?>
 					]
 				},
@@ -673,7 +673,7 @@ function showPastWeekGraph(){
 					pointStrokeColor: '#fff',
 					data: [
 						<?foreach ($elixirPastWeek as $loot) {
-							echo "{ x: " . (strtotime($loot['dateRecorded'])*1000) . ", y: " . $loot['lootAmount'] . " },\n\t\t\t\t\t";
+							echo "{ x: " . (strtotime($loot['dateRecorded'])*1000) . ", y: " . $loot['statAmount'] . " },\n\t\t\t\t\t";
 						}?>
 					]
 				},
@@ -685,7 +685,7 @@ function showPastWeekGraph(){
 					pointStrokeColor: '#fff',
 					data: [
 						<?foreach ($oilPastWeek as $loot) {
-							echo "{ x: " . (strtotime($loot['dateRecorded'])*1000) . ", y: " . ($loot['lootAmount']*100) . " },\n\t\t\t\t\t";
+							echo "{ x: " . (strtotime($loot['dateRecorded'])*1000) . ", y: " . ($loot['statAmount']*100) . " },\n\t\t\t\t\t";
 						}?>
 					]
 				}
