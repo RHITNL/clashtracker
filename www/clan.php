@@ -11,8 +11,7 @@ try{
 	if($apiMembers === false){
 		$apiMembers = array();
 	}
-}catch(Exception $e){
-	error_log($e->getMessage());
+}catch(illegalFunctionCallException $e){
 	$clan = new clan();
 	$clan->create($clanId);
 	$apiMembers = refreshClanInfo($clan, isset($force));
@@ -23,6 +22,10 @@ try{
 		exit;
 	}
 	$clanId = $clan->get('id');
+}catch(Exception $e){
+	$_SESSION['curError'] = $e->getMessage();
+	header('Location: /clans.php');
+	exit;
 }
 
 $members = $clan->getMembers();
