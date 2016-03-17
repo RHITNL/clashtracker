@@ -37,11 +37,22 @@
 				</div>
 				<div id="navbar" class="navbar-collapse collapse">
 					<ul class="nav navbar-nav navbar-right">
-						<li><a href="/players.php">Players</a></li>
-						<li><a href="/clans.php">Clans</a></li>
 						<?if(!isset($loggedInUser)){?>
+							<li><a href="/players.php">Players</a></li>
+							<li><a href="/clans.php">Clans</a></li>
 							<li><a href="/login.php">Log In</a></li>
-						<?}else{?>
+						<?}else{
+							if($loggedInUser->get('email') == 'alexinmann@gmail.com'){?>
+								<li><a href="/dev.php">Dev</a></li>
+							<?}if(isset($loggedInUserPlayer)){?>
+								<li><a href="/player.php?playerId=<?=$loggedInUserPlayer->get('id');?>">My Player</a></li>
+							<?}else{?>
+								<li><a href="/players.php">Players</a></li>
+							<?}if(isset($loggedInUserClan)){?>
+								<li><a href="/clan.php?clanId=<?=$loggedInUserClan->get('id');?>">My Clan</a></li>
+							<?}else{?>
+								<li><a href="/clans.php">Clans</a></li>
+							<?}?>
 							<li><a href="/accountSettings.php">Settings</a></li>
 							<li><a href="/processLogout.php">Log Out</a></li>
 						<?}?>
