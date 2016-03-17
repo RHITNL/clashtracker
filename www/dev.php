@@ -13,6 +13,7 @@ $totalRequests = 0;
 $totalLimit = 0;
 
 $apiKeys = apiKey::getKeys();
+$daysInMonth = (strtotime(date('d-m-Y h:m:s'))-strtotime(date('01-m-Y')))/DAY;
 
 require('header.php');
 ?>
@@ -37,7 +38,7 @@ require('header.php');
 						<tr>
 							<?$totalRequests += $proxy->count;
 							$totalLimit += $proxy->limit;
-							$requestsPerDay = $proxy->count/date('d');?>
+							$requestsPerDay = $proxy->count/$daysInMonth;?>
 							<td><?=$proxy->env;?></td>
 							<td><?=$proxy->count;?></td>
 							<td><?=$proxy->limit;?></td>
@@ -45,7 +46,7 @@ require('header.php');
 							<td>
 								<?if($requestsPerDay != 0){
 									$daysUntilExhaustion = $proxy->limit / $requestsPerDay;
-									print date('F j, Y g:m:s A', strtotime(date('01-m-Y h:m:s')) + $daysUntilExhaustion*DAY);
+									print date('F j, Y g:m:s A', strtotime(date('01-m-Y')) + $daysUntilExhaustion*DAY);
 								}?>
 							</td>
 							<td class="text-right"><?=$proxy->ip;?></td>
@@ -53,14 +54,14 @@ require('header.php');
 					<?}?>
 					<tr>
 						<th class="text-right">Total</th>
-						<?$requestsPerDay = $totalRequests/date('d');?>
+						<?$requestsPerDay = $totalRequests/$daysInMonth;?>
 						<td><?=$totalRequests;?></td>
 						<td><?=$totalLimit;?></td>
 						<td><?=number_format($requestsPerDay, 2);?></td>
 						<td>
 							<?if($requestsPerDay != 0){
 								$daysUntilExhaustion = $totalLimit / $requestsPerDay;
-								print date('F j, Y g:m:s A', strtotime(date('01-m-Y h:m:s')) + $daysUntilExhaustion*DAY);
+								print date('F j, Y g:m:s A', strtotime(date('01-m-Y')) + $daysUntilExhaustion*DAY);
 							}?>
 						</td>
 						<td></td>
