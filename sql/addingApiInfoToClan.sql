@@ -1,1 +1,0 @@
-alter table clan add api_info varchar(50000) default null;
