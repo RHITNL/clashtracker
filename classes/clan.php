@@ -265,7 +265,7 @@ class clan{
 										convertLocation($clanInfo->location->name),
 										date('Y-m-d H:m:s', time()),
 										json_encode($clanInfo),
-										date('Y-m-d H:m:s', hourAgo());
+										date('Y-m-d H:m:s', hourAgo()));
 			if(($db->multi_query($procedure)) === TRUE){
 				while ($db->more_results()){
 					$db->next_result();

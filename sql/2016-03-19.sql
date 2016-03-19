@@ -10,3 +10,22 @@ begin
 	update clan set api_info = null where api_info is not null and date_modified < varHourAgo;
 end //
 delimiter ;
+
+drop procedure if exists p_loot_report_create;
+delimiter //
+create procedure p_loot_report_create(varClanId int, varDate datetime)
+begin
+	insert into loot_report(clan_id, date_created) values(varClanId, varDate);
+	select * from loot_report where id in (select last_insert_id() as id);
+end //
+delimiter ;
+
+alter table loot_report_player_result add primary key (player_id, loot_report_id, loot_type);
+
+drop procedure if exists p_player_best_report_results;
+delimiter //
+create procedure p_player_best_report_results(varPlayerId int)
+begin
+	select loot_type, max(loot_amount) as max from loot_report_player_result where player_id = varPlayerId group by loot_type;
+end //
+delimiter ;

@@ -75,6 +75,10 @@ $elixirAvailablePastWeek = count($elixirPastWeek)>1;
 $oilAvailablePastWeek = count($oilPastWeek)>1;
 $lootAvailablePastWeek = ($goldAvailablePastWeek||$elixirAvailablePastWeek||$oilAvailablePastWeek);
 
+$bestGold = $player->getBestReportResult('GO');
+$bestElixir = $player->getBestReportResult('EL');
+$bestDarkElixir = $player->getBestReportResult('DE');
+
 $playerClan = $player->getMyClan();
 $playerClans = $player->getMyClans();
 
@@ -334,7 +338,34 @@ require('header.php');
 							<?}?>
 						</div>
 					</div>
-				<?}else{?>
+					<?if(isset($bestGold) || isset($bestElixir) || isset($bestDarkElixir)){
+						$count = 1;
+						if(isset($bestGold)){$count++;}
+						if(isset($bestElixir)){$count++;}
+						if(isset($bestDarkElixir)){$count++;}
+						$colSize = 12 / $count;?>
+						<div class="col-md-12">
+							<div class="col-md-<?=$colSize;?>">
+								<h5>Best Results in Clan Loot Reports:</h5>
+							</div>
+							<?if(isset($bestGold)){?>
+								<div class="col-md-<?=$colSize;?>">
+									<h6>Gold&nbsp;<i class="fa fa-coins" style="color: gold;"></i>&nbsp;<?=number_format($bestGold, 0, '.', ',');?>/week</h6>
+								</div>
+							<?}?>
+							<?if(isset($bestElixir)){?>
+								<div class="col-md-<?=$colSize;?>">
+									<h6>Elixir&nbsp;<i class="fa fa-tint" style="color: #FF09F4;"></i>&nbsp;<?=number_format($bestElixir, 0, '.', ',');?>/week</h6>
+								</div>
+							<?}?>
+							<?if(isset($bestDarkElixir)){?>
+								<div class="col-md-<?=$colSize;?>">
+									<h6>Dark Elixir&nbsp;<i class="fa fa-tint"></i>&nbsp;<?=number_format($bestDarkElixir, 0, '.', ',');?>/week</h6>
+								</div>
+							<?}?>
+						</div>
+					<?}
+				}else{?>
 					<div class="col-md-8">
 						<div class="alert alert-info" role="alert">
 							<strong>Oh no!</strong> We don't have enough records for this player's loot to display any stats. <?if($userHasAccessToUpdatePlayer){print "You can start by adding some above.";}?>

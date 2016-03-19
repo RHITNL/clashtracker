@@ -15,7 +15,8 @@ class lootReport{
 		if(!isset($this->id)){
 			$clanId = $clan->get('id');
 			if($clan->canGenerateLootReport($sinceTime)){
-				$procedure = buildProcedure('p_loot_report_create', $clanId);
+				$date = date('Y-m-d H:m:s', time());
+				$procedure = buildProcedure('p_loot_report_create', $clanId, $date);
 				if(($db->multi_query($procedure)) === TRUE){
 					$result = $db->store_result()->fetch_object();
 					while ($db->more_results()){
@@ -41,6 +42,27 @@ class lootReport{
 		}
 	}
 
+	public function createWithoutGeneration($clan, $date){
+		global $db;
+		if(!isset($this->id)){
+			$clanId = $clan->get('id');
+			$procedure = buildProcedure('p_loot_report_create', $clanId, $date);
+			if(($db->multi_query($procedure)) === TRUE){
+				$result = $db->store_result()->fetch_object();
+				while ($db->more_results()){
+					$db->next_result();
+				}
+				$this->id = $result->id;
+				$this->clanId = $result->clan_id;
+				$this->dateCreated = $result->date_created;
+			}else{
+				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			}
+		}else{
+			throw new illegalFunctionCallException('ID set, cannot create.');
+		}
+	}
+
 	private function generate($sinceTime=null){
 		if(isset($this->id)){
 			$this->clan = new clan($this->clanId);
@@ -59,7 +81,7 @@ class lootReport{
 		}
 	}
 
-	private function recordPlayerResult($player, $type, $amount){
+	public function recordPlayerResult($player, $type, $amount){
 		global $db;
 		if(isset($this->id)){
 			$procedure = buildProcedure('p_loot_report_record_player_result', $player->get('id'), $this->id, $type, $amount);

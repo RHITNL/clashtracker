@@ -971,4 +971,33 @@ class player{
 		$this->score *= (100-$wslp)/100;
 		return $this->score;
 	}
+
+	public function getBestReportResult($type){
+		global $db;
+		if(isset($this->bestResult)){
+			return $this->bestResult[$type];
+		}
+		if(isset($this->id)){
+			$procedure = buildProcedure('p_player_best_report_results', $this->id);
+			if(($db->multi_query($procedure)) === TRUE){
+				$results = $db->store_result();
+				while ($db->more_results()){
+					$db->next_result();
+				}
+				$this->bestResult = array();
+				if ($results->num_rows) {
+					while ($result = $results->fetch_object()) {
+						$loot_type = $result->loot_type;
+						$amount = $result->max;
+						$this->bestResult[$loot_type] = $amount;
+					}
+				}
+				return $this->bestResult[$type];
+			}else{
+				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set for recording loot.');
+		}
+	}
 }

@@ -48,10 +48,21 @@ require('header.php');
 								</tr>
 							</thead>
 							<tbody>
-								<?foreach($result as $rank => $playerResult){?>
+								<?foreach($result as $rank => $playerResult){
+									$best = $playerResult['player']->getBestReportResult($type);
+									$best = $playerResult['amount'] === $best && $best != 0;?>
 									<tr style="cursor: pointer;" onclick="clickRow('player.php?playerId=<?=$playerResult['player']->get("id");?>&clanId=<?=$clan->get('id');?>');">
 										<td><?=$rank+1 . '. ' . htmlspecialchars($playerResult['player']->get('name'));?></td>
-										<td class="text-right"><?=number_format($playerResult['amount'], 0, '.', ',');?></td>
+										<td class="text-right">
+											<?if($best){?>
+												<div data-toggle="popover" data-trigger="hover" data-placement="top" data-content="This is <?=$playerResult['player']->get('name');?>'s highest week for <?=lootTypeFromCode($type);?>.">
+													<i class="fa fa-exclamation"></i>
+													<?=number_format($playerResult['amount'], 0, '.', ',');?>
+												</div>
+											<?}else{?>
+												<?=number_format($playerResult['amount'], 0, '.', ',');?>
+											<?}?>
+										</td>
 									</tr>
 								<?}?>
 							</tbody>
@@ -72,6 +83,9 @@ require('header.php');
 function clickRow(href){
 	window.document.location = href;
 }
+$(document).ready(function(){
+    $('[data-toggle="popover"]').popover();   
+});
 </script>
 <?
 require('footer.php');
