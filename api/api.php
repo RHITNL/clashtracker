@@ -29,7 +29,11 @@ class api{
 		if($result->reason){
 			throw new apiException($result->reason, $result->message);
 		}
-		return $result;
+		if(isset($result)){
+			return $result;
+		}else{
+			throw new apiException('Nothing was returned from Clash of Clans API.', 'No Result');
+		}
 	}
 
 	private function determineProxy(){
