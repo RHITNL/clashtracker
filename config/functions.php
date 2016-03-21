@@ -3,12 +3,11 @@ require('config.php');
 require('../vendor/autoload.php');
 
 function rankFromCode($code){
-	$ranks = array('LE' => 'Leader',
-		'CO' => 'Co-leader',
-		'EL' => 'Elder',
-		'ME' => 'Member',
-		'KI' => 'Kicked',
-		'EX' => 'Left',
+	$ranks = array('1' => 'Leader',
+		'2' => 'Co-leader',
+		'3' => 'Elder',
+		'4' => 'Member',
+		'5' => 'Left',
 		null => '');
 	return $ranks[$code];
 }
@@ -103,43 +102,6 @@ function sortPlayersByWarScore($players){
 		}
 	}
 	return $players;
-}
-
-function sortPlayersByRank($players, $order='desc'){
-	for ($i=1; $i < count($players); $i++) { 
-		$j=$i;
-		while ($j>0 && rankIsLower($players[$j-1]->get('rank'), $players[$j]->get('rank'))){
-			$temp = $players[$j];
-			$players[$j] = $players[$j-1];
-			$players[$j-1] = $temp;
-			$j--;
-		}
-	}
-	if($order == 'desc'){
-		return $players;
-	}else{
-		return array_reverse($players);
-	}
-}
-
-function rankIsHigher($rank1, $rank2){
-	$ranks = array('LE' => 4,
-		'CO' => 3,
-		'EL' => 2,
-		'ME' => 1,
-		'EX' => 0,
-		'KI' => -1);
-	return $ranks[$rank1] > $ranks[$rank2];
-}
-
-function rankIsLower($rank1, $rank2){
-	$ranks = array('LE' => 4,
-		'CO' => 3,
-		'EL' => 2,
-		'ME' => 1,
-		'EX' => 0,
-		'KI' => -1);
-	return $ranks[$rank1] < $ranks[$rank2];
 }
 
 function validPassword($password){
@@ -283,19 +245,19 @@ function convertBackFrequency($code){
 
 function convertRank($code){
 	$ranks = array(
-		'member' => 'ME',
-		'admin' => 'EL',
-		'coLeader' => 'CO',
-		'leader' => 'LE');
+		'member' => '4',
+		'admin' => '3',
+		'coLeader' => '2',
+		'leader' => '1');
 	return $ranks[$code];
 }
 
 function convertBackRank($code){
 	$ranks = array(
-		'ME' => 'member',
-		'EL' => 'admin',
-		'CO' => 'coLeader',
-		'LE' => 'leader');
+		'4' => 'member',
+		'3' => 'admin',
+		'2' => 'coLeader',
+		'1' => 'leader');
 	return $ranks[$code];
 }
 
@@ -334,7 +296,6 @@ function refreshClanInfo($clan, $force=false){
 	$members = $clan->getMembers();
 	$apiMembers = array();
 	$duplicateNames = array();
-	$membersUpdated = false;
 	foreach ($clanInfo->memberList as $apiMember) {
 		$count = 0;
 		foreach ($members as $key => $temp) {
@@ -345,7 +306,7 @@ function refreshClanInfo($clan, $force=false){
 			}
 		}
 		if($count==1){
-			$membersUpdated = $membersUpdated | $member->updateFromApi($apiMember);
+			$member->updateFromApi($apiMember);
 		}elseif($count==0) {
 			if(!in_array($apiMember->name, $duplicateNames)){
 				$apiMembers[] = $apiMember;
@@ -358,10 +319,6 @@ function refreshClanInfo($clan, $force=false){
 		foreach ($members as $member) {
 			$member->leaveClan();
 		}
-		$membersUpdated = true;
-	}
-	if($membersUpdated){
-		$clan->getMembers(true);//reload the members after some have left or changed trophies
 	}
 	return $apiMembers;
 }

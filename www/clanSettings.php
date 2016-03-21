@@ -55,10 +55,10 @@
 						<label class="col-sm-2 control-lable" for="minRank">Minimum Rank:</label>
 						<div class="col-sm-4">
 							<select class="form-control" id="minRank" name="minRank">
-								<option <?=($minRank == 'ME') ? 'selected' : '';?> value="ME">Member</option>
-								<option <?=($minRank == 'EL') ? 'selected' : '';?> value="EL">Elder</option>
-								<option <?=($minRank == 'CO') ? 'selected' : '';?> value="CO">Co-leader (Recommended)</option>
-								<option <?=($minRank == 'LE') ? 'selected' : '';?> value="LE">Leader</option>
+								<option <?=($minRank == 4) ? 'selected' : '';?> value="4">Member</option>
+								<option <?=($minRank == 3) ? 'selected' : '';?> value="3">Elder</option>
+								<option <?=($minRank == 2) ? 'selected' : '';?> value="2">Co-leader (Recommended)</option>
+								<option <?=($minRank == 1) ? 'selected' : '';?> value="1">Leader</option>
 							</select>
 						</div>
 					</div>

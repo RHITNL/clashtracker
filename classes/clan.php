@@ -358,13 +358,30 @@ class clan{
 		return isset($leader);
 	}
 
-	public function getMembers($force=false){
+	public function getMembers($force=false, $sort=null){
 		global $db;
+		if(isset($sort)){
+			$sorts = array(
+				'name_desc' => 'name desc',
+				'trophies_desc' => 'trophies desc',
+				'donations_desc' => 'donations desc',
+				'received_desc' => 'received desc',
+				'rank_desc' => 'rank desc',
+				'name' => 'name',
+				'trophies' => 'trophies',
+				'donations' => 'donations',
+				'received' => 'received',
+				'rank' => 'rank');
+			$sort = $sorts[$sort];
+		}
+		if(!isset($sort)){
+			$sort = 'trophies desc';
+		}
 		if(isset($this->id)){
 			if(isset($this->currentMembers) && !$force){
 				return $this->currentMembers;
 			}
-			$procedure = buildProcedure('p_clan_get_current_members', $this->id);
+			$procedure = buildProcedure('p_clan_get_current_members', $this->id, $sort);
 			if(($db->multi_query($procedure)) === TRUE){
 				$results = $db->store_result();
 				while ($db->more_results()){
@@ -675,7 +692,7 @@ class clan{
 				$users = array();
 				foreach ($clanMembers as $member) {
 					$clanRank = $member->getClanRank();
-					if($clanRank == $this->minRankAccess || rankIsHigher($clanRank, $this->minRankAccess)){
+					if($clanRank <= $this->minRankAccess){
 						$user = $member->getLinkedUser();
 						if(isset($user)){
 							$users[] = $user;

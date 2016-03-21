@@ -4,6 +4,8 @@ require('session.php');
 
 $clanId = $_GET['clanId'];
 $force = $_GET['force'];
+$sort = $_GET['sort'];
+$sort = isset($sort) ? $sort : 'trophies_desc';
 try{
 	$clan = new clan($clanId);
 	$clanId = $clan->get('id');
@@ -28,7 +30,7 @@ try{
 	exit;
 }
 
-$members = $clan->getMembers();
+$members = $clan->getMembers(true, $sort);
 $wars = $clan->getMyWars();
 $war = $wars[0];
 $lootReport = $clan->getLootReports()[0];
@@ -40,6 +42,18 @@ if(isset($loggedInUserClan) && $loggedInUserClan->get('id') == $clanId){
 	$requests = array();
 }
 $canRequest = $clan->canRequestAccess();
+
+$sorts = array(
+	'name' => 'name',
+	'trophies' => 'trophies_desc',
+	'donations' => 'donations_desc',
+	'received' => 'received_desc',
+	'rank' => 'rank');
+if(strpos($sort, '_desc') !== FALSE){
+	$sorts[str_replace('_desc', '', $sort)] = str_replace('_desc', '', $sort);
+}else{
+	$sorts[str_replace('_desc', '', $sort)] = str_replace('_desc', '', $sort) . '_desc';
+}
 
 require('header.php');
 ?>
@@ -137,11 +151,11 @@ require('header.php');
 					<thead>
 						<tr>
 							<th></th>
-							<th>Name</th>
-							<th>Rank</th>
-							<th>Trophies</th>
-							<th>Troops donated:</th>
-							<th>Troops received:</th>
+							<th style="cursor: pointer;" onclick="clickRow('clan.php?clanId=<?=$clanId;?>&sort=<?=$sorts['name'];?>');"><i class="fa fa-sort"></i>&nbsp;Name</th>
+							<th style="cursor: pointer;" onclick="clickRow('clan.php?clanId=<?=$clanId;?>&sort=<?=$sorts['rank'];?>');"><i class="fa fa-sort"></i>&nbsp;Rank</th>
+							<th style="cursor: pointer;" onclick="clickRow('clan.php?clanId=<?=$clanId;?>&sort=<?=$sorts['trophies'];?>');"><i class="fa fa-sort"></i>&nbsp;Trophies</th>
+							<th style="cursor: pointer;" onclick="clickRow('clan.php?clanId=<?=$clanId;?>&sort=<?=$sorts['donations'];?>');"><i class="fa fa-sort"></i>&nbsp;Troops donated:</th>
+							<th style="cursor: pointer;" onclick="clickRow('clan.php?clanId=<?=$clanId;?>&sort=<?=$sorts['received'];?>');"><i class="fa fa-sort"></i>&nbsp;Troops received:</th>
 							<th class="text-right">Player Tag</th>
 						</tr>
 					</thead>

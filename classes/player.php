@@ -876,7 +876,7 @@ class player{
 					$users = array();
 					foreach ($clanMembers as $member) {
 						$clanRank = $member->getClanRank();
-						if($clanRank == $this->minRankAccess || rankIsHigher($clanRank, $this->minRankAccess)){
+						if($clanRank <= $this->minRankAccess){
 							$user = $member->getLinkedUser();
 							if(isset($user)){
 								$users[] = $user;
