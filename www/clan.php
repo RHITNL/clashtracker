@@ -13,7 +13,7 @@ try{
 	if($apiMembers === false){
 		$apiMembers = array();
 	}
-}catch(illegalFunctionCallException $e){
+}catch(noResultFoundException $e){
 	$clan = new clan();
 	$clan->create($clanId);
 	$apiMembers = refreshClanInfo($clan, isset($force));
