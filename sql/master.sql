@@ -1390,3 +1390,11 @@ begin
 	insert into player_stats (player_id, date_recorded, stat_type, stat_amount) values (varId, varDate, 'RE', varReceived);
 end //
 delimiter ;
+
+drop procedure if exists p_player_leave_clan;
+delimiter //
+create procedure p_player_leave_clan(varPlayerId int)
+begin
+	update clan_member set rank = 5, date_modified = NOW(), date_left = NOW() where player_id = varPlayerId and rank != 5;
+end //
+delimiter ;

@@ -8,14 +8,14 @@
 		<meta name="author" content="">
 		<link rel="icon" href="images/clash.png">
 		<title>Clash Tracker</title>
-		<link href="css/bootstrap.min.css" rel="stylesheet">
-		<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+		<link href="css/bootstrap.css" rel="stylesheet">
+		<link href="css/bootstrap-theme.css" rel="stylesheet">
 		<link href="css/sticky-footer.css" rel="stylesheet">
 		<link href="/css/font-awesome.css" rel="stylesheet" type="text/css">
 		<link href="/css/custom-font-icons.css" rel="stylesheet" type="text/css"></link>
-		<link href="css/bootstrap-slider.min.css" rel="stylesheet">
+		<link href="css/bootstrap-slider.css" rel="stylesheet">
 		<script src="js/jquery-1.11.3.min.js"></script>
-		<script src="js/bootstrap.min.js"></script>
+		<script src="js/bootstrap.js"></script>
 		<script src="js/Chart.js"></script>
 		<script src="js/Chart.Scatter.js"></script>
 		<script src="js/bootstrap-slider.js"></script>
@@ -50,9 +50,18 @@
 								<li><a href="/players.php">Players</a></li>
 							<?}if(isset($loggedInUserClan)){?>
 								<li><a href="/clan.php?clanId=<?=$loggedInUserClan->get('id');?>">My Clan</a></li>
-							<?}else{?>
-								<li><a href="/clans.php">Clans</a></li>
-							<?}?>
+							<?}else{
+								if(isset($loggedInUserPlayer)){
+									$clan = $loggedInUserPlayer->getMyClan();
+									if(isset($clan)){?>
+										<li><a href="/clan.php?clanId=<?=$clan->get('id');?>">My Clan</a></li>
+									<?}else{?>
+										<li><a href="/clans.php">Clans</a></li>
+									<?}
+								}else{?>
+									<li><a href="/clans.php">Clans</a></li>
+								<?}
+							}?>
 							<li><a href="/accountSettings.php">Settings</a></li>
 							<li><a href="/processLogout.php">Log Out</a></li>
 						<?}?>
