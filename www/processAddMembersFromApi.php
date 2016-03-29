@@ -19,24 +19,39 @@ if(!userHasAccessToUpdateClan($clan)){
 }
 
 $playerTags = $_POST['playerTags'];
-$names = $_POST['names'];
+$name = $_POST['name'];
+$role = $_POST['role'];
+$expLevel = $_POST['expLevel'];
+$trophies = $_POST['trophies'];
+$donations = $_POST['donations'];
+$donationsReceived = $_POST['donationsReceived'];
+$leagueUrl = $_POST['leagueUrl'];
 
 $count=0;
 foreach ($playerTags as $key => $playerTag) {
 	if(strlen($playerTag)>0){
 		try{
 			$player = new player($playerTag);
-			if($player->get('name') != $names[$key]){
-				$player->set('name', $names[$key]);
+			if($player->get('name') != $name[$key]){
+				$player->set('name', $name[$key]);
 			}
 		}catch(Exception $e){
 			$player = new player();
-			$player->create($names[$key], $playerTag);
+			$player->create($name[$key], $playerTag);
 		}
+		$apiMember = new StdClass();
+		$apiMember->name = $name[$key];
+		$apiMember->role = $role[$key];
+		$apiMember->expLevel = $expLevel[$key];
+		$apiMember->trophies = $trophies[$key];
+		$apiMember->donations = $donations[$key];
+		$apiMember->donationsReceived = $donationsReceived[$key];
+		$apiMember->league = new StdClass();
+		$apiMember->league->iconUrls = new StdClass();
+		$apiMember->league->iconUrls->small = $leagueUrl[$key];
+		$player->updateFromApi($apiMember);
 		$playerClan = $player->getMyClan();
-		if(isset($playerClan) && $playerClan->get('id') == $clan->get('id')){
-			$_SESSION['curError'] .= htmlspecialchars($player->get('name')) . ' already in ' . htmlspecialchars($clan->get('name')) . '.<br>';
-		}else{
+		if(!isset($playerClan) || $playerClan->get('id') != $clan->get('id')){
 			$count++;
 			$clan->addPlayer($player->get('id'));
 		}

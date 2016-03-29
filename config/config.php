@@ -16,23 +16,35 @@ date_default_timezone_set('America/Halifax');
 session_start();
 
 $classes = scandir(APPROOT . '/classes');
-foreach ($classes as $class) {
+foreach ($classes as $key => $class) {
 	if(strpos($class, '.php') !== false){
 		include(APPROOT . '/classes/' . $class);
+		$classes[$key] = substr($class, 0, -4);
+	}else{
+		unset($classes[$key]);
 	}
 }
+$classes = array_values($classes);
 $exceptions = scandir(APPROOT . '/exceptions');
-foreach ($exceptions as $exception) {
+foreach ($exceptions as $key => $exception) {
 	if(strpos($exception, '.php') !== false){
 		include(APPROOT . '/exceptions/' . $exception);
+		$exceptions[$key] = substr($exception, 0, -4);
+	}else{
+		unset($exceptions[$key]);
 	}
 }
+$exceptions = array_values($exceptions);
 $apiClasses = scandir(APPROOT . '/api');
-foreach ($apiClasses as $apiClass) {
+foreach ($apiClasses as $key => $apiClass) {
 	if(strpos($apiClass, '.php') !== false){
 		include(APPROOT . '/api/' . $apiClass);
+		$apiClasses[$key] = substr($apiClass, 0, -4);
+	}else{
+		unset($apiClasses[$key]);
 	}
 }
+$apiClasses = array_values($apiClasses);
 
 define('DEVELOPMENT', strpos(__DIR__, 'alexinman') !== FALSE);
 if(DEVELOPMENT){

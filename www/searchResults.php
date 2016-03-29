@@ -107,8 +107,6 @@ require('header.php');
 	</form>
 	<?if(isset($api)){?>
 		<?if(count($apiClans)==0 && (count($clans)>0 || count($players)>0)){?>
-			<? error_log(count($clans)); ?>
-			<? error_log(count($players)); ?>
 			<div class="alert alert-info" role="alert">
 				<strong>Oh no!</strong> We couldn't find anything in Clash of Clans.
 			</div>

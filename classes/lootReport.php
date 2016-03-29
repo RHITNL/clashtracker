@@ -15,7 +15,7 @@ class lootReport{
 		if(!isset($this->id)){
 			$clanId = $clan->get('id');
 			if($clan->canGenerateLootReport($sinceTime)){
-				$date = date('Y-m-d H:m:s', time());
+				$date = date('Y-m-d H:i:s', time());
 				$procedure = buildProcedure('p_loot_report_create', $clanId, $date);
 				if(($db->multi_query($procedure)) === TRUE){
 					$result = $db->store_result()->fetch_object();

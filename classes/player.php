@@ -21,6 +21,9 @@ class player{
 	private $numberOfDefences;
 	private $attacksUsed;
 	private $numberOfWars;
+	private $clanWarRank;
+	private $clan;
+	private $clanRank;
 
 	private $acceptGet = array(
 		'id' => 'id',
@@ -229,6 +232,8 @@ class player{
 				return $this->getClanRank($clanId);
 			}elseif($prpty == 'warRank'){
 				return $this->getWarRank($clanId);
+			}elseif($prpty == 'clan'){
+				return $this->getMyClan();
 			}else{
 				throw new illegalOperationException('Property is not in accept get.');
 			}
@@ -261,7 +266,7 @@ class player{
 	public function updateFromApi($apiMember){
 		global $db;
 		if(isset($this->id)){
-			if($this->clanRank == convertRank($apiMember->role)
+			if($this->getClanRank() == convertRank($apiMember->role)
 				&& $this->level == $apiMember->expLevel
 				&& $this->trophies == $apiMember->trophies
 				&& $this->donations == $apiMember->donations
@@ -269,7 +274,7 @@ class player{
 				&& $this->leagueUrl == $apiMember->league->iconUrls->small){
 				return false; //no changes will be made
 			}
-			$date = date('Y-m-d H:m:s', time());
+			$date = date('Y-m-d H:i:s', time());
 			$procedure = buildProcedure('p_player_update_bulk',
 										$this->id,
 										convertRank($apiMember->role),
@@ -301,7 +306,7 @@ class player{
 	private function recordLoot($type, $amount, $date='%'){
 		global $db;
 		if(isset($this->id)){
-			$date = ($date == '%') ? date('Y-m-d H:m:s', time()) : $date;
+			$date = ($date == '%') ? date('Y-m-d H:i:s', time()) : $date;
 			$loot = $this->getStat($type);
 			if((count($loot) == 0 || $loot[0]['statAmount'] <= $amount) && $amount >= 0){
 				$procedure = buildProcedure('p_player_record_loot', $this->id, $type, $amount, $date);

@@ -18,6 +18,8 @@ class clan{
 	private $accessType;
 	private $minRankAccess;
 	private $apiInfo;
+	private $currentMembers;
+	private $pastAndCurrentMembers;
 
 	private $acceptGet = array(
 		'id' => 'id',
@@ -204,6 +206,10 @@ class clan{
 		if(isset($this->id)){
 			if(in_array($prpty, $this->acceptGet)){
 				return $this->$prpty;
+			}elseif($prpty == 'pastAndCurrentMembers'){
+				return $this->getPastAndCurrentMembers();
+			}elseif($prpty == 'currentMembers'){
+				return $this->getMembers();
 			}else{
 				throw new illegalOperationException('Property is not in accept get.');
 			}
@@ -263,9 +269,9 @@ class clan{
 										$clanInfo->warWins,
 										$clanInfo->badgeUrls->small,
 										convertLocation($clanInfo->location->name),
-										date('Y-m-d H:m:s', time()),
+										date('Y-m-d H:i:s', time()),
 										json_encode($clanInfo),
-										date('Y-m-d H:m:s', hourAgo()));
+										date('Y-m-d H:i:s', hourAgo()));
 			if(($db->multi_query($procedure)) === TRUE){
 				while ($db->more_results()){
 					$db->next_result();
@@ -290,7 +296,7 @@ class clan{
 		}
 	}
 
-	public function addPlayer($playerId, $rank='ME'){
+	public function addPlayer($playerId, $rank=4){
 		global $db;
 		if(isset($this->id)){
 			$player = new player($playerId);
@@ -392,7 +398,7 @@ class clan{
 					while ($memberObj = $results->fetch_object()) {
 						$member = new player();
 						$member->loadByObj($memberObj, $this);
-						$this->currentMembers[] = $member;
+						$this->currentMembers[$member->get('id')] = $member;
 					}
 				}
 				return $this->currentMembers;
@@ -516,7 +522,7 @@ class clan{
 	public function updatePlayerWarRank($playerId, $warRank){
 		if(isset($this->id)){
 			global $db;
-			$procedure = buildProcedure('p_clan_update_player_war_rank', $this->id, $playerId, $warRank, date('Y-m-d H:m:s', time()));
+			$procedure = buildProcedure('p_clan_update_player_war_rank', $this->id, $playerId, $warRank, date('Y-m-d H:i:s', time()));
 			if(($db->multi_query($procedure)) === TRUE){
 				while ($db->more_results()){
 					$db->next_result();
@@ -768,7 +774,7 @@ class clan{
 		global $db;
 		if(isset($this->id)){
 			if(!isset($sinceTime)){$sinceTime=weekAgo();}
-			$date = date('Y-m-d H:m:s', $sinceTime);
+			$date = date('Y-m-d H:i:s', $sinceTime);
 			$procedure = buildProcedure('p_clan_players_for_loot_report', $this->id, $type, $date);
 			if(($db->multi_query($procedure)) === TRUE){
 				$results = $db->store_result();

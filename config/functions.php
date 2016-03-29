@@ -294,33 +294,135 @@ function refreshClanInfo($clan, $force=false){
 	}
 	$clan->updateFromApi($clanInfo);
 	$members = $clan->getMembers();
-	$apiMembers = array();
-	$duplicateNames = array();
-	foreach ($clanInfo->memberList as $apiMember) {
-		$count = 0;
-		foreach ($members as $key => $temp) {
-			if($apiMember->name == $temp->get('name')){
-				$count++;
-				$member = $temp;
-				unset($members[$key]);
+	$possibleMemberMatches = array();
+	$possibleApiMemberMatches = array();
+	foreach ($clanInfo->memberList as $key => $apiMember) {
+		$possibleApiMemberMatches[$key] = array();
+		foreach ($members as $id => $member) {
+			if(!isset($possibleMemberMatches[$id])){
+				$possibleMemberMatches[$id] = array();
+			}
+			if($apiMember->name == $member->get('name')){
+				if($apiMember->expLevel >= $member->get('level')){
+					$possibleMemberMatches[$id][$key] = $apiMember;
+					$possibleApiMemberMatches[$key][$id] = $member;
+				}
 			}
 		}
-		if($count==1){
-			$member->updateFromApi($apiMember);
-		}elseif($count==0) {
-			if(!in_array($apiMember->name, $duplicateNames)){
-				$apiMembers[] = $apiMember;
+	}
+	$result = findMemberWithNMatches($possibleMemberMatches, 1);
+	while($result !== false){
+		$id = $result;
+		$matches = $possibleMemberMatches[$result];
+		$match = each($matches);
+		$members[$id]->updateFromApi($match['value']);
+		$otherMatches = $possibleApiMemberMatches[$match['key']];
+		unset($possibleMemberMatches[$id]);
+		unset($otherMatches[$id]);
+		if(count($otherMatches)>0){
+			foreach ($otherMatches as $id => $member) {
+				unset($possibleMemberMatches[$id][$match['key']]);
+			}
+		}
+		unset($possibleApiMemberMatches[$match['key']]);
+		$result = findMemberWithNMatches($possibleMemberMatches, 1);
+	}
+	$result = findMemberWithNMatches($possibleMemberMatches, 0);
+	while($result !== false){
+		$id = $result;
+		$members[$id]->leaveClan();
+		unset($possibleMemberMatches[$id]);
+		$result = findMemberWithNMatches($possibleMemberMatches, 0);
+	}
+	$result = findMemberWithNMatches($possibleMemberMatches, 1, 1);
+	$duplicates = 0;
+	while($result !== false){
+		$id = $result;
+		unset($possibleMemberMatches[$id]);
+		$duplicates++;
+		$result = findMemberWithNMatches($possibleMemberMatches, 1, 1);
+	}
+	$apiMembers = array();
+	foreach ($possibleApiMemberMatches as $key => $value) {
+		$apiMembers[] = $clanInfo->memberList[$key];
+	}
+	return array('members' => $apiMembers, 'duplicates' => $duplicates);
+}
+
+function cpr($var, $limit=2, $tab="", $depth=0){
+	if(is_array($var)){
+		if($depth>$limit){
+			return "DEPTH LIMIT REACHED";
+		}
+		$val .= "Array\n" . $tab . "(\n";
+		foreach ($var as $key => $value) {
+			$val .= $tab . "\t[" . $key . '] => ' . cpr($value, $limit, $tab."\t\t", $depth+1) . "\n";
+		}
+		$val .= $tab . ")";
+	}elseif(is_object($var)){
+		if($depth>$limit){
+			return "DEPTH LIMIT REACHED";
+		}
+		$class = get_class($var);
+		global $classes;
+		if(in_array($class, $classes)){
+			$reflect = new ReflectionClass($var);
+			$props = $reflect->getProperties();
+			$varArray = array();
+			foreach ($props as $prop) {
+				$key = $prop->name;
+				$value = null;
+				try{
+					$value = $var->get($key);
+				}catch(Exception $e){
+					//ignore
+				}
+				if(isset($value)){
+					$varArray[$key] = $value;
+				}
 			}
 		}else{
-			$duplicateNames[] = $apiMember->name;
+			$varArray = get_object_vars($var);
+		}
+		$val .= $class . " Object\n" . $tab . "(\n";
+		foreach ($varArray as $key => $value) {
+			$val .= $tab . "\t[" . $key . '] => ' . cpr($value, $limit, $tab."\t\t", $depth+1) . "\n";
+		}
+		$val .= $tab . ")";
+	}else{
+		if(is_null($var)){
+			$val .= "NULL";
+		}elseif($var === true){
+			$val .= "TRUE";
+		}elseif($var === false){
+			$val .= "FALSE";
+		}else{
+			$val .= $var;
 		}
 	}
-	if(count($members)>0){
-		foreach ($members as $member) {
-			$member->leaveClan();
+	return $val;
+}
+
+function findMemberWithNMatches($possibleMemberMatches, $n, $compare=0){
+	foreach ($possibleMemberMatches as $id => $matches) {
+		if(compare(count($matches), $n) === $compare){
+			return $id;
 		}
 	}
-	return $apiMembers;
+	return false;
+}
+
+function compare($a, $b){
+	if($a > $b){
+		return 1;
+	}
+	if($a == $b){
+		return 0;
+	}
+	if($a < $b){
+		return -1;
+	}
+	return false;
 }
 
 function email($to, $subject, $message){

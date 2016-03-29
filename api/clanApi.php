@@ -51,7 +51,7 @@ class clanApi extends api{
 		$clanInfo->memberList = array();
 		$members = $clan->getMembers();
 		foreach ($members as $member) {
-			$apiMember = new stdClass();
+			$apiMember = new StdClass();
 			$apiMember->name = $member->get('name');
 			if($apiMember->name == 'Barby Doll' || $apiMember->name == 'Johnny Boy'){
 				continue;
@@ -66,7 +66,7 @@ class clanApi extends api{
 			$apiMember->league->iconUrls->small = $member->get('leagueUrl');
 			$clanInfo->memberList[] = $apiMember;
 		}
-		$fakeNewMember = new stdClass();
+		$fakeNewMember = new StdClass();
 		$fakeNewMember->name = 'Barby Doll';
 		$fakeNewMember->role = 'coLeader';
 		$fakeNewMember->expLevel = 93;
@@ -77,7 +77,7 @@ class clanApi extends api{
 		$fakeNewMember->league->iconUrls = new StdClass();
 		$fakeNewMember->league->iconUrls->small = 'https://api-assets.clashofclans.com/leagues/72/kSfTyNNVSvogX3dMvpFUTt72VW74w6vEsEFuuOV4osQ.png';
 		$clanInfo->memberList[] = $fakeNewMember;
-		$fakeNewMember = new stdClass();
+		$fakeNewMember = new StdClass();
 		$fakeNewMember->name = 'Johnny Boy';
 		$fakeNewMember->role = 'admin';
 		$fakeNewMember->expLevel = 34;
