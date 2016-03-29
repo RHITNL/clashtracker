@@ -87,6 +87,7 @@ function yearAgo(){
 }
 
 function sortPlayersByWarScore($players){
+	$players = array_values($players);
 	for ($i=1; $i < count($players); $i++) { 
 		$j=$i;
 		while ($j>0 && $players[$j-1]->getScore() < $players[$j]->getScore()){
