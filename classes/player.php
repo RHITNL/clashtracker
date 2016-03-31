@@ -574,9 +574,22 @@ class player{
 		}
 	}
 
-	public static function getPlayers($pageSize=50){
+	public static function getPlayers($sort=null, $pageSize=50){
 		global $db;
-		$procedure = buildProcedure('p_get_players', $pageSize);
+		if(isset($sort)){
+			$sorts = array(
+				'name_desc' => 'name desc',
+				'trophies_desc' => 'trophies desc',
+				'level_desc' => 'level desc',
+				'name' => 'name',
+				'trophies' => 'trophies',
+				'level' => 'level');
+			$sort = $sorts[$sort];
+		}
+		if(!isset($sort)){
+			$sort = 'trophies desc';
+		}
+		$procedure = buildProcedure('p_get_players', $sort, $pageSize);
 		if(($db->multi_query($procedure)) === TRUE){
 			$results = $db->store_result();
 			while ($db->more_results()){

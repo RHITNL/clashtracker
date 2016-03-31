@@ -53,7 +53,7 @@ require('header.php');
 	</ol>
 	<?require('showMessages.php');?>
 	<h1 style="margin-bottom: 0px;">Search Results</h1>
-	<h5 style="margin-top: 0px;">Search for "<?=$query;?>"...</h5><br>
+	<h5 style="margin-top: 0px;">Search for "<?=htmlspecialchars($query);?>"...</h5><br>
 	<form class="form-horizontal" action="/searchResults.php" method="GET">
 		<div class="col-sm-6">
 			<?if(isset($api)){?>

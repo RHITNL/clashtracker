@@ -2,11 +2,24 @@
 require('init.php');
 require('session.php');
 
+$sort = $_GET['sort'];
+$sort = isset($sort) ? $sort : 'trophies_desc';
+
 $players = array();
 try{
-	$players = player::getPlayers();
+	$players = player::getPlayers($sort);
 }catch(Exception $e){
 	$_SESSION['curError'] = $e->getMessage();
+}
+
+$sorts = array(
+	'name' => 'name',
+	'level' => 'level_desc',
+	'trophies' => 'trophies_desc');
+if(strpos($sort, '_desc') !== FALSE){
+	$sorts[str_replace('_desc', '', $sort)] = str_replace('_desc', '', $sort);
+}else{
+	$sorts[str_replace('_desc', '', $sort)] = str_replace('_desc', '', $sort) . '_desc';
 }
 
 require('header.php');
@@ -25,9 +38,9 @@ require('header.php');
 				<thead>
 					<tr>
 						<th></th>
-						<th>Name</th>
-						<th>Level</th>
-						<th>Trophies</th>
+						<th style="cursor: pointer;" onclick="clickRow('players.php?sort=<?=$sorts['name'];?>');"><i class="fa fa-sort"></i>&nbsp;Name</th>
+						<th style="cursor: pointer;" onclick="clickRow('players.php?sort=<?=$sorts['level'];?>');"><i class="fa fa-sort"></i>&nbsp;Level</th>
+						<th style="cursor: pointer;" onclick="clickRow('players.php?sort=<?=$sorts['trophies'];?>');"><i class="fa fa-sort"></i>&nbsp;Trophies</th>
 						<th>Clan Name</th>
 						<th>Clan Rank</th>
 						<th class="text-right">Player Tag</th>

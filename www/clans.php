@@ -2,11 +2,26 @@
 require('init.php');
 require('session.php');
 
+$sort = $_GET['sort'];
+$sort = isset($sort) ? $sort : 'clan_points_desc';
+
 $clans = array();
 try{
-	$clans = clan::getClans();
+	$clans = clan::getClans($sort);
 }catch(Exception $e){
 	$_SESSION['curError'] = $e->getMessage();
+}
+
+$sorts = array(
+	'name' => 'name',
+	'clan_points' => 'clan_points_desc',
+	'war_wins' => 'war_wins_desc',
+	'members' => 'members_desc',
+	'minimum_trophies' => 'minimum_trophies_desc');
+if(strpos($sort, '_desc') !== FALSE){
+	$sorts[str_replace('_desc', '', $sort)] = str_replace('_desc', '', $sort);
+}else{
+	$sorts[str_replace('_desc', '', $sort)] = str_replace('_desc', '', $sort) . '_desc';
 }
 
 require('header.php');
@@ -44,13 +59,13 @@ require('header.php');
 					<thead>
 						<tr>
 							<th></th>
-							<th>Clan name</th>
-							<th>Clan Points</th>
-							<th>Wars Won</th>
-							<th>Members</th>
+							<th style="cursor: pointer;" onclick="clickRow('clans.php?sort=<?=$sorts['name'];?>');"><i class="fa fa-sort"></i>&nbsp;Clan name</th>
+							<th style="cursor: pointer;" onclick="clickRow('clans.php?sort=<?=$sorts['clan_points'];?>');"><i class="fa fa-sort"></i>&nbsp;Clan Points</th>
+							<th style="cursor: pointer;" onclick="clickRow('clans.php?sort=<?=$sorts['war_wins'];?>');"><i class="fa fa-sort"></i>&nbsp;Wars Won</th>
+							<th style="cursor: pointer;" onclick="clickRow('clans.php?sort=<?=$sorts['members'];?>');"><i class="fa fa-sort"></i>&nbsp;Members</th>
 							<th>Type</th>
 							<th>War Frequency</th>
-							<th>Required Trophies</th>
+							<th style="cursor: pointer;" onclick="clickRow('clans.php?sort=<?=$sorts['minimum_trophies'];?>');"><i class="fa fa-sort"></i>&nbsp;Required Trophies</th>
 							<th class="text-right">Clan Tag</th>
 						</tr>
 					</thead>

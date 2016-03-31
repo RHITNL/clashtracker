@@ -1,7 +1,7 @@
 <?
 require(__DIR__ . '/../config/functions.php');
 
-$players = player::getPlayers(1000);
+$players = player::getPlayers(null, 1000);
 foreach ($players as $player) {
 	$player->set('firstAttackTotalStars', 0);
 	$player->set('firstAttackNewStars', 0);
@@ -13,7 +13,7 @@ foreach ($players as $player) {
 	$player->set('numberOfWars', 0);
 }
 
-$clans = clan::getClans(1000);
+$clans = clan::getClans(null, 1000);
 foreach ($clans as $clan) {
 	$wars = $clan->getMyWars();
 	if(count($wars)>1){

@@ -482,9 +482,26 @@ class clan{
 		}
 	}
 
-	public static function getClans($pageSize=50){
+	public static function getClans($sort=null, $pageSize=50){
 		global $db;
-		$procedure = buildProcedure('p_get_clans', $pageSize);
+		if(isset($sort)){
+			$sorts = array(
+				'name_desc' => 'name desc',
+				'clan_points_desc' => 'clan_points desc',
+				'war_wins_desc' => 'war_wins desc',
+				'members_desc' => 'members desc',
+				'minimum_trophies_desc' => 'minimum_trophies desc',
+				'name' => 'name',
+				'clan_points' => 'clan_points',
+				'war_wins' => 'war_wins',
+				'members' => 'members',
+				'minimum_trophies' => 'minimum_trophies');
+			$sort = $sorts[$sort];
+		}
+		if(!isset($sort)){
+			$sort = 'clan_points desc';
+		}
+		$procedure = buildProcedure('p_get_clans', $sort, $pageSize);
 		if(($db->multi_query($procedure)) === TRUE){
 			$results = $db->store_result();
 			while ($db->more_results()){
