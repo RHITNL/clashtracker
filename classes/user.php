@@ -27,7 +27,7 @@ class user{
 			if(filter_var($email, FILTER_VALIDATE_EMAIL)) {
 				if(validPassword($password)){
 					$password = password_hash($password, PASSWORD_DEFAULT);
-					$procedure = buildProcedure('p_user_create', $email, $password);
+					$procedure = buildProcedure('p_user_create', $email, $password, date('Y-m-d H:i:s', time()));
 					if(($db->multi_query($procedure)) === TRUE){
 						$result = $db->store_result()->fetch_object();
 						while ($db->more_results()){
@@ -173,7 +173,7 @@ class user{
 		if(isset($this->id)){
 			if(in_array($prpty, $this->acceptSet)){
 				if($prpty != 'email' || filter_var($value, FILTER_VALIDATE_EMAIL)){
-					$procedure = buildProcedure('p_user_set', $this->id, array_search($prpty, $this->acceptSet), $value);
+					$procedure = buildProcedure('p_user_set', $this->id, array_search($prpty, $this->acceptSet), $value, date('Y-m-d H:i:s', time()));
 					if(($db->multi_query($procedure)) === TRUE){
 						while ($db->more_results()){
 							$db->next_result();
@@ -198,7 +198,7 @@ class user{
 		if(isset($this->id)){
 			if(validPassword($newPassword)){
 				$newPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-				$procedure = buildProcedure('p_user_change_password', $this->id, $newPassword);
+				$procedure = buildProcedure('p_user_change_password', $this->id, $newPassword, date('Y-m-d H:i:s', time()));
 				if(($db->multi_query($procedure)) === TRUE){
 					while ($db->more_results()){
 						$db->next_result();
@@ -221,7 +221,7 @@ class user{
 			$player = new player($playerId);
 			$linkedUser = $player->getLinkedUser();
 			if(!isset($linkedUser)){
-				$procedure = buildProcedure('p_user_link_player', $this->id, $player->get('id'));
+				$procedure = buildProcedure('p_user_link_player', $this->id, $player->get('id'), date('Y-m-d H:i:s', time()));
 				if(($db->multi_query($procedure)) === TRUE){
 					while ($db->more_results()){
 						$db->next_result();
@@ -241,7 +241,7 @@ class user{
 	public function unlinkFromPlayer(){
 		global $db;
 		if(isset($this->id)){
-			$procedure = buildProcedure('p_user_unlink_player', $this->id);
+			$procedure = buildProcedure('p_user_unlink_player', $this->id, date('Y-m-d H:i:s', time()));
 			if(($db->multi_query($procedure)) === TRUE){
 				while ($db->more_results()){
 					$db->next_result();
@@ -261,7 +261,7 @@ class user{
 			$clan = new clan($clanId);
 			$linkedUser = $clan->getLinkedUser();
 			if(!isset($linkedUser)){
-				$procedure = buildProcedure('p_user_link_clan', $this->id, $clan->get('id'));
+				$procedure = buildProcedure('p_user_link_clan', $this->id, $clan->get('id'), date('Y-m-d H:i:s', time()));
 				if(($db->multi_query($procedure)) === TRUE){
 					while ($db->more_results()){
 						$db->next_result();
@@ -281,7 +281,7 @@ class user{
 	public function unlinkFromClan(){
 		global $db;
 		if(isset($this->id)){
-			$procedure = buildProcedure('p_user_unlink_clan', $this->id);
+			$procedure = buildProcedure('p_user_unlink_clan', $this->id, date('Y-m-d H:i:s', time()));
 			if(($db->multi_query($procedure)) === TRUE){
 				while ($db->more_results()){
 					$db->next_result();

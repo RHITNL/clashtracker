@@ -64,7 +64,7 @@ class clan{
 		if(!isset($this->id)){
 			if(strlen($tag) > 0){
 				$tag = correctTag($tag);
-				$procedure = buildProcedure('p_clan_create', $name, $tag, $description, $clanType, $minimumTrophies, $warFrequency);
+				$procedure = buildProcedure('p_clan_create', $name, $tag, $description, $clanType, $minimumTrophies, $warFrequency, date('Y-m-d H:i:s', time()));
 				if(($db->multi_query($procedure)) === TRUE){
 					$result = $db->store_result()->fetch_object();
 					while ($db->more_results()){
@@ -222,7 +222,7 @@ class clan{
 		global $db;
 		if(isset($this->id)){
 			if(in_array($prpty, $this->acceptSet)){
-				$procedure = buildProcedure('p_clan_set', $this->id, array_search($prpty, $this->acceptSet), $value);
+				$procedure = buildProcedure('p_clan_set', $this->id, array_search($prpty, $this->acceptSet), $value, date('Y-m-d H:i:s', time()));
 				if(($db->multi_query($procedure)) === TRUE){
 					while ($db->more_results()){
 						$db->next_result();
@@ -312,7 +312,7 @@ class clan{
 					break;
 				}
 			}
-			$procedure = buildProcedure('p_clan_add_player', $this->id, $playerId, $rank);
+			$procedure = buildProcedure('p_clan_add_player', $this->id, $playerId, $rank, date('Y-m-d H:i:s', time()));
 			if(($db->multi_query($procedure)) === TRUE){
 				while ($db->more_results()){
 					$db->next_result();

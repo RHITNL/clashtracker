@@ -75,7 +75,7 @@ class player{
 		if(!isset($this->id)){
 			if((strlen($name) > 0) && (strlen($tag) > 0)){
 				$tag = correctTag($tag);
-				$procedure = buildProcedure('p_player_create', $name, $tag);
+				$procedure = buildProcedure('p_player_create', $name, $tag, date('Y-m-d H:i:s', time()));
 				if(($db->multi_query($procedure)) === TRUE){
 					$result = $db->store_result()->fetch_object();
 					while ($db->more_results()){
@@ -246,7 +246,7 @@ class player{
 		global $db;
 		if(isset($this->id)){
 			if(in_array($prpty, $this->acceptSet)){
-				$procedure = buildProcedure('p_player_set', $this->id, array_search($prpty, $this->acceptSet), $value);
+				$procedure = buildProcedure('p_player_set', $this->id, array_search($prpty, $this->acceptSet), $value, date('Y-m-d H:i:s', time()));
 				if(($db->multi_query($procedure)) === TRUE){
 					while ($db->more_results()){
 						$db->next_result();
@@ -342,7 +342,7 @@ class player{
 		$sinceTime = isset($sinceTime) ? $sinceTime : 0;
 		if(isset($this->id)){
 			if(!isset($this->loot[$type])){
-				$procedure = buildProcedure('p_player_get_loot', $this->id);
+				$procedure = buildProcedure('p_player_get_stats', $this->id);
 				if(($db->multi_query($procedure)) === TRUE){
 					$results = $db->store_result();
 					while ($db->more_results()){
@@ -478,7 +478,7 @@ class player{
 	public function leaveClan(){
 		global $db;
 		if(isset($this->id)){
-			$procedure = buildProcedure('p_player_leave_clan', $this->id);
+			$procedure = buildProcedure('p_player_leave_clan', $this->id, date('Y-m-d H:i:s', time()));
 			if(($db->multi_query($procedure)) === TRUE){
 				$results = $db->store_result();
 				while ($db->more_results()){

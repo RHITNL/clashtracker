@@ -22,7 +22,7 @@ try{
 	if($apiResult === false){
 		$apiMembers = array();
 	}else{
-		$apiMembers = $result['members'];
+		$apiMembers = $apiResult['members'];
 	}
 	if($apiMembers === false){
 		$clan->delete();

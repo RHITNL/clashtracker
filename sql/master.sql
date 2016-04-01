@@ -1,3 +1,4 @@
+drop table if exists clan_stats;
 drop table if exists clan_edit_requests;
 drop table if exists loot_report_player_result;
 drop table if exists loot_report;
@@ -13,7 +14,7 @@ drop table if exists war_player;
 drop table if exists war;
 drop table if exists clan_member;
 drop table if exists clan;
-drop table if exists loot;
+drop table if exists player_stats;
 drop table if exists player;
 
 create table player(
@@ -113,53 +114,6 @@ begin
 end //
 delimiter ;
 
-drop procedure if exists p_player_set;
-delimiter //
-create procedure p_player_set(varId int, varKey varchar(40), varValue text)
-begin
-	set @st := concat('update player set ', varKey, ' = ', quote(varValue), ', date_modified = NOW() where id = ', quote(varId));
-	prepare stmt from @st;
-	execute stmt;
-end //
-delimiter ;
-
-drop procedure if exists p_player_record_loot;
-delimiter // 
-create procedure p_player_record_loot(varId int, varType varchar(2), varAmount int, varDate varchar(50))
-begin
-if(varDate = '%')
-	then insert into loot (player_id, date_recorded, loot_type, loot_amount) values (varId, NOW(), varType, varAmount);
-	else insert into loot (player_id, date_recorded, loot_type, loot_amount) values (varId, varDate, varType, varAmount);
-end if;
-end //
-delimiter ;
-
-drop procedure if exists p_player_get_loot;
-delimiter // 
-create procedure p_player_get_loot(varId int, varType varchar(2))
-begin
-	select * from loot where player_id = varId and loot_type = varType order by date_recorded desc;
-end //
-delimiter ;
-
-drop procedure if exists p_player_create;
-delimiter //
-create procedure p_player_create(varName varchar(50), varTag varchar(15))
-begin
-	insert into player(name, tag, date_created) values(varName, varTag, NOW());
-	select last_insert_id() as id;
-end //
-delimiter ;
-
-drop procedure if exists p_clan_create;
-delimiter //
-create procedure p_clan_create(varName varchar(50), varTag varchar(15), varDescription varchar(256), varType varchar(2), varMinimumTrophies int, varWarFrequency varchar(2))
-begin
-	insert into clan(name, tag, description, clan_type, minimum_trophies, war_frequency, date_created) values(varName, varTag, varDescription, varType, varMinimumTrophies, varWarFrequency, NOW());
-	select last_insert_id() as id;
-end //
-delimiter ;
-
 drop procedure if exists p_clan_load;
 delimiter //
 create procedure p_clan_load(varId int)
@@ -173,55 +127,6 @@ delimiter //
 create procedure p_clan_load_by_tag(varTag varchar(15))
 begin
 	select * from clan where tag = varTag;
-end //
-delimiter ;
-
-drop procedure if exists p_clan_set;
-delimiter //
-create procedure p_clan_set(varId int, varKey varchar(40), varValue text)
-begin
-	set @st := concat('update clan set ', varKey, ' = ', quote(varValue), ', date_modified = NOW() where id = ', quote(varId));
-	prepare stmt from @st;
-	execute stmt;
-end //
-delimiter ;
-
-drop procedure if exists p_clan_add_player;
-delimiter //
-create procedure p_clan_add_player(varClanId int, varPlayerId int, varRank varchar(2))
-begin
-if exists (select * from clan_member where clan_id = varClanId and player_id = varPlayerId)
-	then 
-	if (varRank = 'KI' or varRank = 'EX')
-	    then update clan_member set rank = varRank, date_modified = NOW(), date_left = NOW() where clan_id = varClanId and player_id = varPlayerId;
-	    else update clan_member set rank = varRank, date_modified = NOW() where clan_id = varClanId and player_id = varPlayerId;
-	end if;
-	else insert into clan_member(clan_id, player_id, rank, date_created) values(varClanId, varPlayerId, varRank, NOW());
-end if;
-end //
-delimiter ;
-
-drop procedure if exists p_player_get_clan;
-delimiter //
-create procedure p_player_get_clan(varPlayerId int)
-begin
-	select clan_id from clan_member where player_id = varPlayerId and rank != 'KI' and rank != 'EX';
-end //
-delimiter ;
-
-drop procedure if exists p_clan_get_leader;
-delimiter //
-create procedure p_clan_get_leader(varClanId int)
-begin
-	select player_id from clan_member where clan_id = varClanId and rank = 'LE';
-end //
-delimiter ;
-
-drop procedure if exists p_player_leave_clan;
-delimiter //
-create procedure p_player_leave_clan(varPlayerId int)
-begin
-	update clan_member set rank = 'EX', date_modified = NOW(), date_left = NOW() where player_id = varPlayerId and rank != 'KI' and rank != 'EX';
 end //
 delimiter ;
 
@@ -244,86 +149,11 @@ end if;
 end //
 delimiter ;
 
-drop procedure if exists p_player_get_clans;
-delimiter //
-create procedure p_player_get_clans(varPlayerId int)
-begin
-	select clan_id from clan_member where player_id = varPlayerId order by date_modified;
-end //
-delimiter ;
-
-drop procedure if exists p_war_create;
-delimiter //
-create procedure p_war_create(varFirstClanId int, varSecondClanId int, varSize int)
-begin
-	insert into war(first_clan_id, second_clan_id, size, date_created) values(varFirstClanId, varSecondClanId, varSize, NOW());
-	select last_insert_id() as id;
-end //
-delimiter ;
-
 drop procedure if exists p_war_load;
 delimiter //
 create procedure p_war_load(varId int)
 begin
 	select * from war where id = varId;
-end //
-delimiter ;
-
-drop procedure if exists p_clan_get_wars;
-delimiter //
-create procedure p_clan_get_wars(varClanId int)
-begin
-	select id from war where first_clan_id = varClanId or second_clan_id = varClanId order by date_created desc;
-end //
-delimiter ;
-
-drop procedure if exists p_war_add_player;
-delimiter //
-create procedure p_war_add_player(varWarId int, varPlayerId int, varClanId int)
-begin
-	insert into war_player(war_id, player_id, clan_id, date_created) values(varWarId, varPlayerId, varClanId, NOW());
-	update war set date_modified = NOW() where id = varWarId;
-end //
-delimiter ;
-
-drop procedure if exists p_war_remove_player;
-delimiter //
-create procedure p_war_remove_player(varWarId int, varPlayerId int)
-begin
-	delete from war_player where war_id = varWarId and player_id = varPlayerId;
-	update war set date_modified = NOW() where id = varWarId;
-end //
-delimiter ;
-
-drop procedure if exists p_war_get_players;
-delimiter //
-create procedure p_war_get_players(varWarId int, varClanId int)
-begin
-if (varClanId = '%')
-	then select player_id from war_player where war_id = varWarId order by rank;
-	else select player_id from war_player where war_id = varWarId and clan_id = varClanId order by rank;
-end if;
-end //
-delimiter ;
-
-drop procedure if exists p_war_add_attack;
-delimiter //
-create procedure p_war_add_attack(varWarId int, varAttackerId int, varDefenderId int, varAttackerClanId int, varDefenderClanId int, varStars int)
-begin
-if exists (select * from war_attack where war_id = varWarId and attacker_id = varAttackerId and defender_id = varDefenderId)
-	then update war_attack set stars = varStars, date_modified = NOW() where war_id = varWarId and attacker_id = varAttackerId and defender_id = varDefenderId;
-	else insert into war_attack(war_id, attacker_id, defender_id, attacker_clan_id, defender_clan_id, stars, date_created) values (varWarId, varAttackerId, varDefenderId, varAttackerClanId, varDefenderClanId, varStars, NOW());
-end if;
-update war set date_modified = NOW() where id = varWarId;
-end //
-delimiter ;
-
-drop procedure if exists p_war_remove_attack;
-delimiter //
-create procedure p_war_remove_attack(varWarId int, varAttackerId int, varDefenderId int)
-begin
-	delete from war_attack where war_id = varWarId and attacker_id = varAttackerId and defender_id = varDefenderId;
-	update war set date_modified = NOW() where id = varWarId;
 end //
 delimiter ;
 
@@ -335,40 +165,6 @@ if (varClanId != '%')
 	then select * from war_attack where war_id = varWarId and attacker_clan_id = varClanId order by date_created;
 	else select * from war_attack where war_id = varWarId order by date_created;
 end if;
-end //
-delimiter ;
-
-drop procedure if exists p_get_clans;
-delimiter //
-create procedure p_get_clans(varPageSize int)
-begin
-	select id from clan order by clan_points desc limit varPageSize;
-end //
-delimiter ;
-
-drop procedure if exists p_get_players;
-delimiter //
-create procedure p_get_players(varPageSize int)
-begin
-	select id from player order by trophies desc limit varPageSize;
-end //
-delimiter ;
-
-drop procedure if exists p_get_wars;
-delimiter //
-create procedure p_get_wars(varPageSize int)
-begin
-	select id from war order by date_created desc limit varPageSize;
-end //
-delimiter ;
-
-drop procedure if exists p_war_set;
-delimiter //
-create procedure p_war_set(varId int, varKey varchar(40), varValue text)
-begin
-	set @st := concat('update war set ', varKey, ' = ', quote(varValue), ', date_modified = NOW() where id = ', quote(varId));
-	prepare stmt from @st;
-	execute stmt;
 end //
 delimiter ;
 
@@ -406,14 +202,6 @@ delimiter ;
 
 alter table clan_member add war_rank int not null;
 
-drop procedure if exists p_clan_update_player_war_rank;
-delimiter //
-create procedure p_clan_update_player_war_rank(varClanId int, varPlayerId int, varWarRank int)
-begin
-	update clan_member set war_rank = varWarRank where clan_id = varClanId and player_id = varPlayerId;
-end //
-delimiter ;
-
 drop procedure if exists p_player_get_war_rank;
 delimiter //
 create procedure p_player_get_war_rank(varPlayerId int, varClanId int)
@@ -431,15 +219,6 @@ end //
 delimiter ;
 
 alter table war_player add rank int not null;
-
-drop procedure if exists p_war_update_player_rank;
-delimiter //
-create procedure p_war_update_player_rank(varWarId int, varPlayerId int, varRank int)
-begin
-	update war_player set rank = varRank where war_id = varWarId and player_id = varPlayerId;
-	update war set date_modified = NOW() where id = varWarId;
-end //
-delimiter ;
 
 drop procedure if exists p_war_get_highest_rank;
 delimiter //
@@ -481,35 +260,11 @@ begin
 end //
 delimiter ;
 
-drop procedure if exists p_player_get_wars;
-delimiter //
-create procedure p_player_get_wars(varPlayerId int)
-begin
-	select war_id from war_player where player_id = varPlayerId order by date_created desc;
-end //
-delimiter ;
-
 drop procedure if exists p_clan_player_joined;
 delimiter //
 create procedure p_clan_player_joined(varClanId int, varPlayerId int)
 begin
 	select date_created as date_joined from clan_member where clan_id = varClanId and player_id = varPlayerId;
-end //
-delimiter ;
-
-drop procedure if exists p_clan_search;
-delimiter //
-create procedure p_clan_search(varQuery varChar(50))
-begin
-	select id from clan where lower(name) like lower(varQuery) or lower(tag) like lower(varQuery) limit 50;
-end //
-delimiter ;
-
-drop procedure if exists p_player_search;
-delimiter //
-create procedure p_player_search(varQuery varChar(50))
-begin
-	select id from player where lower(name) like lower(varQuery) or lower(tag) like lower(varQuery) limit 50;
 end //
 delimiter ;
 
@@ -521,19 +276,6 @@ begin
 end //
 delimiter ;
 
-drop procedure if exists p_player_remove_loot;
-delimiter //
-create procedure p_player_remove_loot(varId int, varType varChar(2), varDate varChar(50))
-begin
-if(varDate ='%')
-	then delete from loot where player_id = varId and loot_type = varType;
-	else delete from loot where player_id = varId and loot_type = varType and date_recorded >= varDate;
-end if;
-end //
-delimiter ;
-
--- New Table and Procedures for user accounts
-
 create table user(
 	id int auto_increment not null,
 	email varchar(254) not null unique,
@@ -544,15 +286,6 @@ create table user(
 	primary key(id),
 	foreign key(player_id) references player(id)
 );
-
-drop procedure if exists p_user_create;
-delimiter //
-create procedure p_user_create(varEmail varchar(254), varPassword varchar(255))
-begin
-	insert into user(email, password, date_created) values(varEmail, varPassword, NOW());
-	select last_insert_id() as id;
-end //
-delimiter ;
 
 drop procedure if exists p_user_load;
 delimiter //
@@ -570,45 +303,11 @@ begin
 end //
 delimiter ;
 
-drop procedure if exists p_user_change_password;
-delimiter //
-create procedure p_user_change_password(varId int, varPassword varchar(255))
-begin
-	update user set password = varPassword, date_modified = NOW() where id = varId;
-end //
-delimiter ;
-
-drop procedure if exists p_user_link_player;
-delimiter //
-create procedure p_user_link_player(varUserId int, varPlayerId int)
-begin
-	update user set player_id = varPlayerId, date_modified = NOW() where id = varUserId;
-end //
-delimiter ;
-
-drop procedure if exists p_user_unlink_player;
-delimiter //
-create procedure p_user_unlink_player(varUserId int)
-begin
-	update user set player_id = null, date_modified = NOW() where id = varUserId;
-end //
-delimiter ;
-
 drop procedure if exists p_player_get_linked_user;
 delimiter //
 create procedure p_player_get_linked_user(varId int)
 begin
 	select id from user where player_id = varId;
-end //
-delimiter ;
-
-drop procedure if exists p_user_set;
-delimiter //
-create procedure p_user_set(varId int, varKey varchar(40), varValue text)
-begin
-	set @st := concat('update user set ', varKey, ' = ', quote(varValue), ', date_modified = NOW() where id = ', quote(varId));
-	prepare stmt from @st;
-	execute stmt;
 end //
 delimiter ;
 
@@ -658,22 +357,6 @@ delimiter ;
 alter table user add clan_id int unique default null;
 alter table clan add access_type varchar(2) not null default 'AN';
 alter table clan add min_rank_access varchar(2) default null;
-
-drop procedure if exists p_user_link_clan;
-delimiter //
-create procedure p_user_link_clan(varUserId int, varClanId int)
-begin
-	update user set clan_id = varClanId, date_modified = NOW() where id = varUserId;
-end //
-delimiter ;
-
-drop procedure if exists p_user_unlink_clan;
-delimiter //
-create procedure p_user_unlink_clan(varUserId int)
-begin
-	update user set clan_id = null, date_modified = NOW() where id = varUserId;
-end //
-delimiter ;
 
 drop procedure if exists p_clan_get_linked_user;
 delimiter //
@@ -850,30 +533,6 @@ begin
 end //
 delimiter ;
 
-drop procedure if exists p_get_players;
-delimiter //
-create procedure p_get_players(varPageSize int)
-begin
-	select * from player order by trophies desc limit varPageSize;
-end //
-delimiter ;
-
-drop procedure if exists p_player_get_clan;
-delimiter //
-create procedure p_player_get_clan(varPlayerId int)
-begin
-	select clan.*, rank from clan_member join clan on clan.id = clan_id where player_id = varPlayerId and rank != 'KI' and rank != 'EX';
-end //
-delimiter ;
-
-drop procedure if exists p_get_clans;
-delimiter //
-create procedure p_get_clans(varPageSize int)
-begin
-	select * from clan order by clan_points desc limit varPageSize;
-end //
-delimiter ;
-
 drop procedure if exists p_clan_get_past_and_current_members;
 delimiter //
 create procedure p_clan_get_past_and_current_members(varClanId int)
@@ -882,36 +541,11 @@ begin
 end //
 delimiter ;
 
-drop procedure if exists p_clan_get_current_members;
-delimiter //
-create procedure p_clan_get_current_members(varClanId int)
-begin
-	select player.*, rank from clan_member join player on player_id = player.id where clan_id = varClanId and rank != 'KI' and rank != 'EX' order by trophies desc;
-end //
-delimiter ;
-
 drop procedure if exists p_clan_get_wars;
 delimiter //
 create procedure p_clan_get_wars(varClanId int)
 begin
 	select * from war where first_clan_id = varClanId or second_clan_id = varClanId order by date_created desc;
-end //
-delimiter ;
-
-drop procedure if exists p_clan_update_bulk;
-delimiter //
-create procedure p_clan_update_bulk(varId int, varName varchar(50), varType varchar(2), varDescription varchar(256), varFrequency varchar(2), varMinTrophies int, varMembers int, varClanPoints int, varClanLevel int, varWarWins int, varBadgeUrl varchar(200), varLocation varchar(50))
-begin
-	update clan set name=varName, clan_type=varType, description=varDescription, war_frequency=varFrequency, minimum_trophies=varMinTrophies, members=varMembers, clan_points=varClanPoints, clan_level=varClanLevel, war_wins=varWarWins, badge_url=varBadgeUrl, location=varLocation where id = varId;
-end //
-delimiter ;
-
-drop procedure if exists p_player_update_bulk;
-delimiter //
-create procedure p_player_update_bulk(varId int, varRank varchar(2), varLevel int, varTrophies int, varDonations int, varReceived int, varLeagueUrl varchar(200))
-begin
-	update player set level=varLevel, trophies=varTrophies, donations=varDonations, received=varReceived, league_url=varLeagueUrl where id = varId;
-	update clan_member set rank=varRank where player_id = varId and rank != 'KI' and rank != 'EX';
 end //
 delimiter ;
 
@@ -994,22 +628,6 @@ begin
 end //
 delimiter ;
 
-drop procedure if exists p_player_get_loot;
-delimiter // 
-create procedure p_player_get_loot(varId int)
-begin
-	select * from loot where player_id = varId order by date_recorded desc;
-end //
-delimiter ;
-
-drop procedure if exists p_clan_players_for_loot_report;
-delimiter //
-create procedure p_clan_players_for_loot_report(varId int, varType varchar(2), varDate datetime)
-begin
-	select player.* from loot join player on player.id = player_id where date_recorded > varDate and loot_type = varType and player_id in (select player_id from clan_member where clan_id = varId and rank != 'EX' and rank != 'KI') group by player_id having count(*) > 1;
-end //
-delimiter ;
-
 create table loot_report(
 	id int auto_increment not null,
 	clan_id int not null,
@@ -1026,15 +644,6 @@ create table loot_report_player_result(
 	foreign key(player_id) references player(id) on delete cascade,
 	foreign key(loot_report_id) references loot_report(id) on delete cascade
 );
-
-drop procedure if exists p_loot_report_create;
-delimiter //
-create procedure p_loot_report_create(varClanId int)
-begin
-	insert into loot_report(clan_id, date_created) values(varClanId, NOW());
-	select * from loot_report where id in (select last_insert_id() as id);
-end //
-delimiter ;
 
 drop procedure if exists p_loot_report_record_player_result;
 delimiter //
@@ -1076,30 +685,6 @@ begin
 end //
 delimiter ;
 
-drop procedure if exists p_clan_update_bulk;
-delimiter //
-create procedure p_clan_update_bulk(varId int, varName varchar(50), varType varchar(2), varDescription varchar(256), varFrequency varchar(2), varMinTrophies int, varMembers int, varClanPoints int, varClanLevel int, varWarWins int, varBadgeUrl varchar(200), varLocation varchar(50))
-begin
-	update clan set name=varName, clan_type=varType, description=varDescription, war_frequency=varFrequency, minimum_trophies=varMinTrophies, members=varMembers, clan_points=varClanPoints, clan_level=varClanLevel, war_wins=varWarWins, badge_url=varBadgeUrl, location=varLocation where id = varId;
-end //
-delimiter ;
-
-drop procedure if exists p_clan_update_player_war_rank;
-delimiter //
-create procedure p_clan_update_player_war_rank(varClanId int, varPlayerId int, varWarRank int)
-begin
-	update clan_member set war_rank = varWarRank, date_modifed = NOW() where clan_id = varClanId and player_id = varPlayerId;
-end //
-delimiter ;
-
-drop procedure if exists p_clan_update_bulk;
-delimiter //
-create procedure p_clan_update_bulk(varId int, varName varchar(50), varType varchar(2), varDescription varchar(256), varFrequency varchar(2), varMinTrophies int, varMembers int, varClanPoints int, varClanLevel int, varWarWins int, varBadgeUrl varchar(200), varLocation varchar(50), varDateModified datetime)
-begin
-	update clan set name=varName, clan_type=varType, description=varDescription, war_frequency=varFrequency, minimum_trophies=varMinTrophies, members=varMembers, clan_points=varClanPoints, clan_level=varClanLevel, war_wins=varWarWins, badge_url=varBadgeUrl, location=varLocation, date_modified=varDateModified where id = varId;
-end //
-delimiter ;
-
 drop procedure if exists p_clan_update_player_war_rank;
 delimiter //
 create procedure p_clan_update_player_war_rank(varClanId int, varPlayerId int, varWarRank int, varDateModified datetime)
@@ -1109,14 +694,6 @@ end //
 delimiter ;
 
 alter table clan add api_info varchar(50000) default null;
-
-drop procedure if exists p_clan_update_bulk;
-delimiter //
-create procedure p_clan_update_bulk(varId int, varName varchar(50), varType varchar(2), varDescription varchar(256), varFrequency varchar(2), varMinTrophies int, varMembers int, varClanPoints int, varClanLevel int, varWarWins int, varBadgeUrl varchar(200), varLocation varchar(50), varDateModified datetime, varApiInfo varchar(50000))
-begin
-	update clan set name=varName, clan_type=varType, description=varDescription, war_frequency=varFrequency, minimum_trophies=varMinTrophies, members=varMembers, clan_points=varClanPoints, clan_level=varClanLevel, war_wins=varWarWins, badge_url=varBadgeUrl, location=varLocation, date_modified=varDateModified, api_info=varApiInfo where id = varId;
-end //
-delimiter ;
 
 create table clan_edit_requests(
 	clan_id int not null,
@@ -1163,17 +740,6 @@ rename table loot to player_stats;
 alter table player_stats change loot_type stat_type varchar(2);
 alter table player_stats change loot_amount stat_amount int;
 
-drop procedure if exists p_player_record_loot;
-delimiter // 
-create procedure p_player_record_loot(varId int, varType varchar(2), varAmount int, varDate varchar(50))
-begin
-if(varDate = '%')
-	then insert into player_stats (player_id, date_recorded, stat_type, stat_amount) values (varId, NOW(), varType, varAmount);
-	else insert into player_stats (player_id, date_recorded, stat_type, stat_amount) values (varId, varDate, varType, varAmount);
-end if;
-end //
-delimiter ;
-
 drop procedure if exists p_player_remove_loot;
 delimiter //
 create procedure p_player_remove_loot(varId int, varType varChar(2), varDate varChar(50))
@@ -1185,22 +751,6 @@ end if;
 end //
 delimiter ;
 
-drop procedure if exists p_player_get_loot;
-delimiter // 
-create procedure p_player_get_loot(varId int)
-begin
-	select * from player_stats where player_id = varId order by date_recorded desc;
-end //
-delimiter ;
-
-drop procedure if exists p_clan_players_for_loot_report;
-delimiter //
-create procedure p_clan_players_for_loot_report(varId int, varType varchar(2), varDate datetime)
-begin
-	select player.* from player_stats join player on player.id = player_id where date_recorded > varDate and stat_type = varType and player_id in (select player_id from clan_member where clan_id = varId and rank != 'EX' and rank != 'KI') group by player_id having count(*) > 1;
-end //
-delimiter ;
-
 create table clan_stats(
 	clan_id int not null,
 	date_recorded datetime not null,
@@ -1208,44 +758,6 @@ create table clan_stats(
 	stat_amount int not null,
 	foreign key(clan_id) references clan(id)
 );
-
-drop procedure if exists p_player_update_bulk;
-delimiter //
-create procedure p_player_update_bulk(varId int, varRank varchar(2), varLevel int, varTrophies int, varDonations int, varReceived int, varLeagueUrl varchar(200), varDate datetime)
-begin
-	update player set level=varLevel, trophies=varTrophies, donations=varDonations, received=varReceived, league_url=varLeagueUrl where id = varId;
-	update clan_member set rank=varRank where player_id = varId and rank != 'KI' and rank != 'EX';
-	insert into player_stats (player_id, date_recorded, stat_type, stat_amount) values (varId, varDate, 'LV', varLevel);
-	insert into player_stats (player_id, date_recorded, stat_type, stat_amount) values (varId, varDate, 'TR', varTrophies);
-	insert into player_stats (player_id, date_recorded, stat_type, stat_amount) values (varId, varDate, 'DO', varDonations);
-	insert into player_stats (player_id, date_recorded, stat_type, stat_amount) values (varId, varDate, 'RE', varReceived);
-end //
-delimiter ;
-
-drop procedure if exists p_clan_update_bulk;
-delimiter //
-create procedure p_clan_update_bulk(varId int, varName varchar(50), varType varchar(2), varDescription varchar(256), varFrequency varchar(2), varMinTrophies int, varMembers int, varClanPoints int, varClanLevel int, varWarWins int, varBadgeUrl varchar(200), varLocation varchar(50), varDateModified datetime, varApiInfo varchar(50000), varDate datetime)
-begin
-	update clan set name=varName, clan_type=varType, description=varDescription, war_frequency=varFrequency, minimum_trophies=varMinTrophies, members=varMembers, clan_points=varClanPoints, clan_level=varClanLevel, war_wins=varWarWins, badge_url=varBadgeUrl, location=varLocation, date_modified=varDateModified, api_info=varApiInfo where id = varId;
-	insert into clan_stats (clan_id, date_recorded, stat_type, stat_amount) values (varId, varDate, 'CP', varClanPoints);
-	insert into clan_stats (clan_id, date_recorded, stat_type, stat_amount) values (varId, varDate, 'CL', varClanLevel);
-	insert into clan_stats (clan_id, date_recorded, stat_type, stat_amount) values (varId, varDate, 'ME', varMembers);
-	insert into clan_stats (clan_id, date_recorded, stat_type, stat_amount) values (varId, varDate, 'WW', varWarWins);
-end //
-delimiter ;
-
-drop procedure if exists p_clan_update_bulk;
-delimiter //
-create procedure p_clan_update_bulk(varId int, varName varchar(50), varType varchar(2), varDescription varchar(256), varFrequency varchar(2), varMinTrophies int, varMembers int, varClanPoints int, varClanLevel int, varWarWins int, varBadgeUrl varchar(200), varLocation varchar(50), varDateModified datetime, varApiInfo varchar(50000), varHourAgo datetime)
-begin
-	update clan set name=varName, clan_type=varType, description=varDescription, war_frequency=varFrequency, minimum_trophies=varMinTrophies, members=varMembers, clan_points=varClanPoints, clan_level=varClanLevel, war_wins=varWarWins, badge_url=varBadgeUrl, location=varLocation, date_modified=varDateModified, api_info=varApiInfo where id = varId;
-	insert into clan_stats (clan_id, date_recorded, stat_type, stat_amount) values (varId, varDateModified, 'CP', varClanPoints);
-	insert into clan_stats (clan_id, date_recorded, stat_type, stat_amount) values (varId, varDateModified, 'CL', varClanLevel);
-	insert into clan_stats (clan_id, date_recorded, stat_type, stat_amount) values (varId, varDateModified, 'ME', varMembers);
-	insert into clan_stats (clan_id, date_recorded, stat_type, stat_amount) values (varId, varDateModified, 'WW', varWarWins);
-	update clan set api_info = null where api_info is not null and date_modified < varHourAgo;
-end //
-delimiter ;
 
 drop procedure if exists p_loot_report_create;
 delimiter //
@@ -1304,37 +816,6 @@ begin
 end //
 delimiter ;
 
-drop procedure if exists p_clan_add_player;
-delimiter //
-create procedure p_clan_add_player(varClanId int, varPlayerId int, varRank varchar(2))
-begin
-if exists (select * from clan_member where clan_id = varClanId and player_id = varPlayerId)
-	then 
-	if (varRank = 5)
-	    then update clan_member set rank = varRank, date_modified = NOW(), date_left = NOW() where clan_id = varClanId and player_id = varPlayerId;
-	    else update clan_member set rank = varRank, date_modified = NOW() where clan_id = varClanId and player_id = varPlayerId;
-	end if;
-	else insert into clan_member(clan_id, player_id, rank, date_created) values(varClanId, varPlayerId, varRank, NOW());
-end if;
-end //
-delimiter ;
-
-drop procedure if exists p_player_get_clan;
-delimiter //
-create procedure p_player_get_clan(varPlayerId int)
-begin
-	select clan_id from clan_member where player_id = varPlayerId and rank != 5;
-end //
-delimiter ;
-
-drop procedure if exists p_player_leave_clan;
-delimiter //
-create procedure p_player_leave_clan(varPlayerId int)
-begin
-	update clan_member set rank = 'EX', date_modified = NOW(), date_left = NOW() where player_id = varPlayerId and rank != 5;
-end //
-delimiter ;
-
 drop procedure if exists p_player_get_clan;
 delimiter //
 create procedure p_player_get_clan(varPlayerId int)
@@ -1353,49 +834,11 @@ begin
 end //
 delimiter ;
 
-drop procedure if exists p_player_update_bulk;
-delimiter //
-create procedure p_player_update_bulk(varId int, varRank varchar(2), varLevel int, varTrophies int, varDonations int, varReceived int, varLeagueUrl varchar(200))
-begin
-	update player set level=varLevel, trophies=varTrophies, donations=varDonations, received=varReceived, league_url=varLeagueUrl where id = varId;
-	update clan_member set rank=varRank where player_id = varId and rank != 5;
-end //
-delimiter ;
-
-drop procedure if exists p_clan_players_for_loot_report;
-delimiter //
-create procedure p_clan_players_for_loot_report(varId int, varType varchar(2), varDate datetime)
-begin
-	select player.* from loot join player on player.id = player_id where date_recorded > varDate and loot_type = varType and player_id in (select player_id from clan_member where clan_id = varId and rank != 5) group by player_id having count(*) > 1;
-end //
-delimiter ;
-
 drop procedure if exists p_clan_players_for_loot_report;
 delimiter //
 create procedure p_clan_players_for_loot_report(varId int, varType varchar(2), varDate datetime)
 begin
 	select player.* from player_stats join player on player.id = player_id where date_recorded > varDate and stat_type = varType and player_id in (select player_id from clan_member where clan_id = varId and rank != 5) group by player_id having count(*) > 1;
-end //
-delimiter ;
-
-drop procedure if exists p_player_update_bulk;
-delimiter //
-create procedure p_player_update_bulk(varId int, varRank varchar(2), varLevel int, varTrophies int, varDonations int, varReceived int, varLeagueUrl varchar(200), varDate datetime)
-begin
-	update player set level=varLevel, trophies=varTrophies, donations=varDonations, received=varReceived, league_url=varLeagueUrl where id = varId;
-	update clan_member set rank=varRank where player_id = varId and rank != 5;
-	insert into player_stats (player_id, date_recorded, stat_type, stat_amount) values (varId, varDate, 'LV', varLevel);
-	insert into player_stats (player_id, date_recorded, stat_type, stat_amount) values (varId, varDate, 'TR', varTrophies);
-	insert into player_stats (player_id, date_recorded, stat_type, stat_amount) values (varId, varDate, 'DO', varDonations);
-	insert into player_stats (player_id, date_recorded, stat_type, stat_amount) values (varId, varDate, 'RE', varReceived);
-end //
-delimiter ;
-
-drop procedure if exists p_player_leave_clan;
-delimiter //
-create procedure p_player_leave_clan(varPlayerId int)
-begin
-	update clan_member set rank = 5, date_modified = NOW(), date_left = NOW() where player_id = varPlayerId and rank != 5;
 end //
 delimiter ;
 
@@ -1416,5 +859,250 @@ begin
 	set @st := concat('select * from player order by ', varOrder, ' limit ', varPageSize, ';');
 	prepare stmt from @st;
 	execute stmt;
+end //
+delimiter ;
+
+drop procedure if exists p_player_record_loot;
+delimiter // 
+create procedure p_player_record_loot(varId int, varType varchar(2), varAmount int, varDate varchar(50))
+begin
+	insert into player_stats (player_id, date_recorded, stat_type, stat_amount) values (varId, varDate, varType, varAmount);
+end //
+delimiter ;
+
+drop procedure if exists p_player_get_stats;
+delimiter // 
+create procedure p_player_get_stats(varId int)
+begin
+	select * from player_stats where player_id = varId order by date_recorded desc;
+end //
+delimiter ;
+
+drop procedure if exists p_player_set;
+delimiter //
+create procedure p_player_set(varId int, varKey varchar(40), varValue text, varDate datetime)
+begin
+	set @st := concat('update player set ', varKey, ' = ', quote(varValue), ', date_modified = ', quote(varDate), ' where id = ', quote(varId));
+	prepare stmt from @st;
+	execute stmt;
+end //
+delimiter ;
+
+drop procedure if exists p_player_create;
+delimiter //
+create procedure p_player_create(varName varchar(50), varTag varchar(15), varDate datetime)
+begin
+	insert into player(name, tag, date_created) values(varName, varTag, varDate);
+	select last_insert_id() as id;
+end //
+delimiter ;
+
+drop procedure if exists p_clan_create;
+delimiter //
+create procedure p_clan_create(varName varchar(50), varTag varchar(15), varDescription varchar(256), varType varchar(2), varMinimumTrophies int, varWarFrequency varchar(2), varDate datetime)
+begin
+	insert into clan(name, tag, description, clan_type, minimum_trophies, war_frequency, date_created) values(varName, varTag, varDescription, varType, varMinimumTrophies, varWarFrequency, varDate);
+	select last_insert_id() as id;
+end //
+delimiter ;
+
+drop procedure if exists p_clan_set;
+delimiter //
+create procedure p_clan_set(varId int, varKey varchar(40), varValue text, varDate datetime)
+begin
+	set @st := concat('update clan set ', varKey, ' = ', quote(varValue), ', date_modified = ', quote(varDate), ' where id = ', quote(varId));
+	prepare stmt from @st;
+	execute stmt;
+end //
+delimiter ;
+
+drop procedure if exists p_war_create;
+delimiter //
+create procedure p_war_create(varFirstClanId int, varSecondClanId int, varSize int, varDate datetime)
+begin
+	insert into war(first_clan_id, second_clan_id, size, date_created) values(varFirstClanId, varSecondClanId, varSize, varDate);
+	select last_insert_id() as id;
+end //
+delimiter ;
+
+drop procedure if exists p_war_add_player;
+delimiter //
+create procedure p_war_add_player(varWarId int, varPlayerId int, varClanId int, varDate datetime)
+begin
+	insert into war_player(war_id, player_id, clan_id, date_created) values(varWarId, varPlayerId, varClanId, varDate);
+	update war set date_modified = varDate where id = varWarId;
+end //
+delimiter ;
+
+drop procedure if exists p_war_remove_player;
+delimiter //
+create procedure p_war_remove_player(varWarId int, varPlayerId int, varDate datetime)
+begin
+	delete from war_player where war_id = varWarId and player_id = varPlayerId;
+	update war set date_modified = varDate where id = varWarId;
+end //
+delimiter ;
+
+drop procedure if exists p_war_add_attack;
+delimiter //
+create procedure p_war_add_attack(varWarId int, varAttackerId int, varDefenderId int, varAttackerClanId int, varDefenderClanId int, varStars int, varDate datetime)
+begin
+if exists (select * from war_attack where war_id = varWarId and attacker_id = varAttackerId and defender_id = varDefenderId)
+	then update war_attack set stars = varStars, date_modified = varDate where war_id = varWarId and attacker_id = varAttackerId and defender_id = varDefenderId;
+	else insert into war_attack(war_id, attacker_id, defender_id, attacker_clan_id, defender_clan_id, stars, date_created) values (varWarId, varAttackerId, varDefenderId, varAttackerClanId, varDefenderClanId, varStars, varDate);
+end if;
+update war set date_modified = varDate where id = varWarId;
+end //
+delimiter ;
+
+drop procedure if exists p_war_remove_attack;
+delimiter //
+create procedure p_war_remove_attack(varWarId int, varAttackerId int, varDefenderId int, varDate datetime)
+begin
+	delete from war_attack where war_id = varWarId and attacker_id = varAttackerId and defender_id = varDefenderId;
+	update war set date_modified = varDate where id = varWarId;
+end //
+delimiter ;
+
+drop procedure if exists p_war_set;
+delimiter //
+create procedure p_war_set(varId int, varKey varchar(40), varValue text, varDate datetime)
+begin
+	set @st := concat('update war set ', varKey, ' = ', quote(varValue), ', date_modified = ', quote(varDate), ' where id = ', quote(varId));
+	prepare stmt from @st;
+	execute stmt;
+end //
+delimiter ;
+
+drop procedure if exists p_war_update_player_rank;
+delimiter //
+create procedure p_war_update_player_rank(varWarId int, varPlayerId int, varRank int, varDate datetime)
+begin
+	update war_player set rank = varRank where war_id = varWarId and player_id = varPlayerId;
+	update war set date_modified = varDate where id = varWarId;
+end //
+delimiter ;
+
+drop procedure if exists p_user_create;
+delimiter //
+create procedure p_user_create(varEmail varchar(254), varPassword varchar(255), varDate datetime)
+begin
+	insert into user(email, password, date_created) values(varEmail, varPassword, varDate);
+	select last_insert_id() as id;
+end //
+delimiter ;
+
+drop procedure if exists p_user_change_password;
+delimiter //
+create procedure p_user_change_password(varId int, varPassword varchar(255), varDate datetime)
+begin
+	update user set password = varPassword, date_modified = varDate where id = varId;
+end //
+delimiter ;
+
+drop procedure if exists p_user_link_player;
+delimiter //
+create procedure p_user_link_player(varUserId int, varPlayerId int, varDate datetime)
+begin
+	update user set player_id = varPlayerId, date_modified = varDate where id = varUserId;
+end //
+delimiter ;
+
+drop procedure if exists p_user_unlink_player;
+delimiter //
+create procedure p_user_unlink_player(varUserId int, varDate datetime)
+begin
+	update user set player_id = null, date_modified = varDate where id = varUserId;
+end //
+delimiter ;
+
+drop procedure if exists p_user_set;
+delimiter //
+create procedure p_user_set(varId int, varKey varchar(40), varValue text, varDate datetime)
+begin
+	set @st := concat('update user set ', varKey, ' = ', quote(varValue), ', date_modified = ', quote(varDate), ' where id = ', quote(varId));
+	prepare stmt from @st;
+	execute stmt;
+end //
+delimiter ;
+
+drop procedure if exists p_user_unlink_clan;
+delimiter //
+create procedure p_user_unlink_clan(varUserId int, varDate datetime)
+begin
+	update user set clan_id = null, date_modified = varDate where id = varUserId;
+end //
+delimiter ;
+
+drop procedure if exists p_user_link_clan;
+delimiter //
+create procedure p_user_link_clan(varUserId int, varClanId int, varDate datetime)
+begin
+	update user set clan_id = varClanId, date_modified = varDate where id = varUserId;
+end //
+delimiter ;
+
+drop procedure if exists p_clan_update_bulk;
+delimiter //
+create procedure p_clan_update_bulk(varId int, varName varchar(50), varType varchar(2), varDescription varchar(256), varFrequency varchar(2), varMinTrophies int, varMembers int, varClanPoints int, varClanLevel int, varWarWins int, varBadgeUrl varchar(200), varLocation varchar(50), varDateModified datetime, varApiInfo varchar(50000), varHourAgo datetime)
+begin
+	update clan set name=varName, clan_type=varType, description=varDescription, war_frequency=varFrequency, minimum_trophies=varMinTrophies, members=varMembers, clan_points=varClanPoints, clan_level=varClanLevel, war_wins=varWarWins, badge_url=varBadgeUrl, location=varLocation, date_modified=varDateModified, api_info=varApiInfo where id = varId;
+	if (varClanPoints <> (select stat_amount from clan_stats where clan_id = varId and stat_type = 'CP' order by date_recorded desc limit 1))
+		then insert into clan_stats (clan_id, date_recorded, stat_type, stat_amount) values (varId, varDateModified, 'CP', varClanPoints);
+	end if;
+	if (varClanLevel <> (select stat_amount from clan_stats where clan_id = varId and stat_type = 'CL' order by date_recorded desc limit 1))
+		then insert into clan_stats (clan_id, date_recorded, stat_type, stat_amount) values (varId, varDateModified, 'CL', varClanLevel);
+	end if;
+	if (varMembers <> (select stat_amount from clan_stats where clan_id = varId and stat_type = 'ME' order by date_recorded desc limit 1))
+		then insert into clan_stats (clan_id, date_recorded, stat_type, stat_amount) values (varId, varDateModified, 'ME', varMembers);
+	end if;
+	if (varWarWins <> (select stat_amount from clan_stats where clan_id = varId and stat_type = 'WW' order by date_recorded desc limit 1))
+		then insert into clan_stats (clan_id, date_recorded, stat_type, stat_amount) values (varId, varDateModified, 'WW', varWarWins);
+	end if;
+	update clan set api_info = null where api_info is not null and date_modified < varHourAgo;
+end //
+delimiter ;
+
+drop procedure if exists p_clan_add_player;
+delimiter //
+create procedure p_clan_add_player(varClanId int, varPlayerId int, varRank varchar(2), varDate datetime)
+begin
+if exists (select * from clan_member where clan_id = varClanId and player_id = varPlayerId)
+	then 
+	if (varRank = 5)
+	    then update clan_member set rank = varRank, date_modified = varDate, date_left = varDate where clan_id = varClanId and player_id = varPlayerId;
+	    else update clan_member set rank = varRank, date_modified = varDate where clan_id = varClanId and player_id = varPlayerId;
+	end if;
+	else insert into clan_member(clan_id, player_id, rank, date_created) values(varClanId, varPlayerId, varRank, varDate);
+end if;
+end //
+delimiter ;
+
+drop procedure if exists p_player_update_bulk;
+delimiter //
+create procedure p_player_update_bulk(varId int, varRank varchar(2), varLevel int, varTrophies int, varDonations int, varReceived int, varLeagueUrl varchar(200), varDate datetime)
+begin
+	update player set level=varLevel, trophies=varTrophies, donations=varDonations, received=varReceived, league_url=varLeagueUrl where id = varId;
+	update clan_member set rank=varRank where player_id = varId and rank != 5;
+	if (varLevel <> (select stat_amount from player_stats where player_id = varId and stat_type = 'LV' order by date_recorded desc limit 1))
+		then insert into player_stats (player_id, date_recorded, stat_type, stat_amount) values (varId, varDate, 'LV', varLevel);
+	end if;
+	if (varTrophies <> (select stat_amount from player_stats where player_id = varId and stat_type = 'TR' order by date_recorded desc limit 1))
+		then insert into player_stats (player_id, date_recorded, stat_type, stat_amount) values (varId, varDate, 'TR', varTrophies);
+	end if;
+	if (varDonations <> (select stat_amount from player_stats where player_id = varId and stat_type = 'DO' order by date_recorded desc limit 1))
+		then insert into player_stats (player_id, date_recorded, stat_type, stat_amount) values (varId, varDate, 'DO', varDonations);
+	end if;
+	if (varReceived <> (select stat_amount from player_stats where player_id = varId and stat_type = 'RE' order by date_recorded desc limit 1))
+		then insert into player_stats (player_id, date_recorded, stat_type, stat_amount) values (varId, varDate, 'RE', varReceived);
+	end if;
+end //
+delimiter ;
+
+drop procedure if exists p_player_leave_clan;
+delimiter //
+create procedure p_player_leave_clan(varPlayerId int, varDate datetime)
+begin
+	update clan_member set rank = 5, date_modified = varDate, date_left = varDate where player_id = varPlayerId and rank != 5;
 end //
 delimiter ;

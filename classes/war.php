@@ -30,7 +30,7 @@ class war{
 		if(!isset($this->id)){
 			$clan1Id = $clan1->get('id');
 			$clan2Id = $clan2->get('id');
-			$procedure = buildProcedure('p_war_create', $clan1Id, $clan2Id, $size);
+			$procedure = buildProcedure('p_war_create', $clan1Id, $clan2Id, $size, date('Y-m-d H:i:s', time()));
 			if(($db->multi_query($procedure)) === TRUE){
 				$result = $db->store_result()->fetch_object();
 				while ($db->more_results()){
@@ -138,7 +138,7 @@ class war{
 						$prpty = 'secondClanStars';
 					}
 				}
-				$procedure = buildProcedure('p_war_set', $this->id, array_search($prpty, $this->acceptSet), $value);
+				$procedure = buildProcedure('p_war_set', $this->id, array_search($prpty, $this->acceptSet), $value, date('Y-m-d H:i:s', time()));
 				if(($db->multi_query($procedure)) === TRUE){
 					while ($db->more_results()){
 						$db->next_result();
@@ -171,7 +171,7 @@ class war{
 			if(isset($clan) && $this->isClanInWar($clan->get('id'))){
 				if(count($this->getMyWarPlayers($clan)) < $this->size){
 					global $db;
-					$procedure = buildProcedure('p_war_add_player', $this->id, $playerId, $clan->get('id'));
+					$procedure = buildProcedure('p_war_add_player', $this->id, $playerId, $clan->get('id'), date('Y-m-d H:i:s', time()));
 					if(($db->multi_query($procedure)) === TRUE){
 						while ($db->more_results()){
 							$db->next_result();
@@ -199,7 +199,7 @@ class war{
 			$playerId = $player->get('id');
 			if($this->isPlayerInWar($playerId)){
 				global $db;
-				$procedure = buildProcedure('p_war_remove_player', $this->id, $playerId);
+				$procedure = buildProcedure('p_war_remove_player', $this->id, $playerId, date('Y-m-d H:i:s', time()));
 				$playerClan = $this->getPlayerWarClan($playerId);
 				if(($db->multi_query($procedure)) === TRUE){
 					while ($db->more_results()){
@@ -284,7 +284,7 @@ class war{
 				$defenderClan = $this->getPlayerWarClan($defender->get('id'));
 				if($attackerClan->get('id') != $defenderClan->get('id')){
 					if($stars >=0 && $stars <= 3){
-						$procedure = buildProcedure('p_war_add_attack', $this->id, $attackerId, $defenderId, $attackerClan->get('id'), $defenderClan->get('id'), $stars);
+						$procedure = buildProcedure('p_war_add_attack', $this->id, $attackerId, $defenderId, $attackerClan->get('id'), $defenderClan->get('id'), $stars, date('Y-m-d H:i:s', time()));
 						if(($db->multi_query($procedure)) === TRUE){
 							while ($db->more_results()){
 								$db->next_result();
@@ -315,7 +315,7 @@ class war{
 		if(isset($this->id)){
 			$attackerId = $attacker->get('id');
 			$defenderId = $defender->get('id');
-			$procedure = buildProcedure('p_war_remove_attack', $this->id, $attackerId, $defenderId);
+			$procedure = buildProcedure('p_war_remove_attack', $this->id, $attackerId, $defenderId, date('Y-m-d H:i:s', time()));
 			if(($db->multi_query($procedure)) === TRUE){
 				while ($db->more_results()){
 					$db->next_result();
@@ -629,7 +629,7 @@ class war{
 	public function updatePlayerRank($playerId, $rank){
 		if(isset($this->id)){
 			global $db;
-			$procedure = buildProcedure('p_war_update_player_rank', $this->id, $playerId, $rank);
+			$procedure = buildProcedure('p_war_update_player_rank', $this->id, $playerId, $rank, date('Y-m-d H:i:s', time()));
 			if(($db->multi_query($procedure)) === TRUE){
 				while ($db->more_results()){
 					$db->next_result();
