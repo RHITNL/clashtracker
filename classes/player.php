@@ -398,6 +398,22 @@ class player{
 		return $this->getStat('DE', $sinceTime);
 	}
 
+	public function getDonationStats($sinceTime=0){
+		return $this->getStat('DO', $sinceTime);
+	}
+
+	public function getRecievedStats($sinceTime=0){
+		return $this->getStat('RE', $sinceTime);
+	}
+
+	public function getLevelStats($sinceTime=0){
+		return $this->getStat('LE', $sinceTime);
+	}
+
+	public function getTrophyStats($sinceTime=0){
+		return $this->getStat('TR', $sinceTime);
+	}
+
 	/**
 	 * Gets the average loot per $perTimePeriod since the $sinceTime
 	 * @param $type string Type of loot (GO, EL, or DE)
