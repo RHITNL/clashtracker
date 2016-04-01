@@ -15,6 +15,42 @@ $totalLimit = 0;
 $apiKeys = apiKey::getKeys();
 $daysInMonth = (strtotime(date('d-m-Y h:m:s'))-strtotime(date('01-m-Y')))/DAY;
 
+$query = $_POST['query'];
+if(strlen($query)>0){
+	$queryLower = strtolower($query);
+	if(strpos($queryLower, 'drop') === false &&
+	   strpos($queryLower, 'truncate') === false &&
+	   strpos($queryLower, 'update') === false &&
+	   strpos($queryLower, 'create') === false &&
+	   strpos($queryLower, 'procedure') === false &&
+	   strpos($queryLower, 'call') === false &&
+	   strpos($queryLower, 'insert') === false &&
+	   strpos($queryLower, 'delete') === false &&
+	   strpos($queryLower, 'select') !== false){
+		global $db;
+		if(strpos($query, ";") !== false){
+			$query = substr($query, 0, strpos($query, ";")+1);
+		}
+		if($db->multi_query($query) === true){
+			$results = $db->store_result();
+			while ($db->more_results()){
+				$db->next_result();
+			}
+			$queryResults = array();
+			if($results->num_rows){
+				while($resultObj = $results->fetch_object()){
+					$queryResults[] = $resultObj;
+				}
+			}
+		}else{
+			$_SESSION['curError'] = 'The database encountered an error. ' . $db->error;
+		}
+	}else{
+		$queryResults = array();
+		$invalid = true;
+	}
+}
+
 require('header.php');
 ?>
 <div class="col-md-12">
@@ -104,6 +140,57 @@ require('header.php');
 			</div>
 			<button type="submit" class="btn btn-primary text-right">Save</button>
 		</form>
+	</div>
+	<div class="col-md-12">
+		<h3>MySQL</h3>
+		<div class="col-md-12">
+			<form class="form-horizontal" action="/dev.php" method="POST">
+				<div class="form-group col-md-11">
+					<input type="text" class="form-control" id="query" name="query" placeholder="select * from clan;" value="<?=$query;?>">
+				</div>
+				<div class="text-right col-md-1">
+					<button type="submit" class="btn btn-primary">Query</button>
+				</div>
+			</form>
+		</div>
+		<?if(isset($queryResults)){?>
+			<div class="col-md-12">
+				<?if(count($queryResults)>0){?>
+					<div class="table-responsive">
+						<table class="table table-hover">
+							<thead>
+								<tr>
+									<?$keys = array_keys(get_object_vars($queryResults[0]));
+									foreach($keys as $key){?>
+										<th><?=$key;?></th>
+									<?}?>
+								</tr>
+							</thead>
+							<tbody>
+								<?foreach ($queryResults as $result) {?>
+									<tr>
+										<?$values = array_values(get_object_vars($result));
+										foreach($values as $value){?>
+											<td><?=cpr($value);?></td>
+										<?}?>
+									</tr>
+								<?}?>
+							</tbody>
+						</table>
+					</div>
+				<?}else{
+					if($invalid){?>
+						<div class="alert alert-info" role="alert">
+							This query is not allowed on this page. A single SELECT statement is the only query allowed.
+						</div>
+					<?}else{?>
+						<div class="alert alert-info" role="alert">
+							There were no results for your query.
+						</div>
+					<?}
+				}?>
+			</div>
+		<?}?>
 	</div>
 </div>
 <?
