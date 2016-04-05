@@ -17,6 +17,9 @@ $daysInMonth = (strtotime(date('d-m-Y h:m:s'))-strtotime(date('01-m-Y')))/DAY;
 
 $query = $_POST['query'];
 if(strlen($query)>0){
+	if(strpos($query, ";") !== false){
+		$query = substr($query, 0, strpos($query, ";")+1);
+	}
 	$queryLower = strtolower($query);
 	if(strpos($queryLower, 'drop') === false &&
 	   strpos($queryLower, 'truncate') === false &&
@@ -28,9 +31,6 @@ if(strlen($query)>0){
 	   strpos($queryLower, 'delete') === false &&
 	   strpos($queryLower, 'select') !== false){
 		global $db;
-		if(strpos($query, ";") !== false){
-			$query = substr($query, 0, strpos($query, ";")+1);
-		}
 		if($db->multi_query($query) === true){
 			$results = $db->store_result();
 			while ($db->more_results()){
