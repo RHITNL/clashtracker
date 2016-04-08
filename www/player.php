@@ -149,26 +149,26 @@ require('header.php');
 			<h3 style="cursor: pointer;" onclick="clickRow('wars.php?playerId=<?=$player->get("id");?>');">
 				<i class="fa fa-star" style="color: gold;"></i>
 				&nbsp;Wars
-				</h3>
+			</h3>
 			<div class="col-md-12">
 				<div class="col-md-12">
-					<div class="col-md-3 text-center" style="margin-bottom: 10px;">
+					<div class="col-xs-12 col-sm-6 col-md-3 text-center" style="margin-bottom: 10px;">
 						<h4>Attacks</h4><br>
 						<canvas id="attackPie"></canvas>
 					</div>
 					<?if(count($defences)>0){?>
-						<div class="col-md-3 text-center" style="margin-bottom: 10px;">
+						<div class="col-xs-12 col-sm-6 col-md-3 text-center" style="margin-bottom: 10px;">
 							<h4>Defences</h4><br>
 							<canvas id="defencePie"></canvas>
 						</div>
 					<?}?>
 					<div class="col-md-1"></div>
 					<div class="jumbotron col-xs-12 col-md-5">
-						<label class="col-xs-8 col-sm-7">Average <i class="fa fa-star" style="color: gold;"></i> per attack</label>
+						<label class="col-xs-8 col-sm-7">Average <i class="fa fa-star" style="color: gold;"></i> per&nbsp;attack</label>
 						<div class="col-xs-4 col-sm-5 text-right">
 							<p><?=round($averageAttackStars, 2);?></p>
 						</div>
-						<label class="col-xs-8 col-sm-7">Average <i class="fa fa-star" style="color: gold;"></i> per defence</label>
+						<label class="col-xs-8 col-sm-7">Average <i class="fa fa-star" style="color: gold;"></i> per&nbsp;defence</label>
 						<div class="col-xs-4 col-sm-5 text-right">
 							<p><?=round($averageDefenceStars, 2);?></p>
 						</div>
@@ -382,7 +382,7 @@ require('header.php');
 				<h3><i class="fa fa-shield"></i>&nbsp;Clan</h3>
 			<?}
 			if(isset($playerClan)){?>
-				<div class="jumbotron col-xs-12 col-md-6">
+				<div class="jumbotron col-xs-12 col-sm-12 col-md-6">
 					<label class="col-xs-4 col-md-6">Current Clan</label>
 					<div class="col-xs-8 col-md-6 text-right" style="cursor: pointer;" onclick="clickRow('clan.php?clanId=<?=$playerClan->get("id");?>');">
 						<p>
@@ -397,48 +397,50 @@ require('header.php');
 					<div class="col-xs-8 col-md-6 text-right">
 						<p><?=rankFromCode($player->get('rank'));?></p>
 					</div>
-					<label class="col-xs-4 col-md-6">Date Joined</label>
-					<div class="col-xs-8 col-md-6 text-right">
-						<p><?=date('F j, Y', strtotime($playerClan->playerJoined($player->get('id'))));?></p>
+					<label class="col-xs-4 col-sm-4 col-md-6">Date Joined</label>
+					<div class="col-xs-8 col-sm-8 col-md-6 text-right">
+						<p><?=displayName(date('M. j, Y', strtotime($playerClan->playerJoined($player->get('id')))));?></p>
 					</div>
 				</div>
 			<?}
 			if((isset($playerClan)&&count($playerClans)>1)||(!isset($playerClan)&&count($playerClans)>0)){?>
-				<div class="col-xs-12 col-md-6">
+				<div class="col-xs-12 col-sm-12 col-md-6">
 					<?if((isset($playerClan)&&count($playerClans)>2) || (!isset($playerClan)&&count($playerClans)>1)){?>
 						<h4>Previous Clans</h4>
 					<?}else{?>
 						<h4>Previous Clan</h4>
 					<?}?>
-					<table class="table table-hover">
-						<thead>
-							<tr>
-								<th></th>
-								<th>Name</th>
-								<th>Clan Points</th>
-								<th>Wars Won</th>
-								<th class="text-right">Clan Tag</th>
-							</tr>
-						</thead>
-						<tbody>
-							<?foreach ($playerClans as $clan) {
-								if((isset($playerClan) && $clan->get('id') != $playerClan->get('id')) || !isset($playerClan)){?>
-									<tr style="cursor: pointer;" onclick="clickRow('clan.php?clanId=<?=$clan->get("id");?>');">
-										<td width="20">
-											<?$url = $clan->get('badgeUrl');
-											if(strlen($url)>0){?>
-												<img src="<?=$url;?>" height="20" width="20">
-											<?}?>
-										</td>
-										<td><?=htmlspecialchars($clan->get('name'));?></td>
-										<td><?=$clan->get('clanPoints');?></td>
-										<td><?=$clan->get('warWins');?></td>
-										<td class="text-right"><?=$clan->get('tag');?></td>
-									</tr>
-								<?}
-							}?>
-						</tbody>
-					</table>
+					<div class="table-responsive">
+						<table class="table table-hover">
+							<thead>
+								<tr>
+									<th></th>
+									<th>Name</th>
+									<th>Clan&nbsp;Points</th>
+									<th>Wars&nbsp;Won</th>
+									<th class="text-right">Clan Tag</th>
+								</tr>
+							</thead>
+							<tbody>
+								<?foreach ($playerClans as $clan) {
+									if((isset($playerClan) && $clan->get('id') != $playerClan->get('id')) || !isset($playerClan)){?>
+										<tr style="cursor: pointer;" onclick="clickRow('clan.php?clanId=<?=$clan->get("id");?>');">
+											<td width="20">
+												<?$url = $clan->get('badgeUrl');
+												if(strlen($url)>0){?>
+													<img src="<?=$url;?>" height="20" width="20">
+												<?}?>
+											</td>
+											<td><?=htmlspecialchars($clan->get('name'));?></td>
+											<td><?=$clan->get('clanPoints');?></td>
+											<td><?=$clan->get('warWins');?></td>
+											<td class="text-right"><?=$clan->get('tag');?></td>
+										</tr>
+									<?}
+								}?>
+							</tbody>
+						</table>
+					</div>
 				</div>
 			<?}?>
 		</div>

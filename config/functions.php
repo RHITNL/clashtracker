@@ -67,7 +67,7 @@ function correctTag($tag){
 }
 
 function weekAgo(){
-	return strtotime('-175 hours');
+	return strtotime('-180 hours');
 }
 
 function dayAgo(){
@@ -98,7 +98,7 @@ function sortPlayersByWarScore($players){
 		}
 	}
 	foreach ($players as $key => $player) {
-		if($player->get('numberOfDefences') == 0){
+		if($player->get('numberOfWars') == 0){
 			unset($players[$key]);
 		}
 	}
@@ -445,4 +445,17 @@ function email($to, $subject, $message){
 		error_log($e->getMessage());
 		return false;
 	}
+}
+
+function correctDateFormat($date){
+	if(is_numeric($date)){
+		return date('Y-m-d H:i:s', $date);
+	}else{
+		return date('Y-m-d H:i:s', strtotime($date));
+	}
+}
+
+function displayName($name){
+	$name = htmlspecialchars($name);
+	return str_replace(' ', '&nbsp;', $name);
 }

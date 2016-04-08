@@ -142,7 +142,7 @@ require('header.php');
 		</form>
 	</div>
 	<div class="col-md-12">
-		<h3>MySQL</h3>
+		<br><h3>MySQL</h3>
 		<div class="col-md-12">
 			<form class="form-horizontal" action="/dev.php" method="POST">
 				<div class="form-group col-md-11">
@@ -191,6 +191,31 @@ require('header.php');
 				}?>
 			</div>
 		<?}?>
+	</div>
+	<div class="col-md-12">
+		<br><h3>Add Blog Post</h3>
+		<form class="form-horizontal" action="/processAddBlogPost.php" method="POST">
+			<div class="col-sm-12">
+				<div class="form-group">
+					<label class="col-sm-4 col-md-2 control-lable" for="name">Post Name:</label>
+					<div class="col-sm-8 col-md-10">
+						<input type="text" class="form-control" id="name" name="name" placeholder="New Update"></input>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-4 col-md-2 control-lable" for="content">Post Content:</label>
+					<div class="col-sm-8 col-md-10">
+						<textarea rows="4" class="form-control" id="content" name="content" placeholder="I've added X feature. Yay :)"></textarea>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12 text-right btn-actions">
+					<br>
+					<button type="submit" class="btn btn-success">Submit</button>
+				</div>
+			</div>
+		</form>
 	</div>
 </div>
 <?

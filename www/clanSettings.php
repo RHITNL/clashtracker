@@ -154,7 +154,7 @@
 				$('#USTable').remove();
 				var noRows;
 				noRows  = '<div id="noRows" class="alert alert-info" role="alert">';
-				noRows += 'You haven\'t granted access to any other user, this means you are the only one that can update your clan\'s war stats. If you\'d like to give access to other users, you can do so by clicking \'Add\' above and then \'Update\' below.';
+				noRows += 'You haven\'t granted access to any other user, this means you are the only one that can update your clan\'s War Statistics. If you\'d like to give access to other users, you can do so by clicking \'Add\' above and then \'Update\' below.';
 				noRows += '</div>';
 				$('#USDiv').append(noRows);
 			}

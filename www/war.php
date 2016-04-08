@@ -125,30 +125,30 @@ require('header.php');
 		<li><a href="/home.php">Home</a></li>
 		<?if(isset($clanId)){?>
 			<li><a href="/clans.php">Clans</a></li>
-			<li><a href="/clan.php?clanId=<?=$clan1->get('id');?>"><?=htmlspecialchars($clan1->get('name'));?></a></li>
+			<li><a href="/clan.php?clanId=<?=$clan1->get('id');?>"><?=displayName($clan1->get('name'));?></a></li>
 			<li><a href="/wars.php?clanId=<?=$clan1->get('id');?>">Wars</a></li>
 		<?}else{?>
 			<li><a href="/wars.php">Wars</a></li>
 		<?}?>
-		<li class="active"><?=htmlspecialchars($clan1->get('name'));?> vs. <?=htmlspecialchars($clan2->get('name'));?></li>
+		<li class="active"><?=displayName($clan1->get('name'));?> vs. <?=displayName($clan2->get('name'));?></li>
 	</ol>
 	<?require('showMessages.php');?>
 	<div class="visible-lg-block">
 		<div class="col-sm-6 text-center">
 			<h1 style="cursor: pointer;" onclick="clickRow('clan.php?clanId=<?=$clan1->get("id");?>');">
-				<?=htmlspecialchars($clan1->get('name'));?>
+				<?=displayName($clan1->get('name'));?>
 			</h1>
 		</div>
 		<div class="col-sm-6 text-center">
 			<h1 style="cursor: pointer;" onclick="clickRow('clan.php?clanId=<?=$clan2->get("id");?>');">
-				<?=htmlspecialchars($clan2->get('name'));?>
+				<?=displayName($clan2->get('name'));?>
 			</h1>
 		</div>
 	</div>
 	<div class="col-sm-12 text-center"><h2><i class="fa fa-star" style="color: gold;"></i> <?=$clan1Stars;?> - <?=$clan2Stars;?> <i class="fa fa-star" style="color: gold;"></i></h2></div>
 	<?if(!$userCanEdit){?>
 		<div class="col-md-6">
-			<h2 class="hidden-lg"><?=htmlspecialchars($clan1->get('name'));?></h2>
+			<h2 class="hidden-lg"><?=displayName($clan1->get('name'));?></h2>
 			<div class="panel panel-primary">
 				<div class="panel-heading text-center">
 					<h3 class=" panel-title">Attack Totals</h3>
@@ -184,7 +184,7 @@ require('header.php');
 			</div>
 		</div>
 		<div class="col-md-6">
-			<h2 class="hidden-lg"><?=htmlspecialchars($clan2->get('name'));?></h2>
+			<h2 class="hidden-lg"><?=displayName($clan2->get('name'));?></h2>
 			<div class="panel panel-primary">
 				<div class="panel-heading text-center">
 					<h3 class=" panel-title">Attack Totals</h3>
@@ -248,7 +248,7 @@ require('header.php');
 	<div id="warPlayers" class="col-md-12">
 		<br>
 		<div class="col-md-6">
-			<h2 class="hidden-lg"><?=htmlspecialchars($clan1->get('name'));?></h2>
+			<h2 class="hidden-lg"><?=displayName($clan1->get('name'));?></h2>
 			<div class="col-md-12">
 				<?if($clan1CanAddMore && $userCanEdit){
 					if(isset($clanId)){?>
@@ -273,8 +273,8 @@ require('header.php');
 										<th></th>
 									<?}?>
 									<th>Player</th>
-									<th>First Attack</th>
-									<th>Second Attack</th>
+									<th>First&nbsp;Attack</th>
+									<th>Second&nbsp;Attack</th>
 									<th>Defence</th>
 									<?if($userCanEdit){?>
 										<th></th>
@@ -322,7 +322,7 @@ require('header.php');
 												}?>
 											</td>
 										<?}?>
-										<td><?=$rank . '. ' . htmlspecialchars($player->get('name'));?></td>
+										<td><?=$rank . '.&nbsp;' . displayName($player->get('name'));?></td>
 										<td>
 											<?if(isset($firstAttack)){
 												for($i=$firstAttack['totalStars']-$firstAttack['newStars'];$i>0;$i--){?>
@@ -398,7 +398,7 @@ require('header.php');
 			</div>
 		</div>
 		<div class="col-md-6">
-			<h2 class="hidden-lg"><?=htmlspecialchars($clan2->get('name'));?></h2>
+			<h2 class="hidden-lg"><?=displayName($clan2->get('name'));?></h2>
 			<div class="col-md-12">
 				<?if($clan2CanAddMore && $userCanEdit){
 					if(isset($clanId)){?>
@@ -423,8 +423,8 @@ require('header.php');
 										<th></th>
 									<?}?>
 									<th>Player</th>
-									<th>First Attack</th>
-									<th>Second Attack</th>
+									<th>First&nbsp;Attack</th>
+									<th>Second&nbsp;Attack</th>
 									<th>Defence</th>
 									<?if($userCanEdit){?>
 										<th></th>
@@ -472,7 +472,7 @@ require('header.php');
 												}?>
 											</td>
 										<?}?>
-										<td><?=$rank . '. ' . htmlspecialchars($player->get('name'));?></td>
+										<td><?=$rank . '.&nbsp;' . displayName($player->get('name'));?></td>
 										<td>
 											<?if(isset($firstAttack)){
 												for($i=$firstAttack['totalStars']-$firstAttack['newStars'];$i>0;$i--){?>
@@ -553,11 +553,11 @@ require('header.php');
 			<table class="table table-hover">
 				<thead>
 					<tr>
-						<th class="text-left"><h3><?=htmlspecialchars($clan1->get('name'));?></h3></th>
+						<th class="text-left"><h3><?=displayName($clan1->get('name'));?></h3></th>
 						<?if($userCanEdit){?>
 							<th class="text-center">Actions</th>
 						<?}?>
-						<th class="text-right"><h3><?=htmlspecialchars($clan2->get('name'));?></h3></th>
+						<th class="text-right"><h3><?=displayName($clan2->get('name'));?></h3></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -571,7 +571,7 @@ require('header.php');
 						$newStars = $attack['newStars'];?>
 						<tr>
 							<?if($attackerClanId == $clan1->get('id')){?>
-								<td class="text-left"><strong><?=$attackerRank . '. ' . htmlspecialchars($attacker->get('name'));?></strong>&nbsp;<i class="fa fa-star"></i><br>
+								<td class="text-left"><strong><?=$attackerRank . '.&nbsp;' . displayName($attacker->get('name'));?></strong>&nbsp;<i class="fa fa-star"></i><br>
 									<?for($i=$totalStars-$newStars;$i>0;$i--){?>
 										<i class="fa fa-star" style="color: silver;"></i>
 									<?}
@@ -593,7 +593,7 @@ require('header.php');
 										<?}?>
 									</td>
 								<?}?>
-								<td class="text-right"><i class="fa fa-shield"></i>&nbsp;<strong><?=$defenderRank . '. ' . htmlspecialchars($defender->get('name'));?></strong><br>
+								<td class="text-right"><i class="fa fa-shield"></i>&nbsp;<strong><?=$defenderRank . '. ' . displayName($defender->get('name'));?></strong><br>
 									<?if($totalStars==0){?>
 										<i>Defended</i>
 									<?}else{?>
@@ -601,7 +601,7 @@ require('header.php');
 									<?}?>
 								</td>
 							<?}else{?>
-								<td class="text-left"><strong><?=$defenderRank . '. ' . htmlspecialchars($defender->get('name'));?></strong>&nbsp;<i class="fa fa-shield"></i><br>
+								<td class="text-left"><strong><?=$defenderRank . '. ' . displayName($defender->get('name'));?></strong>&nbsp;<i class="fa fa-shield"></i><br>
 									<?if($totalStars==0){?>
 										<i>Defended</i>
 									<?}else{?>
@@ -619,7 +619,7 @@ require('header.php');
 										<?}?>
 									</td>
 								<?}?>
-								<td class="text-right"><i class="fa fa-star"></i>&nbsp;<strong><?=$attackerRank . '. ' . htmlspecialchars($attacker->get('name'));?></strong><br>
+								<td class="text-right"><i class="fa fa-star"></i>&nbsp;<strong><?=$attackerRank . '.&nbsp;' . displayName($attacker->get('name'));?></strong><br>
 									<?for($i=$totalStars-$newStars;$i>0;$i--){?>
 										<i class="fa fa-star" style="color: silver;"></i>
 									<?}
@@ -659,7 +659,7 @@ require('header.php');
 								<td>
 									<?$requestPlayer = $request->user->get('player');
 									if(isset($requestPlayer)){
-										print htmlspecialchars($requestPlayer->get('name'));
+										print displayName($requestPlayer->get('name'));
 									}?>									
 								</td>
 								<td>
@@ -668,7 +668,7 @@ require('header.php');
 									}?>
 								</td>
 								<td><?=$request->user->get('email');?></td>
-								<td><?=htmlspecialchars($request->message);?></td>
+								<td><?=displayName($request->message);?></td>
 								<td class="text-right">
 									<?$clanIdText = (isset($clan)) ? '&clanId=' . $clan->get('id') : '';?>
 									<a type="button" class="btn btn-xs btn-danger" href="/processEditRequestResponse.php?warId=<?=$war->get('id');?>&userId=<?=$request->user->get('id');?>&response=decline<?=$clanIdText;?>">Decline</a>
@@ -702,7 +702,7 @@ require('header.php');
 								<td>
 									<?$allowedUserPlayer = $allowedUser->get('player');
 									if(isset($allowedUserPlayer)){
-										print htmlspecialchars($allowedUserPlayer->get('name'));
+										print displayName($allowedUserPlayer->get('name'));
 									}?>									
 								</td>
 								<td>
@@ -724,7 +724,7 @@ require('header.php');
 	<div id="requestAccess" class="col-md-12 hidden">
 		<div class="col-md-12"><br>
 			<div class="alert alert-info" role="alert">
-				<?=htmlspecialchars($war->get('clan1')->get('name'));?> has restricted access to updating their war information, but you can request access to edit this war below.
+				<?=displayName($war->get('clan1')->get('name'));?> has restricted access to updating their war information, but you can request access to edit this war below.
 			</div>
 			<form class="form-horizontal" action="/processRequestAccess.php" method="POST">
 				<div class="col-md-12">

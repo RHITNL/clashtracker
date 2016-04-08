@@ -54,7 +54,7 @@ require('header.php');
 									<tr style="cursor: pointer;" onclick="clickRow('player.php?playerId=<?=$playerResult['player']->get("id");?>&clanId=<?=$clan->get('id');?>');">
 										<td><?=$rank+1 . '. ' . htmlspecialchars($playerResult['player']->get('name'));?></td>
 										<td class="text-right">
-											<?if($best){?>
+											<?if($best && $previousLootReports){?>
 												<div data-toggle="popover" data-trigger="hover" data-placement="top" data-content="This is <?=$playerResult['player']->get('name');?>'s highest week for <?=lootTypeFromCode($type);?>.">
 													<i class="fa fa-exclamation"></i>
 													<?=number_format($playerResult['amount'], 0, '.', ',');?>

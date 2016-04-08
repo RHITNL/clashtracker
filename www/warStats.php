@@ -32,10 +32,10 @@ require('header.php');
 		<li><a href="/home.php">Home</a></li>
 		<li><a href="/clans.php">Clans</a></li>
 		<li><a href="/clan.php?clanId=<?=$clanId;?>"><?=htmlspecialchars($clan->get('name'));?></a></li>
-		<li class="active">War Stats</li>
+		<li class="active">War Statistics</li>
 	</ol>
 	<?require('showMessages.php');?>
-	<h1>War Stats</h1>
+	<h1>War Statistics</h1>
 	<?if(count($members)>0){?>
 		<div class="table-responsive">
 			<table class="table table-hover">

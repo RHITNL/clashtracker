@@ -129,14 +129,14 @@ require('header.php');
 				if(isset($lootReport)){?>
 					<a type="button" class="btn btn-success" href="/lootReport.php?lootReportId=<?=$lootReport->get('id');?>">Loot Report</a>
 				<?}
-				if(count($members)>=10 && $userHasAccessToUpdateClan){?>
+				if($clan->get('members')>0 && $userHasAccessToUpdateClan){?>
 					<a type="button" class="btn btn-success" href="/addWar.php?clanId=<?=$clanId;?>">Add War</a>
 				<?}
 				if(isset($war)){?>
-					<a type="button" class="btn btn-success" href="/war.php?warId=<?=$war->get('id');?>&clanId=<?=$clanId;?>">Most Recent War</a>
+					<a type="button" class="btn btn-success" href="/war.php?warId=<?=$war->get('id');?>&clanId=<?=$clanId;?>">Current War</a>
 				<?}
 				if(count($wars)>1){?>
-					<a type="button" class="btn btn-success" href="/warStats.php?clanId=<?=$clanId;?>">War Stats</a>
+					<a type="button" class="btn btn-success" href="/warStats.php?clanId=<?=$clanId;?>">War Statistics</a>
 				<?}
 				if(count($wars)>1){?>
 					<a type="button" class="btn btn-success" href="/wars.php?clanId=<?=$clanId;?>">War Log</a>

@@ -14,6 +14,8 @@
 		<link href="/css/font-awesome.css" rel="stylesheet" type="text/css">
 		<link href="/css/custom-font-icons.css" rel="stylesheet" type="text/css"></link>
 		<link href="css/bootstrap-slider.css" rel="stylesheet">
+		<link href="css/blog.css" rel="stylesheet">
+		<link href="css/dashboard.css" rel="stylesheet">
 		<script src="js/jquery-1.11.3.min.js"></script>
 		<script src="js/bootstrap.js"></script>
 		<script src="js/Chart.js"></script>
@@ -33,7 +35,7 @@
 					<a class="navbar-brand" href="/home.php">
 						<img alt="Brand" src="images/clash.png" height="20" width="20">
 					</a>
-					<a class="navbar-brand" href="/home.php">Clash Tracker</a>
+					<a class="navbar-brand" href="/home.php">Clash&nbsp;Tracker</a>
 				</div>
 				<div id="navbar" class="navbar-collapse collapse">
 					<ul class="nav navbar-nav navbar-right">
@@ -52,9 +54,9 @@
 								<li><a href="/clan.php?clanId=<?=$loggedInUserClan->get('id');?>">My Clan</a></li>
 							<?}else{
 								if(isset($loggedInUserPlayer)){
-									$clan = $loggedInUserPlayer->getMyClan();
-									if(isset($clan)){?>
-										<li><a href="/clan.php?clanId=<?=$clan->get('id');?>">My Clan</a></li>
+									$loggedInUserPlayerClan = $loggedInUserPlayer->getMyClan();
+									if(isset($loggedInUserPlayerClan)){?>
+										<li><a href="/clan.php?clanId=<?=$loggedInUserPlayerClan->get('id');?>">My Clan</a></li>
 									<?}else{?>
 										<li><a href="/clans.php">Clans</a></li>
 									<?}
@@ -72,5 +74,5 @@
 				</div>
 			</div>
 		</nav>
-		<br><br><br><br>
+		<br>
 		<div class="container-fluid">

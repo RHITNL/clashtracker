@@ -41,9 +41,11 @@ require('header.php');
 					<label class="col-sm-4 control-lable" for="description">War Size:</label>
 					<div class="col-sm-8">
 						<select class="form-control" id="size" name="size">
-							<?for ($i=10; $i <= 50; $i+=5){?>
-								<option <?=($_SESSION['size'] == $i) ? 'selected' : '';?> value="<?=$i;?>"><?=$i;?></option>
-							<?}?>
+							<?for ($i=10; $i <= 50; $i+=5){
+								if($i!=35 && $i!=45){?>
+									<option <?=($_SESSION['size'] == $i) ? 'selected' : '';?> value="<?=$i;?>"><?=$i;?></option>
+								<?}
+							}?>
 						</select>
 					</div>
 				</div>
