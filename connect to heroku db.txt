@@ -1,2 +1,0 @@
-export PATH=$PATH:/usr/local/mysql/bin
-mysql --host=us-cdbr-iron-east-02.cleardb.net --user=b6ea4e24a1ffc7 --password=53bcf947 heroku_77959075bea71f9

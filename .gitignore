@@ -1,5 +1,10 @@
 www/.DS_Store
+www/less/.DS_Store
+www/js/.DS_Store
+www/fonts/.DS_Store
+www/css/.DS_Store
+classes/.DS_Store
+config/.DS_Store
+sql/.DS_Store
 .DS_Store
 vendor/
-connect to heroku db
-clash.sublime-workspace
