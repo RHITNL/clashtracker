@@ -276,8 +276,9 @@ function refreshClanInfo($clan, $force=false){
 			$api = new clanApi();
 			$clanInfo = $api->getClanInformation($clan->get('tag'));
 			if($clan->get('id') == 2){
+				global $loggedInUser;
 				if(!isset($loggedInUser) || $loggedInUser->get('email') != 'alexinmann@gmail.com'){
-					email('alexinmann@gmail.com', 'Clash Tracker Activity', "Someone other than you is using Clash Tracker to view Free Tacos' Statistics.\n\nClash on!", 'activity@clashtracker.ca');
+					email('alexinmann@gmail.com', 'Clash Tracker Activity', "Hey Alex!\n\tSomeone other than you is using Clash Tracker to view Free Tacos' Statistics.\n\nClash on!", 'activity@clashtracker.ca');
 				}
 			}
 		}else{
