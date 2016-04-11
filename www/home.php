@@ -82,10 +82,16 @@ require('showMessages.php');
 			</ol>
 		</div>
 	<?}?>
-		<div class="sidebar-module">
+	<div class="sidebar-module">
 		<h4>Contact Us!</h4>
 		<ol class="list-unstyled">
 			<li><a href="https://twitter.com/clashsolo"><i class="fa fa-twitter" style="color: #3C90E8;"></i>&nbsp;Twitter</a></li>
+		</ol>
+	</div>
+	<div class="sidebar-module">
+		<h4>Found a Bug?</h4>
+		<ol class="list-unstyled">
+			<li><a href="https://github.com/alexinman/clashtracker/issues"><i class="fa fa-github" style="color: black;"></i>&nbsp;GitHub Issues List</a></li>
 		</ol>
 	</div>
 </div>
