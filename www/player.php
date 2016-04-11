@@ -23,25 +23,38 @@ try{
 $attacks = $player->getAttacks();
 $defences = $player->getDefences();
 $wars = $player->getWars();
-$attackStats = array(3=>0, 2=>0, 1=>0, 0=>0, 'DNA' => (count($wars)*2 - count($attacks)));
+if(count($wars)>0 && $wars[0]->isEditable()){
+	$lastWarId = $wars[0]->get('id');
+	$ignoreLast=1;
+}
+$attackStats = array(3=>0, 2=>0, 1=>0, 0=>0);
+$countAttacks = 0;
 $defenceStats = array(3=>0, 2=>0, 1=>0, 0=>0);
+$countDefences = 0;
 $totalAttackStars = 0;
 $totalDefenceStars = 0;
-if(count($wars)>0){
+if(count($wars)>1){
 	$warsAvailable = true;
 	foreach ($attacks as $attack) {
-		$attackStats[$attack['totalStars']]++;
-		$totalAttackStars += $attack['totalStars'];
+		if($attack['warId'] != $lastWarId){
+			$attackStats[$attack['totalStars']]++;
+			$totalAttackStars += $attack['totalStars'];
+			$countAttacks++;
+		}
 	}
 	foreach ($defences as $defence) {
-		$defenceStats[$defence['totalStars']]++;
-		$totalDefenceStars += $defence['totalStars'];
+		if($defence['warId'] != $lastWarId){
+			$defenceStats[$defence['totalStars']]++;
+			$totalDefenceStars += $defence['totalStars'];
+			$countDefences++;
+		}
 	}
 }else{
 	$warsAvailable = false;
 }
-$averageAttackStars = ($totalAttackStars==0) ? 0 : $totalAttackStars/count($attacks);
-$averageDefenceStars = ($totalDefenceStars==0) ? 0 : $totalDefenceStars/count($defences);
+$attackStats['DNA'] = (count($wars)-$ignoreLast)*2 - $countAttacks;
+$averageAttackStars = ($totalAttackStars==0) ? 0 : $totalAttackStars/$countAttacks;
+$averageDefenceStars = ($totalDefenceStars==0) ? 0 : $totalDefenceStars/$countDefences;
 
 $gold = $player->getGold();
 $elixir = $player->getElixir();
@@ -152,11 +165,12 @@ require('header.php');
 			</h3>
 			<div class="col-md-12">
 				<div class="col-md-12">
-					<div class="col-xs-12 col-sm-6 col-md-3 text-center" style="margin-bottom: 10px;">
-						<h4>Attacks</h4><br>
-						<canvas id="attackPie"></canvas>
-					</div>
-					<?if(count($defences)>0){?>
+					<?if($countAttacks>0){?>
+						<div class="col-xs-12 col-sm-6 col-md-3 text-center" style="margin-bottom: 10px;">
+							<h4>Attacks</h4><br>
+							<canvas id="attackPie"></canvas>
+						</div>
+					<?}if($countDefences>0){?>
 						<div class="col-xs-12 col-sm-6 col-md-3 text-center" style="margin-bottom: 10px;">
 							<h4>Defences</h4><br>
 							<canvas id="defencePie"></canvas>
