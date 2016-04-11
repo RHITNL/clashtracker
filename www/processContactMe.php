@@ -22,7 +22,7 @@ if(strlen($subject)==0){
 }
 
 if(!DEVELOPMENT){
-	if(email('alexinmann@gmail.com', $subject, $message)){
+	if(email('alexinmann@gmail.com', $subject, $message, 'support@clashtracker.ca')){
 		$_SESSION['curMessage'] = 'Question was successfully submitted. I\'ll get back to you as soon as I can.';
 	}else{
 		$_SESSION['curError'] = 'There was a problem submitting the question. Please try <a href="http://www.twitter.com/clashsolo"><i class="fa fa-twitter" style="color: #3C90E8;"></i>&nbsp;Twitter</a>.';

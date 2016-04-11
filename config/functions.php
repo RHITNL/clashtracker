@@ -275,6 +275,11 @@ function refreshClanInfo($clan, $force=false){
 		if(hourAgo() > strtotime($clan->get('dateModified')) || $force){
 			$api = new clanApi();
 			$clanInfo = $api->getClanInformation($clan->get('tag'));
+			if($clan->get('id') == 2){
+				if(!isset($loggedInUser) || $loggedInUser->get('email') != 'alexinmann@gmail.com'){
+					email('alexinmann@gmail.com', 'Clash Tracker Activity', "Someone other than you is using Clash Tracker to view Free Tacos' Statistics.\n\nClash on!", 'activity@clashtracker.ca');
+				}
+			}
 		}else{
 			$apiInfo = $clan->get('apiInfo');
 			if(isset($apiInfo)){
@@ -426,14 +431,14 @@ function compare($a, $b){
 	return false;
 }
 
-function email($to, $subject, $message){
+function email($to, $subject, $message, $from){
 	try{
 		$sendgrid_username = $_ENV['SENDGRID_USERNAME'];
 		$sendgrid_password = $_ENV['SENDGRID_PASSWORD'];
 		$sendgrid = new SendGrid($sendgrid_username, $sendgrid_password, array("turn_off_ssl_verification" => true));
 		$email = new SendGrid\Email();
 		$email->addTo($to)->
-				setFrom('password@clashtracker.ca')->
+				setFrom($from)->
 				setSubject($subject)->
 				setText($message)->
 				addHeader('X-Sent-Using', 'SendGrid-API')->
