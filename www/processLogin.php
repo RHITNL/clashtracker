@@ -1,5 +1,11 @@
 <?
 require('init.php');
+require('session.php');
+if(isset($loggedInUser)){
+	$_SESSION['curError'] = NO_ACCESS;
+	header('Location: /home.php');
+	exit;
+}
 
 function unsetAll(){
 	unset($_SESSION['email']);

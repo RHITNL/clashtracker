@@ -1,5 +1,11 @@
 <?
 require('init.php');
+require('session.php');
+if(isset($loggedInUser)){
+	$_SESSION['curError'] = NO_ACCESS;
+	header('Location: /home.php');
+	exit;
+}
 require('header.php');
 ?>
 <div class="col-md-12">
