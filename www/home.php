@@ -15,7 +15,12 @@ require('showMessages.php');
 ?>
 <div class="col-md-8">
 	<div class="blog-header">
-		<h1 class="blog-title">Welcome to Clash&nbsp;Tracker</h1>
+		<div class="hidden-xs">
+			<h1 class="blog-title">Welcome to Clash&nbsp;Tracker</h1>
+		</div>
+		<div class="hidden-sm hidden-md hidden-lg">
+			<h1 class="blog-title">Welcome to Clash Tracker</h1>
+		</div>
 		<p class="lead blog-description">Clan & Player Statistics Tracker for Clash of Clans</p>
 	</div>
   	<div class="row">
