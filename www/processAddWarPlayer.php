@@ -42,6 +42,17 @@ if(!$war->isEditable()){
 	}
 }
 
+if(!userHasAccessToUpdateWar($war)){
+	$_SESSION['curError'] = NO_ACCESS;
+	if(isset($clanId)){
+		header('Location: /war.php?warId=' . $war->get('id') . '&clanId=' . $clanId);
+		exit;
+	}else{
+		header('Location: /war.php?warId=' . $war->get('id'));
+		exit;
+	}
+}
+
 $addClanId = $_POST['addClanId'];
 if($war->isClanInWar($addClanId)){
 	$clan1 = $war->get('clan1');

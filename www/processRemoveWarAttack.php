@@ -25,14 +25,19 @@ if($war->isClanInWar($clanId)){
 	$clan2 = new clan($war->get('secondClanId'));
 }
 
-if(!userHasAccessToUpdateClan($war->get('clan1'))){
-	$_SESSION['curError'] = NO_ACCESS;
-	header('Location: /war.php?warId=' . $war->get('id') . $clanIdText);
-	exit;
-}
-
 if(!$war->isEditable()){
 	$_SESSION['curError'] = 'This war is no longer editable.';
+	if(isset($clanId)){
+		header('Location: /war.php?warId=' . $war->get('id') . '&clanId=' . $clanId);
+		exit;
+	}else{
+		header('Location: /war.php?warId=' . $war->get('id'));
+		exit;
+	}
+}
+
+if(!userHasAccessToUpdateWar($war)){
+	$_SESSION['curError'] = NO_ACCESS;
 	if(isset($clanId)){
 		header('Location: /war.php?warId=' . $war->get('id') . '&clanId=' . $clanId);
 		exit;
