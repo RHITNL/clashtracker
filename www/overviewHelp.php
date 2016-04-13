@@ -24,11 +24,8 @@
 				</div>
 			</div>
 		</div>
-		<div class="row">
-			<div class="col-sm-12 text-right btn-actions">
-				<br>
-				<button type="submit" class="btn btn-success">Submit</button>
-			</div>
+		<div class="col-md-12 text-right btn-actions">
+			<button type="submit" class="btn btn-success">Submit</button>
 		</div>
 	</form>
 </div>
