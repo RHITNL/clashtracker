@@ -108,38 +108,42 @@ require('header.php');
 	</div>
 	<h3>API Keys</h3>
 	<div class="col-md-12">
-		<div class="table-responsive">
-			<table class="table table-hover">
-				<thead>
-					<tr>
-						<th>IP</th>
-						<th class="text-right">Key</th>
-					</tr>
-				</thead>
-				<tbody>
-					<?foreach ($apiKeys as $apiKey) {?>
+		<div class="col-md-12">
+			<div class="table-responsive">
+				<table class="table table-hover">
+					<thead>
 						<tr>
-							<td><?=$apiKey->get('ip');?></td>
-							<?$key = $apiKey->get('apiKey');
-							$key = substr($key, 0, 20) . '...' . substr($key, strlen($key)-20, 20);?>
-							<td class="text-right"><?=$key;?></td>
+							<th>IP</th>
+							<th class="text-right">Key</th>
 						</tr>
-					<?}?>
-				</tbody>
-			</table>
+					</thead>
+					<tbody>
+						<?foreach ($apiKeys as $apiKey) {?>
+							<tr>
+								<td><?=$apiKey->get('ip');?></td>
+								<?$key = $apiKey->get('apiKey');
+								$key = substr($key, 0, 20) . '...' . substr($key, strlen($key)-20, 20);?>
+								<td class="text-right"><?=$key;?></td>
+							</tr>
+						<?}?>
+					</tbody>
+				</table>
+			</div>
 		</div>
 		<h4>Add API Key</h4>
-		<form class="form-inline" action="/processAddApiKey.php" method="POST">
-			<div class="form-group">
-				<label for="ips">IPs </label>
-				<input type="text" class="form-control" id="ips" name="ips" placeholder="0.0.0.0">
-			</div>
-			<div class="form-group">
-				<label for="key">Key</label>
-				<input type="text" class="form-control" id="key" name="key" placeholder="eyJ0eXAiOiJKV1QiLCJh...69SRf18_wG4i147Ge0hQ">
-			</div>
-			<button type="submit" class="btn btn-primary text-right">Save</button>
-		</form>
+		<div class="col-md-12">
+			<form class="form-inline" action="/processAddApiKey.php" method="POST">
+				<div class="form-group">
+					<label for="ips">IPs </label>
+					<input type="text" class="form-control" id="ips" name="ips" placeholder="0.0.0.0">
+				</div>
+				<div class="form-group">
+					<label for="key">Key</label>
+					<input type="text" class="form-control" id="key" name="key" placeholder="eyJ0eXAiOiJKV1QiLCJh...69SRf18_wG4i147Ge0hQ">
+				</div>
+				<button type="submit" class="btn btn-primary text-right">Save</button>
+			</form>
+		</div>
 	</div>
 	<div class="col-md-12">
 		<br><h3>MySQL</h3>
