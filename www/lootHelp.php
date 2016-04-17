@@ -8,7 +8,6 @@ if(isset($clan)){
 	$yourClanPage = "<a href=\"/clan.php?clanId=".$clan->get('id')."\">" . $yourClanPage . "</a>";
 }?>
 <div>
-	<h1 class="page-header">Loot</h1>
 	<div class="blog-post">
 		<p>Here you'll find everything you need to know about recording loot, creating a loot report and viewing loot statistics in Clash&nbsp;Tracker.</p>
 		<hr>

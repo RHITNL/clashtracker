@@ -10,7 +10,6 @@ if(isset($clan)){
 }
 ?>
 <div>
-	<h1 class="blog-post-title">Wars</h1>
 	<div class="blog-post">
 		<p>Here you'll find everything you need to know about anything to do with wars in Clash Tracker. Adding/Updating wars can only be done by users who have access to update the clan information. If the clan has restricted access, then you might need to ask your clanmates to give you access before you can Add or Update war information.</p>
 		<hr>

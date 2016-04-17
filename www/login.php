@@ -10,8 +10,7 @@ require('header.php');
 ?>
 <div class="col-md-12">
 	<?require('showMessages.php');?>
-	<div class="col-md-4"></div>
-	<div class="well col-md-4">
+	<div class="well col-md-4 col-md-offset-4">
 		<h2>Log In</h2>
 			<form class="form-horizontal" action="/processLogin.php" method="POST">
 				<a class="help-block" href="/signup.php">Don't have an account?</a>
@@ -36,6 +35,5 @@ require('header.php');
 			</form>
 		</div>
 	</div>
-	<div class="col-md-4"></div>
 <?
 require('footer.php');

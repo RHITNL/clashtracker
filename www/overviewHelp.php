@@ -1,7 +1,6 @@
 <div>
-	<h1 class="page-header">Overview</h1>
 	<div class="blog-post">
-		<p>This page is here to help you use Clash&nbsp;Tracker. To the left, you should see different sections that contain information about how to use the feature in Clash&nbsp;Tracker. Information about adding wars, recording loot statistics, creating a loot report and viewing war statistics should all be there. If, however, you have further questions, you can contact me directly either through <a href="http://www.twitter.com/clashsolo"><i class="fa fa-twitter" style="color: #3C90E8;"></i>&nbsp;Twitter</a> or filling out the form below to send me an email. </p>
+		<p>This page is here to help you use Clash&nbsp;Tracker. In the menu, you should see different sections that contain information about how to use the feature in Clash&nbsp;Tracker. Information about adding wars, recording loot statistics, creating a loot report and viewing war statistics should all be there. If, however, you have further questions, you can contact me directly either through <a href="http://www.twitter.com/clashsolo"><i class="fa fa-twitter" style="color: #3C90E8;"></i>&nbsp;Twitter</a> or filling out the form below to send me an email. </p>
 	</div>
 	<form class="form-horizontal" action="/processContactMe.php" method="POST">
 		<div class="col-sm-12">
