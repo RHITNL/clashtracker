@@ -737,9 +737,9 @@ require('header.php');
 						</div>
 					</div>
 				</div>
-				<input hidden id="warId" name="warId" value="<?=$war->get('id');?>"></input>
+				<input hidden id="warId" name="warId" value="<?=$war->get('id');?>">
 				<?if(isset($clan)){?>
-					<input hidden id="clanId" name="clanId" value="<?=$clan->get('id');?>"></input>
+					<input hidden id="clanId" name="clanId" value="<?=$clan->get('id');?>">
 				<?}?>
 				<div class="row col-md-6">
 					<div class="text-right btn-actions">

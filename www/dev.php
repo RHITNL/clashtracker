@@ -203,7 +203,7 @@ require('header.php');
 				<div class="form-group">
 					<label class="col-sm-4 col-md-2 control-lable" for="name">Post Name:</label>
 					<div class="col-sm-8 col-md-10">
-						<input type="text" class="form-control" id="name" name="name" placeholder="New Update"></input>
+						<input type="text" class="form-control" id="name" name="name" placeholder="New Update">
 					</div>
 				</div>
 				<div class="form-group">

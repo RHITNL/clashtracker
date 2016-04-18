@@ -57,12 +57,12 @@ require('header.php');
 	<form class="form-horizontal" action="/searchResults.php" method="GET">
 		<div class="col-sm-6">
 			<?if(isset($api)){?>
-				<input hidden id="api" name="api" value="api"></input>
+				<input hidden id="api" name="api" value="api">
 			<?}?>
 			<div class="form-group">
 				<label class="col-sm-4 control-lable" for="query">Name:</label>
 				<div class="col-sm-8">
-					<input type="text" class="form-control" id="query" name="query" value="<?=$query;?>"></input>
+					<input type="text" class="form-control" id="query" name="query" value="<?=$query;?>">
 				</div>
 			</div>
 			<div class="form-group">

@@ -43,16 +43,16 @@ require('header.php');
 				<div class="form-group">
 					<label class="col-sm-4 control-lable" for="name">Player Name:</label>
 					<div class="col-sm-8">
-						<input type="text" class="form-control" id="name" name="name" placeholder="Angry Neeson 52"></input>
+						<input type="text" class="form-control" id="name" name="name" placeholder="Angry Neeson 52">
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-4 control-lable">Player Tag:</label>
 					<div class="col-sm-8">
-						<input disabled type="text" class="form-control" placeholder="#JKFH83J" value="<?=$playerTag;?>"></input>
+						<input disabled type="text" class="form-control" placeholder="#JKFH83J" value="<?=$playerTag;?>">
 					</div>
 				</div>
-				<input type="text" class="form-control hidden" id="playerTag" name="playerTag" value="<?=$playerTag;?>"></input>
+				<input type="text" class="form-control hidden" id="playerTag" name="playerTag" value="<?=$playerTag;?>">
 			</div>
 			<div class="row">
 				<div class="col-sm-12 text-right btn-actions">

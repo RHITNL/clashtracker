@@ -142,9 +142,9 @@ require('header.php');
 				</div>
 				<div id="editNameFormDiv" hidden>
 					<form class="form-inline" action="/processEditName.php" method="POST">
-						<input hidden name="playerId" value="<?=$player->get('id');?>"></input>
+						<input hidden name="playerId" value="<?=$player->get('id');?>">
 						<?if(isset($clan)){?>
-							<input hidden name="clanId" value="<?=$clan->get('id');?>"></input>
+							<input hidden name="clanId" value="<?=$clan->get('id');?>">
 						<?}?>
 						<div class="form-group">
 							<label for="name">Name </label>
@@ -201,10 +201,10 @@ require('header.php');
 					</div>
 					<div id="recordLootDiv" hidden class="col-md-12" style="margin-bottom: 10px;">
 						<form class="form-inline" action="/processRecordLoot.php" method="POST">
-							<input hidden name="type" value="single"></input>
-							<input hidden name="playerId" value="<?=$player->get('id');?>"></input>
+							<input hidden name="type" value="single">
+							<input hidden name="playerId" value="<?=$player->get('id');?>">
 							<?if(isset($clan)){?>
-								<input hidden name="clanId" value="<?=$clan->get('id');?>"></input>
+								<input hidden name="clanId" value="<?=$clan->get('id');?>">
 							<?}?>
 							<div class="col-md-3">
 								<div class="form-group" style="margin-bottom: 10px;">

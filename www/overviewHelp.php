@@ -7,13 +7,13 @@
 			<div class="form-group">
 				<label class="col-sm-4 col-md-3 control-lable" for="email">Your Email (optional):</label>
 				<div class="col-sm-8 col-md-9">
-					<input type="text" class="form-control" id="email" name="email" placeholder="If you do not provide your email, I'll tweet my answer with the hashtag #ClashTrackerFAQ"></input>
+					<input type="text" class="form-control" id="email" name="email" placeholder="If you do not provide your email, I'll tweet my answer with the hashtag #ClashTrackerFAQ">
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="col-sm-4 col-md-3 control-lable" for="subject">Subject (optional):</label>
 				<div class="col-sm-8 col-md-9">
-					<input type="text" class="form-control" id="subject" name="subject" placeholder="What is your question about?"></input>
+					<input type="text" class="form-control" id="subject" name="subject" placeholder="What is your question about?">
 				</div>
 			</div>
 			<div class="form-group">

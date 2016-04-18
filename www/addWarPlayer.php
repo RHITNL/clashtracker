@@ -125,10 +125,10 @@ require('header.php');
 	<h1>Add Players to War</h1><br>
 	<div class="">
 		<form class="form-horizontal" action="/processAddWarPlayer.php" method="POST">
-			<input hidden name="warId" value="<?=$war->get('id');?>"></input>
-			<input hidden name="addClanId" value="<?=$addClan->get('id');?>"></input>
+			<input hidden name="warId" value="<?=$war->get('id');?>">
+			<input hidden name="addClanId" value="<?=$addClan->get('id');?>">
 			<?if(isset($clanId)){?>
-				<input hidden name="clanId" value="<?=$clan->get('id');?>"></input>
+				<input hidden name="clanId" value="<?=$clan->get('id');?>">
 			<?}?>
 			<div class="col-md-12">
 				<?if(count($members) > 0){?>
@@ -157,13 +157,13 @@ require('header.php');
 						<div class="form-group">
 							<label class="col-sm-4 control-lable" for="name">Player Name:</label>
 							<div class="col-sm-8">
-								<input type="text" class="form-control" id="name" name="name" placeholder="Angry Neeson 52" value="<?=$_SESSION['name'];?>"></input>
+								<input type="text" class="form-control" id="name" name="name" placeholder="Angry Neeson 52" value="<?=$_SESSION['name'];?>">
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-4 control-lable" for="playerTag">Player Tag:</label>
 							<div class="col-sm-8">
-								<input type="text" class="form-control" id="playerTag" name="playerTag" placeholder="#JKFH83J" value="<?=$_SESSION['playerTag'];?>"></input>
+								<input type="text" class="form-control" id="playerTag" name="playerTag" placeholder="#JKFH83J" value="<?=$_SESSION['playerTag'];?>">
 							</div>
 						</div>
 					</div>

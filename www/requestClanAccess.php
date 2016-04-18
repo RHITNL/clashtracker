@@ -43,7 +43,7 @@ require('header.php');
 					</div>
 				</div>
 			</div>
-			<input hidden id="clanId" name="clanId" value="<?=$clanId;?>"></input>
+			<input hidden id="clanId" name="clanId" value="<?=$clanId;?>">
 			<div class="row col-md-6">
 				<div class="text-right btn-actions">
 					<button type="submit" class="btn btn-success" name="submit" value="submit">Request</button>

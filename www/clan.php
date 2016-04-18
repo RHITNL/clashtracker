@@ -211,7 +211,7 @@ require('header.php');
 						<button type="submit" class="btn btn-success text-right">Save</button>
 					</div>
 				<?}?>
-				<input hidden name="clanId" value="<?=$clanId;?>"></input>
+				<input hidden name="clanId" value="<?=$clanId;?>">
 				<div class="table-responsive col-md-12">
 					<table class="table table-hover">
 						<thead>
@@ -243,14 +243,14 @@ require('header.php');
 									<td><?=$apiMember->donationsReceived;?></td>
 									<?if($userHasAccessToUpdateClan){?>
 										<td class="text-right">
-											<input type="text" class="form-control input-sm text-right" id="playerTags[]" name="playerTags[]" placeholder="<?=randomTag();?>"></input>
-											<input hidden id="name[]" name="name[]" value="<?=htmlspecialchars($apiMember->name);?>"></input>
-											<input hidden id="role[]" name="role[]" value="<?=htmlspecialchars($apiMember->role);?>"></input>
-											<input hidden id="expLevel[]" name="expLevel[]" value="<?=htmlspecialchars($apiMember->expLevel);?>"></input>
-											<input hidden id="trophies[]" name="trophies[]" value="<?=htmlspecialchars($apiMember->trophies);?>"></input>
-											<input hidden id="donations[]" name="donations[]" value="<?=htmlspecialchars($apiMember->donations);?>"></input>
-											<input hidden id="donationsReceived[]" name="donationsReceived[]" value="<?=htmlspecialchars($apiMember->donationsReceived);?>"></input>
-											<input hidden id="leagueUrl[]" name="leagueUrl[]" value="<?=htmlspecialchars($apiMember->league->iconUrls->small);?>"></input>
+											<input type="text" class="form-control input-sm text-right" id="playerTags[]" name="playerTags[]" placeholder="<?=randomTag();?>">
+											<input hidden id="name[]" name="name[]" value="<?=htmlspecialchars($apiMember->name);?>">
+											<input hidden id="role[]" name="role[]" value="<?=htmlspecialchars($apiMember->role);?>">
+											<input hidden id="expLevel[]" name="expLevel[]" value="<?=htmlspecialchars($apiMember->expLevel);?>">
+											<input hidden id="trophies[]" name="trophies[]" value="<?=htmlspecialchars($apiMember->trophies);?>">
+											<input hidden id="donations[]" name="donations[]" value="<?=htmlspecialchars($apiMember->donations);?>">
+											<input hidden id="donationsReceived[]" name="donationsReceived[]" value="<?=htmlspecialchars($apiMember->donationsReceived);?>">
+											<input hidden id="leagueUrl[]" name="leagueUrl[]" value="<?=htmlspecialchars($apiMember->league->iconUrls->small);?>">
 										</td>
 									<?}?>
 								</tr>

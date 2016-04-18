@@ -37,8 +37,8 @@ require('header.php');
 				<button type="submit" class="btn btn-success text-right">Save</button>
 			</div>
 		<?}?>
-		<input hidden name="type" value="multiple"></input>
-		<input hidden name="clanId" value="<?=$clan->get('id');?>"></input>
+		<input hidden name="type" value="multiple">
+		<input hidden name="clanId" value="<?=$clan->get('id');?>">
 		<?foreach ($members as $member) {
 			if(userHasAccessToUpdatePlayer($member)){?>
 				<h4><?=htmlspecialchars($member->get('name'));?></h4>

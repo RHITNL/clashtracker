@@ -34,7 +34,7 @@ require('header.php');
 				<div class="form-group">
 					<label class="col-sm-4 control-lable" for="enemyClanTag">Enemy Clan Tag:</label>
 					<div class="col-sm-8">
-						<input type="text" class="form-control" id="enemyClanTag" name="enemyClanTag" placeholder="#D73HZFU" value="<?=$_SESSION['enemyClanTag'];?>"></input>
+						<input type="text" class="form-control" id="enemyClanTag" name="enemyClanTag" placeholder="#D73HZFU" value="<?=$_SESSION['enemyClanTag'];?>">
 					</div>
 				</div>
 				<div class="form-group">
@@ -50,7 +50,7 @@ require('header.php');
 					</div>
 				</div>
 			</div>
-			<input hidden name="clanId" value="<?=$clan->get('id');?>"></input>
+			<input hidden name="clanId" value="<?=$clan->get('id');?>">
 			<div class="row">
 				<div class="col-sm-12 text-right btn-actions">
 					<br>

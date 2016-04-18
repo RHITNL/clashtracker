@@ -41,13 +41,13 @@ require('header.php');
 				<div class="form-group">
 					<label class="col-sm-4 control-lable" for="name">Player Name:</label>
 					<div class="col-sm-8">
-						<input type="text" class="form-control" id="name" name="name" placeholder="Angry Neeson 52" value="<?=$_SESSION['name'];?>"></input>
+						<input type="text" class="form-control" id="name" name="name" placeholder="Angry Neeson 52" value="<?=$_SESSION['name'];?>">
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-4 control-lable" for="playerTag">Player Tag:</label>
 					<div class="col-sm-8">
-						<input type="text" class="form-control" id="playerTag" name="playerTag" placeholder="<?=randomTag();?>" value="<?=$_SESSION['playerTag'];?>"></input>
+						<input type="text" class="form-control" id="playerTag" name="playerTag" placeholder="<?=randomTag();?>" value="<?=$_SESSION['playerTag'];?>">
 					</div>
 				</div>
 			</div>
@@ -60,7 +60,7 @@ require('header.php');
 						</div>
 					</div>
 				<?}if(isset($clan)){?>
-					<input hidden id="clanId" name="clanId" value="<?=$clan->get('id');?>"></input>
+					<input hidden id="clanId" name="clanId" value="<?=$clan->get('id');?>">
 				<?}?>
 			</div>
 			<div class="row">

@@ -101,11 +101,11 @@ require('header.php');
 	<h1>Edit War Attack</h1><br>
 	<div class="">
 		<form class="form-horizontal" action="/processEditWarAttack.php" method="POST">
-			<input hidden name="warId" value="<?=$war->get('id');?>"></input>
-			<input hidden name="attackerId" value="<?=$attacker->get('id');?>"></input>
-			<input hidden name="defenderId" value="<?=$defender->get('id');?>"></input>
+			<input hidden name="warId" value="<?=$war->get('id');?>">
+			<input hidden name="attackerId" value="<?=$attacker->get('id');?>">
+			<input hidden name="defenderId" value="<?=$defender->get('id');?>">
 			<?if(isset($clanId)){?>
-				<input hidden name="clanId" value="<?=$clan1->get('id');?>"></input>
+				<input hidden name="clanId" value="<?=$clan1->get('id');?>">
 			<?}?>
 			<div class="col-md-12">
 				<h4><?=htmlspecialchars($attacker->get('name')) . ' attacked ' . htmlspecialchars($defender->get('name'));?></h4>
@@ -116,7 +116,7 @@ require('header.php');
 							<?for ($i=0; $i <= 3; $i++){?>
 								<div class="col-sm-3">
 									<input id="<?=$i;?>stars" <?=($attack['totalStars'] == $i) ? 'checked' : '';?> onclick="selectStars(<?=$i;?>);" name="stars" value="<?=$i;?>" class="stars" type="checkbox">
-									&nbsp;<?=$i;?>&nbsp;<i class="fa fa-star"></i></input>
+									&nbsp;<?=$i;?>&nbsp;<i class="fa fa-star"></i>
 								</div>
 							<?}?>
 						</div>
