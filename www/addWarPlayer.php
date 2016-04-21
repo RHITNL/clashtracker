@@ -133,16 +133,32 @@ require('header.php');
 			<div class="col-md-12">
 				<?if(count($members) > 0){?>
 					<div class="col-md-6">
-						<h4>Select Existing Members:</h4><br>
+						<h4>Select Existing Members:</h4>
 						<table class="table table-hover">
+							<thead>
+								<tr style="cursor: pointer;">
+									<th onclick="selectAll();">
+										<div class="checkbox">
+											<div class="col-md-12">
+												<?if(count($members) > $war->get('size')){
+													$all = 'First ' . $war->get('size');
+												}else{
+													$all = ' All';
+												}?>
+												<input id="selectall" type="checkbox">Select <?=$all;?>
+											</div>
+										</div>
+									</th>
+								</tr>
+							</thead>
 							<tbody>
 								<?foreach ($members as $member) {?>
 									<tr style="cursor: pointer;">
 										<td onclick="selectMember(<?=$member->get('id');?>);">
 											<div class="checkbox">
-												<label>
+												<div class="col-md-12">
 													<input id="<?=$member->get('id');?>" type="checkbox" name="members[]" value="<?=$member->get('id');?>"><?=htmlspecialchars($member->get('name'));?>
-												</label>
+												</div>
 											</div>
 										</td>
 									</tr>
@@ -203,6 +219,33 @@ function selectMember(id){
 		});
 	}
 }
+function selectAll(){
+	var checkboxes = $("input:checkbox");
+	var selectall = $('#selectall');
+	var select;
+	if(!selectall.is(':checked') && !selectall.is(':disabled')){
+		select = true;
+	}else{
+		select = false;
+	}
+	var size = <?=$war->get('size');?>;
+	for (var i = 0; i <= checkboxes.length - 1; i++) {
+		checkbox = $('#' + checkboxes[i].id);
+		if(i<=size){
+			checkbox.prop('checked', select);
+		}else{
+			checkbox.prop('checked', false);
+		}
+	}
+}
+$('input[type="checkbox"]').on('click', function(event) {
+	var id = event.target.id;
+	if(id == "selectall"){
+		selectAll();
+	}else{
+		selectMember(id);
+	}
+});
 </script>
 <?
 require('footer.php');
