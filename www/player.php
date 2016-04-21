@@ -266,20 +266,20 @@ require('header.php');
 						<div class="jumbotron col-xs-12 col-md-5">
 							<div id="allTimeAverage">
 								<?if($goldAvailable){?>
-									<label class="col-xs-6 col-sm-6">Average&nbsp;<i class="fa fa-2x fa-coins" style="color: gold;"></i></label>
-									<div class="col-xs-6 col-sm-6 text-right">
+									<label class="col-xs-12 col-sm-6">Average&nbsp;<i class="fa fa-2x fa-coins" style="color: gold;"></i></label>
+									<div class="col-xs-12 col-sm-6 text-right">
 										<p><?=number_format($player->getAverageGold(), 0, '.', ',') . '/week';?></p>
 									</div>
 								<?}
 								if($elixirAvailable){?>
-									<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint" style="color: #FF09F4;"></i></label>
-									<div class="col-xs-6 col-sm-6 text-right">
+									<label class="col-xs-12 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint" style="color: #FF09F4;"></i></label>
+									<div class="col-xs-12 col-sm-6 text-right">
 										<p><?=number_format($player->getAverageElixir(), 0, '.', ',') . '/week';?></p>
 									</div>
 								<?}
 								if($oilAvailable){?>
-									<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint"></i></label>
-									<div class="col-xs-6 col-sm-6 text-right">
+									<label class="col-xs-12 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint"></i></label>
+									<div class="col-xs-12 col-sm-6 text-right">
 										<p><?=number_format($player->getAverageDarkElixir(), 0, '.', ',') . '/week';?></p>
 									</div>
 								<?}?>
