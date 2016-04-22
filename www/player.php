@@ -33,24 +33,22 @@ $defenceStats = array(3=>0, 2=>0, 1=>0, 0=>0);
 $countDefences = 0;
 $totalAttackStars = 0;
 $totalDefenceStars = 0;
-if(count($wars)>1){
-	$warsAvailable = true;
-	foreach ($attacks as $attack) {
-		if($attack['warId'] != $lastWarId){
-			$attackStats[$attack['totalStars']]++;
-			$totalAttackStars += $attack['totalStars'];
-			$countAttacks++;
-		}
+$warsAvailable = false;
+foreach ($attacks as $attack) {
+	if($attack['warId'] != $lastWarId){
+		$attackStats[$attack['totalStars']]++;
+		$totalAttackStars += $attack['totalStars'];
+		$countAttacks++;
+		$warsAvailable = true;
 	}
-	foreach ($defences as $defence) {
-		if($defence['warId'] != $lastWarId){
-			$defenceStats[$defence['totalStars']]++;
-			$totalDefenceStars += $defence['totalStars'];
-			$countDefences++;
-		}
+}
+foreach ($defences as $defence) {
+	if($defence['warId'] != $lastWarId){
+		$defenceStats[$defence['totalStars']]++;
+		$totalDefenceStars += $defence['totalStars'];
+		$countDefences++;
+		$warsAvailable = true;
 	}
-}else{
-	$warsAvailable = false;
 }
 $attackStats['DNA'] = (count($wars)-$ignoreLast)*2 - $countAttacks;
 $averageAttackStars = ($totalAttackStars==0) ? 0 : $totalAttackStars/$countAttacks;
@@ -165,13 +163,16 @@ require('header.php');
 			</h3>
 			<div class="col-md-12">
 				<div class="col-md-12">
-					<?if($countAttacks>0){?>
-						<div class="col-xs-12 col-sm-6 col-md-3 text-center" style="margin-bottom: 10px;">
+					<?$numPies=0;
+					if($countAttacks>0) $numPies++;
+					if($countDefences>0) $numPies++;
+					if($countAttacks>0){?>
+						<div class="col-xs-12 col-sm-<?=12/$numPies;?> col-md-<?=6/$numPies;?> text-center" style="margin-bottom: 10px;">
 							<h4>Attacks</h4><br>
 							<canvas id="attackPie"></canvas>
 						</div>
 					<?}if($countDefences>0){?>
-						<div class="col-xs-12 col-sm-6 col-md-3 text-center" style="margin-bottom: 10px;">
+						<div class="col-xs-12 col-sm-<?=12/$numPies;?> col-md-<?=6/$numPies;?> text-center" style="margin-bottom: 10px;">
 							<h4>Defences</h4><br>
 							<canvas id="defencePie"></canvas>
 						</div>
@@ -487,7 +488,9 @@ $(document).ready(function() {
 		emptyDataMessage: "Oh no! We don't have enough records for this player's loot to display any stats. You can start by adding some above."
 	};
 	var warsAvailable = "<?=$warsAvailable;?>";
-	if(warsAvailable){
+	var attacksAvailable = "<?=(count($attacks)>0);?>";
+	if(attacksAvailable){
+
 		var ctx = $("#attackPie").get(0).getContext("2d");
 		var data = [
 			{
@@ -522,37 +525,37 @@ $(document).ready(function() {
 			}
 		]
 		var attackPieChart = new Chart(ctx).Pie(data,{});
-		var defenceAvailable = "<?=(count($defences)>0);?>";
-		if(defenceAvailable){
-			var ctx = $("#defencePie").get(0).getContext("2d");
-			var data = [
-				{
-					value: <?=$defenceStats[3];?>,
-					color:"#D0470D",
-					highlight: "#E0470D",
-					label: "3 Star Defence"
-				},
-				{
-					value: <?=$defenceStats[2];?>,
-					color: "#E15B00",
-					highlight: "#E16F00",
-					label: "2 Star Defence"
-				},
-				{
-					value: <?=$defenceStats[1];?>,
-					color: "#F8CC00",
-					highlight: "#F8EB00",
-					label: "1 Star Defence"
-				},
-				{
-					value: <?=$defenceStats[0];?>,
-					color: "#419641",
-					highlight: "#5CB85C",
-					label: "Defended"
-				}
-			]
-			var defencePieChart = new Chart(ctx).Pie(data,{});
-		}
+	}
+	var defenceAvailable = "<?=(count($defences)>0);?>";
+	if(defenceAvailable){
+		var ctx = $("#defencePie").get(0).getContext("2d");
+		var data = [
+			{
+				value: <?=$defenceStats[3];?>,
+				color:"#D0470D",
+				highlight: "#E0470D",
+				label: "3 Star Defence"
+			},
+			{
+				value: <?=$defenceStats[2];?>,
+				color: "#E15B00",
+				highlight: "#E16F00",
+				label: "2 Star Defence"
+			},
+			{
+				value: <?=$defenceStats[1];?>,
+				color: "#F8CC00",
+				highlight: "#F8EB00",
+				label: "1 Star Defence"
+			},
+			{
+				value: <?=$defenceStats[0];?>,
+				color: "#419641",
+				highlight: "#5CB85C",
+				label: "Defended"
+			}
+		]
+		var defencePieChart = new Chart(ctx).Pie(data,{});
 	}
 	showAllTimeGraph();
 });
