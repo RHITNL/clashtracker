@@ -240,6 +240,8 @@ function selectAll(){
 		checkbox.prop('checked', false);
 		if(i<=size && select){
 			selectMember(checkboxes[i].id);
+		}else if(!select){
+			checkbox.attr('disabled', false);
 		}
 	}
 }
