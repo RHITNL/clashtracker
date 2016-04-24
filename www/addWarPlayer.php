@@ -169,7 +169,7 @@ require('header.php');
 				<?}
 				if(count($allMembers)<50){?>
 					<div class="col-md-6">
-						<h4>Add New Member:</h4><br>
+						<h4>Add Other Player:</h4><br>
 						<div class="form-group">
 							<label class="col-sm-4 control-lable" for="name">Player Name:</label>
 							<div class="col-sm-8">
@@ -205,6 +205,8 @@ function selectMember(id){
 		checkbox.prop('checked', false);
 	}
 	var limit = "<?=$limit;?>";
+	var selectall = $('#selectall');
+	if(selectall.is(':checked')) limit++;
 	if ($('input[type=checkbox]:checked').length >= limit) {
 		$("input:checkbox:not(:checked)").each(function(){
 			$(this).attr('disabled', true);
@@ -225,16 +227,19 @@ function selectAll(){
 	var select;
 	if(!selectall.is(':checked') && !selectall.is(':disabled')){
 		select = true;
+		$('#name').attr('disabled', true);
+		$('#playerTag').attr('disabled', true);
 	}else{
 		select = false;
+		$('#name').attr('disabled', false);
+		$('#playerTag').attr('disabled', false);
 	}
 	var size = <?=$war->get('size');?>;
 	for (var i = 0; i <= checkboxes.length - 1; i++) {
 		checkbox = $('#' + checkboxes[i].id);
-		if(i<=size){
-			checkbox.prop('checked', select);
-		}else{
-			checkbox.prop('checked', false);
+		checkbox.prop('checked', false);
+		if(i<=size && select){
+			selectMember(checkboxes[i].id);
 		}
 	}
 }
