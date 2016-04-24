@@ -288,20 +288,20 @@ require('header.php');
 							<?if($lootAvailablePastYear){?>
 								<div id="pastYearAverage" hidden>
 									<?if($goldAvailable){?>
-										<label class="col-xs-6 col-sm-6">Average&nbsp;<i class="fa fa-2x fa-coins" style="color: gold;"></i></label>
-										<div class="col-xs-6 col-sm-6 text-right">
+										<label class="col-xs-12 col-sm-6">Average&nbsp;<i class="fa fa-2x fa-coins" style="color: gold;"></i></label>
+										<div class="col-xs-12 col-sm-6 text-right">
 											<p><?=number_format($player->getAverageGold(yearAgo()), 0, '.', ',') . '/week';?></p>
 										</div>
 									<?}
 									if($elixirAvailable){?>
-										<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint" style="color: #FF09F4;"></i></label>
-										<div class="col-xs-6 col-sm-6 text-right">
+										<label class="col-xs-12 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint" style="color: #FF09F4;"></i></label>
+										<div class="col-xs-12 col-sm-6 text-right">
 											<p><?=number_format($player->getAverageElixir(yearAgo()), 0, '.', ',') . '/week';?></p>
 										</div>
 									<?}
 									if($oilAvailable){?>
-										<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint"></i></label>
-										<div class="col-xs-6 col-sm-6 text-right">
+										<label class="col-xs-12 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint"></i></label>
+										<div class="col-xs-12 col-sm-6 text-right">
 											<p><?=number_format($player->getAverageDarkElixir(yearAgo()), 0, '.', ',') . '/week';?></p>
 										</div>
 									<?}?>
@@ -310,20 +310,20 @@ require('header.php');
 							if($lootAvailablePastMonth){?>
 								<div id="pastMonthAverage" hidden>
 									<?if($goldAvailable){?>
-										<label class="col-xs-6 col-sm-6">Average&nbsp;<i class="fa fa-2x fa-coins" style="color: gold;"></i></label>
-										<div class="col-xs-6 col-sm-6 text-right">
+										<label class="col-xs-12 col-sm-6">Average&nbsp;<i class="fa fa-2x fa-coins" style="color: gold;"></i></label>
+										<div class="col-xs-12 col-sm-6 text-right">
 											<p><?=number_format($player->getAverageGold(monthAgo()), 0, '.', ',') . '/week';?></p>
 										</div>
 									<?}
 									if($elixirAvailable){?>
-										<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint" style="color: #FF09F4;"></i></label>
-										<div class="col-xs-6 col-sm-6 text-right">
+										<label class="col-xs-12 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint" style="color: #FF09F4;"></i></label>
+										<div class="col-xs-12 col-sm-6 text-right">
 											<p><?=number_format($player->getAverageElixir(monthAgo()), 0, '.', ',') . '/week';?></p>
 										</div>
 									<?}
 									if($oilAvailable){?>
-										<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint"></i></label>
-										<div class="col-xs-6 col-sm-6 text-right">
+										<label class="col-xs-12 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint"></i></label>
+										<div class="col-xs-12 col-sm-6 text-right">
 											<p><?=number_format($player->getAverageDarkElixir(monthAgo()), 0, '.', ',') . '/week';?></p>
 										</div>
 									<?}?>
@@ -332,20 +332,20 @@ require('header.php');
 							if($lootAvailablePastWeek){?>
 								<div id="pastWeekAverage" hidden>
 									<?if($goldAvailable){?>
-										<label class="col-xs-6 col-sm-6">Average&nbsp;<i class="fa fa-2x fa-coins" style="color: gold;"></i></label>
-										<div class="col-xs-6 col-sm-6 text-right">
+										<label class="col-xs-12 col-sm-6">Average&nbsp;<i class="fa fa-2x fa-coins" style="color: gold;"></i></label>
+										<div class="col-xs-12 col-sm-6 text-right">
 											<p><?=number_format($player->getAverageGold(weekAgo()), 0, '.', ',') . '/week';?></p>
 										</div>
 									<?}
 									if($elixirAvailable){?>
-										<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint" style="color: #FF09F4;"></i></label>
-										<div class="col-xs-6 col-sm-6 text-right">
+										<label class="col-xs-12 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint" style="color: #FF09F4;"></i></label>
+										<div class="col-xs-12 col-sm-6 text-right">
 											<p><?=number_format($player->getAverageElixir(weekAgo()), 0, '.', ',') . '/week';?></p>
 										</div>
 									<?}
 									if($oilAvailable){?>
-										<label class="col-xs-6 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint"></i></label>
-										<div class="col-xs-6 col-sm-6 text-right">
+										<label class="col-xs-12 col-sm-6">Average&nbsp;&nbsp;<i class="fa fa-2x fa-tint"></i></label>
+										<div class="col-xs-12 col-sm-6 text-right">
 											<p><?=number_format($player->getAverageDarkElixir(weekAgo()), 0, '.', ',') . '/week';?></p>
 										</div>
 									<?}?>
