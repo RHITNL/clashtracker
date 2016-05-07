@@ -57,7 +57,10 @@ if(isset($clan)){
 		<p>Once you've inputted the information for your clan, you can start to view statistics about your members. There are two ways to do this; viewing all members at once or looking at clan members individually.</p>
 		<h4>Clan War Statistics</h4>
 		<p>To view statistics for all your clan members at once, go to <?=$yourClanPage;?> and click 'War Statistics'. This button shows up once you've added at least 2 wars because it only draws upon completed wars for statistics. On this page you can view how many stars that each clan member gets on average for both attacks, along with average stars lost on defence, average number of times they get attacked and average number of attacks they use.</p>
-		<p>This page also includes a score that is calculated based on their offensive and defensive performance in wars. The higher the score the better their performance in wars. (Coming&nbsp;Soon: The ability to change how the score is calculated for your clan.)</p>
+		<p>This page also includes a score that is calculated based on their offensive and defensive performance in wars. The higher the score the better their performance in wars.</p>
+		<h4>Editing Clan War Scoring</h4>
+		<p>The scoring of your players is customizable so you can set a higher priority to attacking versus defending or first attacks versus second attacks. With access to edit your clan, when viewing the War Statistics for you clan, you can click on 'Edit Scoring' to customize the weights for different areas that affect scoring. By default all values are set to 100 percent.</p>
+		<p>Some of the areas are affected by each other so be careful when setting values to zero, as this might not have the affect you desire. For example, if you set both the Total Stars Weight and the New Stars Weight to zero, neither the First or Second Attack Weights will have any affect because they're both affected by Total and New Stars.</p>
 		<br>
 		<h4>Player War Statistics</h4>
 		<p>In addition to seeing an overview of all clan members' war statistics, you can view an individual's statistics by going to their player page. If they've participated in at least one war, then Pie Charts will show giving a breakdown of how their attacks and defenses have gone. It also shows the average number of stars won and lost per attack/defence.</p>

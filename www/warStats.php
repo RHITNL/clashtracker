@@ -165,8 +165,8 @@ require('header.php');
 							<td><?=number_format($member->get('starsOnDefence') / $member->get('numberOfWars'), 2);?></td>
 							<td><?=number_format($member->get('numberOfDefences') / $member->get('numberOfWars'), 2);?></td>
 							<td><?=number_format($member->get('attacksUsed') / $member->get('numberOfWars'), 2);?></td>
-							<td><?=number_format($member->get('rankAttacked') / $member->get('numberOfWars'), 2);?></td>
-							<td><?=number_format($member->get('rankDefended') / $member->get('numberOfWars'), 2);?></td>
+							<td><?=number_format($member->get('rankAttacked') / $member->get('attacksUsed'), 2);?></td>
+							<td><?=number_format($member->get('rankDefended') / $member->get('numberOfDefences'), 2);?></td>
 							<td class="text-right"><?=$member->get('tag');?></td>
 						</tr>
 					<?}?>
