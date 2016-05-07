@@ -22,7 +22,7 @@ foreach ($goldRawData as $i => $goldPlayerRow) {
 		$clan = new clan($tag);
 		foreach ($ids as $id) {
 			$player = new player($id);
-			$playerClan = $player->getMyClan();
+			$playerClan = $player->getClan();
 			if(isset($playerClan)){
 				if($playerClan->get('id') == $clan->get('id')){
 					$curr = array();
@@ -58,7 +58,7 @@ foreach ($elixirRawData as $i => $elixirPlayerRow) {
 		$clan = new clan($tag);
 		foreach ($ids as $id) {
 			$player = new player($id);
-			$playerClan = $player->getMyClan();
+			$playerClan = $player->getClan();
 			if(isset($playerClan)){
 				if($playerClan->get('id') == $clan->get('id')){
 					$curr = array();
@@ -94,7 +94,7 @@ foreach ($darkElixirRawData as $i => $darkElixirPlayerRow) {
 		$clan = new clan($tag);
 		foreach ($ids as $id) {
 			$player = new player($id);
-			$playerClan = $player->getMyClan();
+			$playerClan = $player->getClan();
 			if(isset($playerClan)){
 				if($playerClan->get('id') == $clan->get('id')){
 					$curr = array();

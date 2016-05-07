@@ -69,7 +69,7 @@ try{
 }
 
 if(isset($clan)){
-	$playerClan = $player->getMyClan();
+	$playerClan = $player->getClan();
 	if(isset($playerClan) && $playerClan->get('id') == $clan->get('id')){
 		$_SESSION['curError'] = 'Player already in ' . htmlspecialchars($clan->get('name')) . '.';
 	}else{

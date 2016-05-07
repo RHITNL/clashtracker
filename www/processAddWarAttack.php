@@ -148,8 +148,12 @@ if($stars > 3 || $stars < 0 || $stars == ''){
 	exit;
 }
 
-$war->addAttack($attacker->get('id'), $defender->get('id'), $stars);
-$_SESSION['curMessage'] = 'New attack added successfully.';
+try{
+	$war->addAttack($attacker->get('id'), $defender->get('id'), $stars);
+	$_SESSION['curMessage'] = 'New attack added successfully.';
+}catch(Exception $e){
+	$_SESSION['curError'] = $e->getMessage();
+}
 if(isset($clanId)){
 	header('Location: /war.php?warId=' . $war->get('id') . '&clanId=' . $clanId);
 }else{

@@ -37,7 +37,7 @@ $linkedClan = $user->get("clan");
 if(isset($linkedClan)){
 	header('Location: /clan.php?clanId=' . $linkedClan->get('id'));
 }elseif(isset($linkedPlayer)){
-	$clan = $linkedPlayer->getMyClan();
+	$clan = $linkedPlayer->getClan();
 	if(isset($clan)){
 		header('Location: /clan.php?clanId=' . $clan->get('id'));
 	}else{

@@ -50,7 +50,7 @@ foreach ($playerTags as $key => $playerTag) {
 		$apiMember->league->iconUrls = new StdClass();
 		$apiMember->league->iconUrls->small = $leagueUrl[$key];
 		$player->updateFromApi($apiMember);
-		$playerClan = $player->getMyClan();
+		$playerClan = $player->getClan();
 		if(!isset($playerClan) || $playerClan->get('id') != $clan->get('id')){
 			$count++;
 			$clan->addPlayer($player->get('id'));

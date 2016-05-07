@@ -90,8 +90,8 @@ $bestGold = $player->getBestReportResult('GO');
 $bestElixir = $player->getBestReportResult('EL');
 $bestDarkElixir = $player->getBestReportResult('DE');
 
-$playerClan = $player->getMyClan();
-$playerClans = $player->getMyClans();
+$playerClan = $player->getClan();
+$playerClans = $player->getClans();
 
 $largestValue = max(0, $gold[0]['statAmount'], $elixir[0]['statAmount'], $oil[0]['statAmount']);
 
