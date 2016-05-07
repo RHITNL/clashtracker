@@ -4,11 +4,11 @@ require('session.php');
 require('header.php');
 
 $blogPosts = blogPost::getBlogPosts();
-$blogPost = $blogPosts[0];
 $months = array();
 foreach ($blogPosts as $blogPost) {
 	$months[] = date('F Y', strtotime($blogPost->get('dateCreated')));
 }
+$blogPost = $blogPosts[0];
 $months = array_slice($months, 0, 12);
 
 require('showMessages.php');
