@@ -58,7 +58,7 @@ require('header.php');
 							<td onclick="clickRow('player.php?playerId=<?=$player->get("id");?>');"><?=htmlspecialchars($player->get('name'));?></td>
 							<td onclick="clickRow('player.php?playerId=<?=$player->get("id");?>');"><i class="fa fa-certificate" style="color: #43BBE9;"></i>&nbsp;<?=$player->get('level');?></td>
 							<td onclick="clickRow('player.php?playerId=<?=$player->get("id");?>');"><i class="fa fa-trophy" style="color: gold;"></i>&nbsp;<?=$player->get('trophies');?></td>
-							<?$clan = $player->getMyClan();
+							<?$clan = $player->getClan();
 							if(isset($clan)){?>
 								<td onclick="clickRow('clan.php?clanId=<?=$clan->get("id");?>');">
 									<?$url = $clan->get('badgeUrl');

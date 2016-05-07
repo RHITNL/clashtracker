@@ -20,6 +20,15 @@ class clan{
 	private $apiInfo;
 	private $currentMembers;
 	private $pastAndCurrentMembers;
+	private $firstAttackWeight;
+	private $secondAttackWeight;
+	private $totalStarsWeight;
+	private $newStarsWeight;
+	private $defenceWeight;
+	private $numberOfDefencesWeight;
+	private $attacksUsedWeight;
+	private $rankAttackedWeight;
+	private $rankDefendedWeight;
 
 	private $acceptGet = array(
 		'id' => 'id',
@@ -39,7 +48,16 @@ class clan{
 		'war_wins' => 'warWins',
 		'location' => 'location',
 		'api_info' => 'apiInfo',
-		'badge_url' => 'badgeUrl'
+		'badge_url' => 'badgeUrl',
+		'first_attack_weight' => 'firstAttackWeight',
+		'second_attack_weight' => 'secondAttackWeight',
+		'total_stars_weight' => 'totalStarsWeight',
+		'new_stars_weight' => 'newStarsWeight',
+		'defence_weight' => 'defenceWeight',
+		'number_of_defences_weight' => 'numberOfDefencesWeight',
+		'attacks_used_weight' => 'attacksUsedWeight',
+		'rank_attacked_weight' => 'rankAttackedWeight',
+		'rank_defended_weight' => 'rankDefendedWeight'
 	);
 
 	private $acceptSet = array(
@@ -56,7 +74,16 @@ class clan{
 		'access_type' => 'accessType',
 		'min_rank_access' => 'minRankAccess',
 		'api_info' => 'apiInfo',
-		'badge_url' => 'badgeUrl'
+		'badge_url' => 'badgeUrl',
+		'first_attack_weight' => 'firstAttackWeight',
+		'second_attack_weight' => 'secondAttackWeight',
+		'total_stars_weight' => 'totalStarsWeight',
+		'new_stars_weight' => 'newStarsWeight',
+		'defence_weight' => 'defenceWeight',
+		'number_of_defences_weight' => 'numberOfDefencesWeight',
+		'attacks_used_weight' => 'attacksUsedWeight',
+		'rank_attacked_weight' => 'rankAttackedWeight',
+		'rank_defended_weight' => 'rankDefendedWeight'
 	);
 
 	public function create($tag, $name="", $description=null, $clanType='AN', $minimumTrophies=0, $warFrequency='NS'){
@@ -125,6 +152,15 @@ class clan{
 					$this->accessType = $record->access_type;
 					$this->minRankAccess = $record->min_rank_access;
 					$this->apiInfo = $record->api_info;
+					$this->firstAttackWeight = $record->first_attack_weight;
+					$this->secondAttackWeight = $record->second_attack_weight;
+					$this->totalStarsWeight = $record->total_stars_weight;
+					$this->newStarsWeight = $record->new_stars_weight;
+					$this->defenceWeight = $record->defence_weight;
+					$this->numberOfDefencesWeight = $record->number_of_defences_weight;
+					$this->rankAttackedWeight = $record->rank_attacked_weight;
+					$this->rankDefendedWeight = $record->rank_defended_weight;
+					$this->attacksUsedWeight = $record->attacks_used_weight;
 				}else{
 					throw new noResultFoundException('No clan found with id ' . $this->id);
 				}
@@ -170,6 +206,15 @@ class clan{
 					$this->accessType = $record->access_type;
 					$this->minRankAccess = $record->min_rank_access;
 					$this->apiInfo = $record->api_info;
+					$this->firstAttackWeight = $record->first_attack_weight;
+					$this->secondAttackWeight = $record->second_attack_weight;
+					$this->totalStarsWeight = $record->total_stars_weight;
+					$this->newStarsWeight = $record->new_stars_weight;
+					$this->defenceWeight = $record->defence_weight;
+					$this->numberOfDefencesWeight = $record->number_of_defences_weight;
+					$this->rankAttackedWeight = $record->rank_attacked_weight;
+					$this->rankDefendedWeight = $record->rank_defended_weight;
+					$this->attacksUsedWeight = $record->attacks_used_weight;
 				}else{
 					throw new noResultFoundException('No clan found with tag ' . $tag);
 				}
@@ -200,6 +245,15 @@ class clan{
 		$this->accessType = $clanObj->access_type;
 		$this->minRankAccess = $clanObj->min_rank_access;
 		$this->apiInfo = $clanObj->api_info;
+		$this->firstAttackWeight = $clanObj->first_attack_weight;
+		$this->secondAttackWeight = $clanObj->second_attack_weight;
+		$this->totalStarsWeight = $clanObj->total_stars_weight;
+		$this->newStarsWeight = $clanObj->new_stars_weight;
+		$this->defenceWeight = $clanObj->defence_weight;
+		$this->numberOfDefencesWeight = $clanObj->number_of_defences_weight;
+		$this->rankAttackedWeight = $clanObj->rank_attacked_weight;
+		$this->rankDefendedWeight = $clanObj->rank_defended_weight;
+		$this->attacksUsedWeight = $clanObj->attacks_used_weight;
 	}
 
 	public function get($prpty){
@@ -300,7 +354,7 @@ class clan{
 		global $db;
 		if(isset($this->id)){
 			$player = new player($playerId);
-			$playerClan = $player->getMyClan();
+			$playerClan = $player->getClan();
 			if(isset($playerClan) && $playerClan->get('id') != $this->id){
 				$player->leaveClan();
 			}
@@ -335,7 +389,7 @@ class clan{
 		$this->addPlayer($playerId, $rank);
 	}
 
-	public function getMyLeader(){
+	public function getLeader(){
 		global $db;
 		if(isset($this->id)){
 			$procedure = buildProcedure('p_clan_get_leader', $this->id);
@@ -360,7 +414,7 @@ class clan{
 	}
 
 	public function hasLeader(){
-		$leader = $this->getMyLeader();
+		$leader = $this->getLeader();
 		return isset($leader);
 	}
 
@@ -442,7 +496,7 @@ class clan{
 	public function kickPlayer($playerId){
 		if(isset($this->id)){
 			$player = new player($playerId);
-			$playerClan = $player->getMyClan();
+			$playerClan = $player->getClan();
 			if(isset($playerClan) && $playerClan->get('id') == $this->id){
 				$this->updatePlayerRank($playerId, 'KI');
 			}else{
@@ -528,7 +582,7 @@ class clan{
 		}catch(Exception $e){
 			return false;
 		}
-		$clan = $player->getMyClan();
+		$clan = $player->getClan();
 		if(isset($clan)){
 			return $clan->get('id') == $this->id;
 		}else{

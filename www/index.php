@@ -5,7 +5,7 @@ require('session.php');
 if(isset($loggedInUserClan)){
 	header('Location: /clan.php?clanId=' . $loggedInUserClan->get('id'));
 }elseif(isset($loggedInUserPlayer)){
-	$clan = $loggedInUserPlayer->getMyClan();
+	$clan = $loggedInUserPlayer->getClan();
 	if(isset($clan)){
 		header('Location: /clan.php?clanId=' . $clan->get('id'));
 	}else{

@@ -21,9 +21,13 @@ class player{
 	private $numberOfDefences;
 	private $attacksUsed;
 	private $numberOfWars;
+	private $rankAttacked;
+	private $rankDefended;
 	private $clanWarRank;
 	private $clan;
 	private $clanRank;
+	private $attacks;
+	private $defences;
 
 	private $acceptGet = array(
 		'id' => 'id',
@@ -46,6 +50,8 @@ class player{
 		'stars_on_defence' => 'starsOnDefence',
 		'number_of_defences' => 'numberOfDefences',
 		'attacks_used' => 'attacksUsed',
+		'rank_attacked' => 'rankAttacked',
+		'rank_defended' => 'rankDefended',
 		'number_of_wars' => 'numberOfWars'
 	);
 
@@ -67,6 +73,8 @@ class player{
 		'stars_on_defence' => 'starsOnDefence',
 		'number_of_defences' => 'numberOfDefences',
 		'attacks_used' => 'attacksUsed',
+		'rank_attacked' => 'rankAttacked',
+		'rank_defended' => 'rankDefended',
 		'number_of_wars' => 'numberOfWars'
 	);
 
@@ -139,6 +147,8 @@ class player{
 					$this->numberOfDefences = $record->number_of_defences;
 					$this->attacksUsed = $record->attacks_used;
 					$this->numberOfWars = $record->number_of_wars;
+					$this->rankAttacked = $record->rank_attacked;
+					$this->rankDefended = $record->rank_defended;
 				}else{
 					throw new noResultFoundException('No player found with id ' . $this->id);
 				}
@@ -186,6 +196,8 @@ class player{
 					$this->numberOfDefences = $record->number_of_defences;
 					$this->attacksUsed = $record->attacks_used;
 					$this->numberOfWars = $record->number_of_wars;
+					$this->rankAttacked = $record->rank_attacked;
+					$this->rankDefended = $record->rank_defended;
 				}else{
 					throw new noResultFoundException('No player found with tag ' . $tag);
 				}
@@ -218,6 +230,8 @@ class player{
 		$this->numberOfDefences = $playerObj->number_of_defences;
 		$this->attacksUsed = $playerObj->attacks_used;
 		$this->numberOfWars = $playerObj->number_of_wars;
+		$this->rankAttacked = $playerObj->rank_attacked;
+		$this->rankDefended = $playerObj->rank_defended;
 		$this->clan = $clan;
 		if(isset($clan)){
 			$this->clanRank = $playerObj->rank;
@@ -233,7 +247,11 @@ class player{
 			}elseif($prpty == 'warRank'){
 				return $this->getWarRank($clanId);
 			}elseif($prpty == 'clan'){
-				return $this->getMyClan();
+				return $this->getClan();
+			}elseif($prpty == 'attacks'){
+				return $this->getAttacks();
+			}elseif($prpty == 'defences'){
+				return $this->getDefences();
 			}else{
 				throw new illegalOperationException('Property is not in accept get.');
 			}
@@ -419,6 +437,7 @@ class player{
 	 * @param $type string Type of loot (GO, EL, or DE)
 	 * @param $sinceTime int unix timestamp of the time you want the average since. (e.g. If you want the average over the last week, pass in the unix timestamp of a week ago)
 	 * @param $perTimePeriod int Time in seconds for the average. (e.g. If you want the average loot per week, pass in 604800 or the constant WEEK)
+	 * @return the average loot calculated as specified above
 	 */
 	private function getAverageLoot($type, $sinceTime=0, $perTimePeriod=WEEK){
 		$loot = $this->getStat($type, $sinceTime);
@@ -446,7 +465,7 @@ class player{
 		return $this->getAverageLoot('DE', $sinceTime, $perTimePeriod);
 	}
 
-	public function getMyClan(){
+	public function getClan(){
 		global $db;
 		if(isset($this->id)){
 			if(isset($this->clan)){
@@ -497,7 +516,7 @@ class player{
 			if(isset($this->clanRank)){
 				return $this->clanRank;
 			}
-			$clan = $this->getMyClan();
+			$clan = $this->getClan();
 			if(isset($clan)){
 				$clanId = $clan->get('id');
 			}
@@ -527,7 +546,7 @@ class player{
 
 	public function getWarRank($clanId=null){
 		if($clanId==null){
-			$clan = $this->getMyClan();
+			$clan = $this->getClan();
 			if(isset($clan)){
 				$clanId = $clan->get('id');
 			}
@@ -564,7 +583,7 @@ class player{
 		}
 	}
 
-	public function getMyClans(){
+	public function getClans(){
 		global $db;
 		if(isset($this->id)){
 			$procedure = buildProcedure('p_player_get_clans', $this->id);
@@ -657,13 +676,16 @@ class player{
 	public function getAttacks(){
 		global $db;
 		if(isset($this->id)){
+			if(isset($this->attacks)){
+				return $this->attacks;
+			}
 			$procedure = buildProcedure('p_player_get_attacks', $this->id);
 			if(($db->multi_query($procedure)) === TRUE){
 				$results = $db->store_result();
 				while ($db->more_results()){
 					$db->next_result();
 				}
-				$warAttacks = array();
+				$this->attacks = array();
 				if ($results->num_rows) {
 					while ($warAttackObj = $results->fetch_object()) {
 						$warAttack = array();
@@ -688,10 +710,12 @@ class player{
 						$warAttack['newStars'] = $newStars;
 						$warAttack['dateCreated'] = $warAttackObj->date_created;
 						$warAttack['dateModified'] = $warAttackObj->date_modified;
-						$warAttacks[] = $warAttack;
+						$warAttack['attackerRank'] = $warAttackObj->attacker_rank;
+						$warAttack['defenderRank'] = $warAttackObj->defender_rank;
+						$this->attacks[] = $warAttack;
 					}
 				}
-				return $warAttacks;
+				return $this->attacks;
 			}else{
 				throw new illegalQueryException('The database encountered an error. ' . $db->error);
 			}
@@ -703,13 +727,16 @@ class player{
 	public function getDefences(){
 		global $db;
 		if(isset($this->id)){
+			if(isset($this->defences)){
+				return $this->defences;
+			}
 			$procedure = buildProcedure('p_player_get_defences', $this->id);
 			if(($db->multi_query($procedure)) === TRUE){
 				$results = $db->store_result();
 				while ($db->more_results()){
 					$db->next_result();
 				}
-				$defences = array();
+				$this->defences = array();
 				$starsAchievedSoFar = 0;
 				if ($results->num_rows) {
 					while ($defenceObj = $results->fetch_object()) {
@@ -726,10 +753,12 @@ class player{
 						$defence['newStars'] = $newStars;
 						$defence['dateCreated'] = $defenceObj->date_created;
 						$defence['dateModified'] = $defenceObj->date_modified;
-						$defences[] = $defence;
+						$warAttack['attackerRank'] = $defenceObj->attacker_rank;
+						$warAttack['defenderRank'] = $defenceObj->defender_rank;
+						$this->defences[] = $defence;
 					}
 				}
-				return $defences;
+				return $this->defences;
 			}else{
 				throw new illegalQueryException('The database encountered an error. ' . $db->error);
 			}
@@ -785,7 +814,7 @@ class player{
 		$wars = $this->getWars();
 		if(count($wars)>0){
 			$lastWarId = $wars[0]->get("id");
-			$clanWars = $this->getMyClan()->getMyWars();
+			$clanWars = $this->getClan()->getMyWars();
 			if(count($clanWars)>0){
 				$count = 0;
 				foreach ($clanWars as $war) {
@@ -904,7 +933,7 @@ class player{
 					throw new illegalQueryException('The database encountered an error. ' . $db->error);
 				}
 			}elseif($this->accessType == 'CL'){
-				$clan = $this->getMyClan();
+				$clan = $this->getClan();
 				if(isset($clan)){
 					$clanMembers = $clan->getMembers();
 					$users = array();
@@ -986,23 +1015,55 @@ class player{
 			$this->score = 0;
 			return $this->score;
 		}
-		$fat = $this->firstAttackTotalStars / $this->numberOfWars;
-		$fan = $this->firstAttackNewStars / $this->numberOfWars;
-		$sat = $this->secondAttackTotalStars / $this->numberOfWars;
-		$san = $this->secondAttackNewStars / $this->numberOfWars;
-		$sa = $this->starsOnDefence / $this->numberOfWars;
-		$aa = $this->numberOfDefences / $this->numberOfWars;
+
+		// clan modifiers
+		$clan = $this->getClan();
+		if(isset($clan)){
+			$faw = $clan->get('firstAttackWeight')/100;
+			$saw = $clan->get('secondAttackWeight')/100;
+			$tsw = $clan->get('totalStarsWeight')/100;
+			$nsw = $clan->get('newStarsWeight')/100;
+			$dw = $clan->get('defenceWeight')/100;
+			$nodw = $clan->get('numberOfDefencesWeight')/100;
+			$auw = $clan->get('attacksUsedWeight')/100;
+			$raw = $clan->get('rankAttackedWeight')/100;
+			$rdw = $clan->get('rankDefendedWeight')/100;
+		}else{
+			$faw = 1;
+			$saw = 1;
+			$tsw = 1;
+			$nsw = 1;
+			$dw = 1;
+			$nodw = 1;
+			$auw = 1;
+			$raw = 1;
+			$rdw = 1;
+		}
+
+		$fat = ($this->firstAttackTotalStars / $this->numberOfWars) * $faw * $tsw;
+		$fan = ($this->firstAttackNewStars / $this->numberOfWars) * $faw * $nsw;
+		$sat = ($this->secondAttackTotalStars / $this->numberOfWars) * $saw * $tsw;
+		$san = ($this->secondAttackNewStars / $this->numberOfWars) * $saw * $nsw;
+		$sa = ($this->starsOnDefence / $this->numberOfWars) * $dw;
+		$aa = ($this->numberOfDefences / $this->numberOfWars) * $nodw;
 		$aa = ($aa == 0) ? 1 : $aa;
+		$ra = ($this->rankAttacked / $this->numberOfWars) * $raw;
+		$rd = ($this->rankDefended / $this->numberOfWars) * $rdw;
 		$au = $this->attacksUsed / $this->numberOfWars;
 		$wslp = $this->warsSinceLastParticipated();
 		$wslp = ($wslp == INF) ? 0 : $wslp;
 
-		$this->score = array_sum(array($fat, $fan, $sat, $san));
-		$this->score *= $au / 2;
-		$this->score -= $sa / $aa;
-		$this->score -= (2 - $au) * 2;
-		$this->score *= min(1, $this->numberOfWars/4);
-		$this->score *= (100-$wslp)/100;
+		$this->score = array_sum(array($fat, $fan, $sat, $san)); // main portion of scoring comes from getting stars
+		$this->score *= (1 + $ra/100); // small bonus for attacking above (or penalty for attacking below)
+
+		$defencePenalty = $sa; // penalty for losing stars on defence
+		$defencePenalty /= $aa; // reduction in penalty for being attacked a lot (e.g. getting 3 starred in a war after 3 defences is similar to only being attacked once and only losing 1 star)
+		$defencePenalty *= (1 - $rd/100); // small reduction in penalty for defending from higher level players (or increase for being attacked by lower level players)
+		$this->score -= $defencePenalty; // applying penalty to score
+
+		$this->score -= ((2 - $au) * 2) * $auw; // penalty for players who don't use attacks
+		$this->score *= min(1, $this->numberOfWars/4); // reduction in score for new players (this is here to reduce new players from getting a perfect war right away and jumping to the top of the clan's war stats)
+		$this->score *= (100-$wslp)/100; // small penalty for players not participating in wars (this is here to reduce players getting a high score and then 'retiring' at the top of the clan's war stats; they have to keep fighting to stay at the top)
 		return $this->score;
 	}
 

@@ -54,7 +54,7 @@
 								<li><a href="/clan.php?clanId=<?=$loggedInUserClan->get('id');?>">My Clan</a></li>
 							<?}else{
 								if(isset($loggedInUserPlayer)){
-									$loggedInUserPlayerClan = $loggedInUserPlayer->getMyClan();
+									$loggedInUserPlayerClan = $loggedInUserPlayer->getClan();
 									if(isset($loggedInUserPlayerClan)){?>
 										<li><a href="/clan.php?clanId=<?=$loggedInUserPlayerClan->get('id');?>">My Clan</a></li>
 									<?}else{?>
