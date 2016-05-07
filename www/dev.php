@@ -175,7 +175,7 @@ require('header.php');
 									<tr>
 										<?$values = array_values(get_object_vars($result));
 										foreach($values as $value){?>
-											<td><?=cpr($value);?></td>
+											<td><?=htmlspecialchars(cpr($value));?></td>
 										<?}?>
 									</tr>
 								<?}?>
