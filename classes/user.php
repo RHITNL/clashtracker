@@ -296,19 +296,19 @@ class user{
 	}
 
 	public function login($password){
-		if(isset($this->id)){
-			if (password_verify($password, $this->password))
-				global $db;
+		if(isset($this->id)) {
+			if (password_verify($password, $this->password)){
+					global $db;
 				$procedure = buildProcedure('p_user_login', $this->id, date('Y-m-d H:i:s', time()));
-				if(($db->multi_query($procedure)) === TRUE){
-					while ($db->more_results()){
+				if (($db->multi_query($procedure)) === TRUE) {
+					while ($db->more_results()) {
 						$db->next_result();
 					}
 					return true;
-				}else{
+				} else {
 					throw new illegalQueryException('The database encountered an error. ' . $db->error);
 				}
-			else{
+			}else{
 				return false;
 			}
 		}else{
