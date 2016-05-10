@@ -296,8 +296,21 @@ class user{
 	}
 
 	public function login($password){
-		if(isset($this->id)){
-			return password_verify($password, $this->password);
+		if(isset($this->id)) {
+			if (password_verify($password, $this->password)){
+					global $db;
+				$procedure = buildProcedure('p_user_login', $this->id, date('Y-m-d H:i:s', time()));
+				if (($db->multi_query($procedure)) === TRUE) {
+					while ($db->more_results()) {
+						$db->next_result();
+					}
+					return true;
+				} else {
+					throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				}
+			}else{
+				return false;
+			}
 		}else{
 			throw new illegalFunctionCallException('ID not set for login.');
 		}

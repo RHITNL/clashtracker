@@ -1133,3 +1133,13 @@ alter table clan add number_of_defences_weight float default 100;
 alter table clan add attacks_used_weight float default 100;
 alter table clan add rank_attacked_weight float default 100;
 alter table clan add rank_defended_weight float default 100;
+
+alter table user add last_login datetime;
+
+drop procedure if exists p_user_login;
+delimiter //
+create procedure p_user_login(varId int, varLoginTime datetime)
+	begin
+		update user set last_login = varLoginTime where id = varId;
+	end //
+delimiter ;
