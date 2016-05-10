@@ -670,6 +670,7 @@ class clan{
 		if(!is_null($minClanPoints)) 	$where .= " and clan_points >= '" . $db->escape_string($minClanPoints) . "'";
 		foreach ($queries as $query) {
 			if(strlen($query)>1 || count($queries)==1){
+				$query = $db->escape_string($query);
 				$procedure = "select * from clan where (lower(name) like lower('%".$query."%') or lower(tag) like lower('%".$query."%'))" . $where . ' limit 50;';
 				error_log($procedure);
 				if(($db->multi_query($procedure)) === TRUE){
