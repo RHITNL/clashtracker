@@ -1,7 +1,5 @@
-<?
+<?php
 class api{
-	private $key;
-	private $host;
 	private $headers;
 
 	public function __construct(){
@@ -11,6 +9,7 @@ class api{
 	protected function request($extension){
 		$url = 'https://api.clashofclans.com/v1/' . $extension;
 		$curl = curl_init();
+		$creds = null;
 		if(!DEVELOPMENT){
 			$creds = $this->determineProxy();
 			$proxyUrl = $creds['host'].":".$creds['port'];
@@ -24,7 +23,14 @@ class api{
 		curl_setopt($curl, CURLOPT_URL, $url);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $this->headers);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-		$result = json_decode(curl_exec($curl));
+		$rawResult = curl_exec($curl);
+		try{
+			$this->recordRequest($creds, $url, $rawResult, $this->ip, $apiKey->get('apiKey'));
+		}catch(Exception $e){
+			error_log($e->getMessage());
+			//ignore, I still want the response returned even if there is a problem recording the request
+		}
+		$result = json_decode($rawResult);
 		curl_close($curl);
 		if($result->reason){
 			throw new apiException($result->reason, $result->message);
@@ -68,6 +74,19 @@ class api{
 		}
 	}
 
+	private function recordRequest($proxy, $url, $response, $ip, $auth){
+		global $db;
+		$date = date('Y-m-d H:i:s', time());
+		$procedure = buildProcedure('p_proxy_request_create', $proxy, $url, $response, $ip, $auth, $date);
+		if(($db->multi_query($procedure)) === TRUE){
+			while ($db->more_results()){
+				$db->next_result();
+			}
+		}else{
+			throw new illegalQueryException('The database encountered an error. ' . $db->error);
+		}
+	}
+
 	public function updateProxyCount($env, $count){
 		global $db;
 		$procedure = buildProcedure('p_proxy_request_count_update', $env, $count, date('F'));
@@ -76,6 +95,9 @@ class api{
 				$db->next_result();
 			}
 		}else{
+			$message = "Hello Alex!\nAn error occurred when trying to update the count for $env. We tried to update the count to $count but the database gave the following error:\n" . $db->error;
+			$message .= "\nSorry for the inconvenience.\nCheers,\nClash Tracker";
+			email('alexinmann@gmail.com', 'Update Proxy Request Count Error', $message, 'error_logging@clashtracker.ca');
 			throw new illegalQueryException('The database encountered an error. ' . $db->error);
 		}
 	}
@@ -92,7 +114,7 @@ class api{
 			$proxies = array();
 			if ($results->num_rows) {
 				while ($proxyObj = $results->fetch_object()) {
-					$proxy = new StdClass();
+					$proxy = new stdClass();
 					$proxy->env = $proxyObj->env;
 					$proxy->month = $proxyObj->month;
 					$proxy->limit = $proxyObj->monthly_limit;
