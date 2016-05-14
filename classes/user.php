@@ -9,12 +9,14 @@ class user{
 	private $playerId;
 	private $clan;
 	private $clanId;
+	private $lastLogin;
 
 	private $acceptGet = array(
 		'id' => 'id',
 		'email' => 'email',
 		'date_created' => 'dateCreated',
-		'date_modified' => 'dateModified'
+		'date_modified' => 'dateModified',
+		'last_login' => 'lastLogin'
 	);
 
 	private $acceptSet = array(
@@ -85,6 +87,7 @@ class user{
 					$this->clan = null;
 					$this->dateCreated = $record->date_created;
 					$this->dateModified = $record->date_modified;
+					$this->lastLogin = $record->last_login;
 				}else{
 					throw new noResultFoundException('No player found with id ' . $this->id);
 				}
@@ -117,6 +120,7 @@ class user{
 					$this->clan = null;
 					$this->dateCreated = $record->date_created;
 					$this->dateModified = $record->date_modified;
+					$this->lastLogin = $record->last_login;
 				}else{
 					throw new noResultFoundException('No player found with email ' . $this->email);
 				}
@@ -138,6 +142,7 @@ class user{
 		$this->clan = null;
 		$this->dateCreated = $userObj->date_created;
 		$this->dateModified = $userObj->date_modified;
+		$this->lastLogin = $userObj->last_login;
 	}
 
 	public function get($prpty){

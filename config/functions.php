@@ -106,14 +106,40 @@ function sortPlayersByWarScore($players){
 }
 
 function validPassword($password){
-	return strlen($password)>8;
+	if(strlen($password)<8){
+		throw new invalidPasswordException('Password is too short. Passwords must be at least 8 characters long.');
+	}
+	if(preg_match('/[a-z]/', $password) != 1){
+		throw new invalidPasswordException('Password must contain at least one lower case character.');
+	}
+	if(preg_match('/[A-Z]/', $password) != 1){
+		throw new invalidPasswordException('Password must contain at least one upper case character.');
+	}
+	if(preg_match('/[0-9]/', $password) != 1){
+		throw new invalidPasswordException('Password must contain at least one number.');
+	}
+	if(preg_match('/[^A-Za-z0-9]/', $password) != 1){
+		throw new invalidPasswordException('Password must contain at least one special character.');
+	}
+	$lowerPassword = strtolower($password);
+	if(preg_match('/(.)\1{2,}/', $lowerPassword) == 1){
+		throw new invalidPasswordException('Password must not repeat 3 or more of the same character');
+	}
+	$commons = ['porsche', 'fire', 'bird', 'prince', 'rose', 'bud', 'guitar', 'butter', 'beach', 'jaguar', 'chelsea', 'united', 'amateur', 'great', '1234', 'black', 'turtle', 'cool', 'pussy', 'diamond', 'steelers', 'muffin', 'cooper', 'nascar', 'tiffany', 'redsox', '1313', 'dragon', 'zxcvbn', 'star', 'scorpio', 'cameron', 'tomcat', 'test', 'mountain', 'golf', 'shannon', 'madison', 'mustang', 'computer', 'bond', '007', 'murphy', '987654', 'letmein', 'amanda', 'bear', 'frank', 'brazil', 'baseball', 'wizard', 'tiger', 'hannah', 'lauren', 'master', 'doctor', 'dave', 'japan', 'michael', 'money', 'gateway', 'eagle', 'naked', 'football', 'phoenix', 'gators', 'squirt', 'shadow', 'mickey', 'angel', 'mother', 'monkey', 'bailey', 'junior', 'nathan', 'apple', 'abc123', 'knight', 'thx1138', 'raiders', 'pass', 'iceman', 'steve', 'badboy', 'forever', 'bonnie', '6969', 'purple', 'debbie', 'peaches', 'jordan', 'andrea', 'spider', 'viper', 'harley', 'horny', 'melissa', 'ou812', 'kevin', 'ranger', 'dakota', 'booger', 'jake', 'matt', 'iwantu', '1212', 'jennifer', 'player', 'flyers', 'suckit', 'hunter', 'sunshine', 'fish', 'gregory', 'beaver', 'fuck', 'morgan', 'porn', '4321', 'matrix', 'whatever', '4128', 'boomer', 'teens', 'young', 'runner', 'batman', 'scooby', 'nicholas', 'swimming', 'trustno1', 'edward', 'jason', 'lucky', 'dolphin', 'thomas', 'charles', 'walter', 'helpme', 'gordon', 'tigger', 'cum', 'casper', 'robert', 'booboo', 'boston', 'monica', 'stupid', 'access', 'coffee', 'braves', 'midnight', 'shit', 'love', 'yankee', 'college', 'saturn', 'buster', 'bulldog', 'baby', 'gemini', 'ncc1701', 'barney', 'cunt', 'soccer', 'rabbit', 'victor', 'brian', 'august', 'hockey', 'peanut', 'tucker', 'mark', 'killer', 'john', 'canada', 'george', 'mercedes', 'sierra', 'blazer', 'sexy', 'gandalf', '5150', 'leather', 'andrew', 'spanky', 'doggie', '232323', 'hunting', 'charlie', 'winter', 'kitty', 'brandy', 'gunner', 'beavis', 'rainbow', 'asshole', 'compaq', 'horney', 'cock', '112233', 'carlos', 'bubba', 'happy', 'arthur', 'dallas', 'tennis', '2112', 'sophie', 'cream', 'jessica', 'james', 'fred', 'ladies', 'calvin', 'panties', 'mike', 'naughty', 'shaved', 'pepper', 'brandon', 'giants', 'surfer', 'fender', 'tits', 'booty', 'samson', 'austin', 'anthony', 'member', 'blonde', 'kelly', 'william', 'boobs', 'paul', 'daniel', 'ferrari', 'donald', 'golden', 'mine', 'cookie', 'bigdaddy', 'king', 'summer', 'chicken', 'bronco', 'fire', 'racing', 'heather', 'penis', 'sandra', 'hammer', 'chicago', 'voyager', 'pookie', 'eagle', 'joseph', 'packers', 'hentai', 'joshua', 'diablo', 'einstein', 'newyork', 'maggie', 'sexsex', 'trouble', 'little', 'biteme', 'hardcore', 'white', 'redwings', 'enter', 'topgun', 'chevy', 'smith', 'ashley', 'willie', 'winston', 'sticky', 'thunder', 'welcome', 'warrior', 'cocacola', 'cowboy', 'chris', 'green', 'sammy', 'animal', 'silver', 'panther', 'super', 'slut', 'richard', 'yamaha', 'qazwsx', '8675309', 'private', 'justin', 'magic', 'skippy', 'orange', 'banana', 'lakers', 'marvin', 'merlin', 'driver', 'rachel', 'power', 'michelle', 'marine', 'slayer', 'enjoy', 'corvette', 'scott', 'girl', 'bigdog', 'vagina', 'apollo', 'cheese', 'david', 'asdf', 'toyota', 'parker', 'maddog', 'video', 'travis', 'qwert', 'hooters', 'london', 'hotdog', 'time', 'patrick', 'wilson', 'paris', 'sydney', 'martin', 'butthead', 'marlboro', 'rock', 'women', 'freedom', 'dennis', 'srinivas', 'voodoo', 'ginger', 'fuck', 'internet', 'extreme', 'magnum', 'blow', 'job', 'captain', 'action', 'redskins', 'juice', 'nicole', 'carter', 'erotic', 'abgrtyu', 'sparky', 'chester', 'jasper', 'dirty', 'yellow', 'smokey', 'monster', 'ford', 'dreams', 'camaro', 'xavier', 'teresa', 'maxwell', 'secret', 'jeremy', 'arsenal', 'music', 'dick', 'falcon', 'snoopy', 'bill', 'wolf', 'russia', 'taylor', 'blue', 'crystal', 'nipple', 'peter', 'rebecca', 'winner', 'pussies', 'alex', '123123', 'samantha', 'cock', 'florida', 'mistress', 'bitch', 'house', 'beer', 'eric', 'phantom', 'hello', 'miller', 'legend', 'scooter', 'flower', 'theman', 'movie', 'please', 'jack', 'oliver', 'success', 'albert'];
+	foreach ($commons as $common){
+		if(strpos($lowerPassword, $common) !== false){
+			throw new invalidPasswordException('Password must not contain frequently used password phrases.');
+		}
+	}
+	return true;
 }
 
 function generateRandomPassword(){
 	$lowerCase = 'abcdefghijklmnopqrstuvwxyz';
 	$upperCase = strtoupper($lowerCase);
 	$nums = '1234567890';
-	$types = array($lowerCase, $upperCase, $nums);
+	$specialChars = '!@#$%^&*()';
+	$types = array($lowerCase, $upperCase, $nums, $specialChars);
 	$password = "";
 	for ($i=0; $i < 10; $i++) { 
 		$type = rand(0,count($types)-1);
@@ -121,6 +147,11 @@ function generateRandomPassword(){
 		$char = rand(0,count($chars)-1);
 		$char = $chars[$char];
 		$password.=$char;
+	}
+	try{
+		validPassword($password);
+	}catch(Exception $e){
+		return generateRandomPassword();
 	}
 	return $password;
 }
