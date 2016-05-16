@@ -25,7 +25,7 @@ class api{
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		$rawResult = curl_exec($curl);
 		try{
-			$this->recordRequest($creds, $url, $rawResult, $this->ip, $apiKey->get('apiKey'));
+			$this->recordRequest($creds['user'], $url, $rawResult, $this->ip, $apiKey->get('apiKey'));
 		}catch(Exception $e){
 			error_log($e->getMessage());
 			//ignore, I still want the response returned even if there is a problem recording the request
