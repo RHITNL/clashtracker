@@ -57,10 +57,16 @@ $averageDefenceStars = ($totalDefenceStars==0) ? 0 : $totalDefenceStars/$countDe
 $gold = $player->getGold();
 $elixir = $player->getElixir();
 $oil = $player->getDarkElixir();
+
 $goldAvailable = count($gold)>1;
 $elixirAvailable = count($elixir)>1;
 $oilAvailable = count($oil)>1;
 $lootAvailable = ($goldAvailable||$elixirAvailable||$oilAvailable);
+
+$lootDeletable = array();
+$lootDeletable['GO'] = $gold[0]['deletable'];
+$lootDeletable['EL'] = $elixir[0]['deletable'];
+$lootDeletable['DE'] = $oil[0]['deletable'];
 
 $goldPastYear = $player->getGold(yearAgo());
 $elixirPastYear = $player->getElixir(yearAgo());
@@ -96,6 +102,14 @@ $playerClans = $player->getClans();
 $largestValue = max(0, $gold[0]['statAmount'], $elixir[0]['statAmount'], $oil[0]['statAmount']);
 
 $userHasAccessToUpdatePlayer = userHasAccessToUpdatePlayer($player);
+$showDelete = false;
+if(array_search(true, $lootDeletable)){
+	if(userHasAccessToUpdatePlayer($player, false)){
+		$showDelete = true;
+	}elseif(isset($playerClan) && userHasAccessToUpdateClan($playerClan, false)){
+		$showDelete = true;
+	}
+}
 require('header.php');
 ?>
 <div class="col-md-12">
@@ -197,9 +211,29 @@ require('header.php');
 			<h3><i class="fa fa-coins" style="color: gold;"></i>&nbsp;Loot</h3>
 			<?if($userHasAccessToUpdatePlayer){?>
 				<div class="col-md-12">
-					<div id="recordLootButtonDiv" class="col-md-12">
+					<div id="lootButtonsDiv" class="col-md-12">
 						<button type="button" class="btn btn-primary" onclick="showRecordLootForm();">Record Loot</button>
+						<?if($showDelete){?>
+							<button type="button" class="btn btn-primary" onclick="showDeleteLootForm();">Delete Previous Records</button>
+						<?}?>
 					</div>
+					<?if($showDelete){?>
+						<div id="deleteLootDiv" hidden class="col-md-12">
+							<form class="form" action="/processDeleteLoot.php" method="POST">
+								<input hidden name="playerId" value="<?=$player->get('id');?>">
+								<?if(isset($clan)){?>
+									<input hidden name="clanId" value="<?=$clan->get('id');?>">
+								<?}?>
+								<?foreach(['GO', 'EL', 'DE'] as $type){
+									if($lootDeletable[$type]){?>
+										<input hidden type="checkbox" id="delete_<?=$type;?>" name="<?=$type;?>">
+										<button class="btn btn-danger" onclick="return selectDeleteType('<?=$type;?>');" type="submit">Delete Previous <?=lootTypeFromCode($type);?> Record</button>
+									<?}
+								}?>
+								<button type="cancel" class="btn btn-default text-right" style="margin-right: 10px;" onclick="return showLootButtons();">Cancel</button>
+							</form>
+						</div>
+					<?}?>
 					<div id="recordLootDiv" hidden class="col-md-12" style="margin-bottom: 10px;">
 						<form class="form-inline" action="/processRecordLoot.php" method="POST">
 							<input hidden name="type" value="single">
@@ -226,7 +260,7 @@ require('header.php');
 								</div>
 							</div>
 							<div class="col-md-3">
-								<button type="cancel" class="btn btn-default text-right" style="margin-right: 10px;" onclick="return showRecordLootButton();">Cancel</button>
+								<button type="cancel" class="btn btn-default text-right" style="margin-right: 10px;" onclick="return showLootButtons();">Cancel</button>
 								<button type="submit" class="btn btn-primary text-right">Save</button>
 							</div>
 						</form>
@@ -744,13 +778,20 @@ function showPastWeekGraph(){
 		lootChart = new Chart(ctx).Scatter(data, options);
 	}
 }
-function showRecordLootForm(){
-	$('#recordLootButtonDiv').hide();
-	$('#recordLootDiv').show();
-}
-function showRecordLootButton(){
-	$('#recordLootButtonDiv').show();
+function showDeleteLootForm(){
+	$('#lootButtonsDiv').hide();
 	$('#recordLootDiv').hide();
+	$('#deleteLootDiv').show();
+}
+function showRecordLootForm(){
+	$('#lootButtonsDiv').hide();
+	$('#recordLootDiv').show();
+	$('#deleteLootDiv').hide();
+}
+function showLootButtons(){
+	$('#lootButtonsDiv').show();
+	$('#recordLootDiv').hide();
+	$('#deleteLootDiv').hide();
 	return false;
 }
 function showEditNameForm(){
@@ -787,6 +828,12 @@ function showLootGraph(type){
 		showPastWeekGraph();
 		$('#pastWeekAverage').show();
 	}
+}
+
+function selectDeleteType(type){
+	console.log(type);
+	$('#delete_' + type).prop('checked', true);
+	return true;
 }
 </script>
 <?

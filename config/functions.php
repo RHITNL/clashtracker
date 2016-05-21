@@ -168,11 +168,11 @@ function randomTag(){
 	return $tag;
 }
 
-function userHasAccessToUpdatePlayer($player){
+function userHasAccessToUpdatePlayer($player, $anyone=true){
 	global $loggedInUser;
 	global $loggedInUserPlayer;
 	$accessType = $player->get('accessType');
-	if($accessType=='AN'){
+	if($accessType=='AN' && $anyone){
 		return true;
 	}else{
 		if(isset($loggedInUser)){
@@ -194,11 +194,11 @@ function userHasAccessToUpdatePlayer($player){
 	return false;
 }
 
-function userHasAccessToUpdateClan($clan){
+function userHasAccessToUpdateClan($clan, $anyone=true){
 	global $loggedInUser;
 	global $loggedInUserClan;
 	$accessType = $clan->get('accessType');
-	if($accessType=='AN'){
+	if($accessType=='AN' && $anyone){
 		return true;
 	}else{
 		if(isset($loggedInUser)){

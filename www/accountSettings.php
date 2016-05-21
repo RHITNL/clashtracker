@@ -25,11 +25,11 @@ require('header.php');
 		</div>
 	</div>
 	<div id="page-content-wrapper" class="main">
-		<?require('showMessages.php');?>
 		<ol class="breadcrumb">
 			<li><a href="/home.php">Home</a></li>
 			<li class="active">Account Settings</li>
 		</ol>
+		<?require('showMessages.php');?>
 		<h1>Account Settings</h1>
 		<div class="hidden-sm hidden-md hidden-lg">
 			<a href="#menu-toggle" class="btn btn-default" id="menu-toggle">More Settings</a>
