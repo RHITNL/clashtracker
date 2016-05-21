@@ -321,6 +321,22 @@ class player{
 		}
 	}
 
+	public function deleteLootRecord($type){
+		global $db;
+		if(isset($this->id)){
+			$procedure = buildProcedure('p_player_delete_record', $this->id, $type);
+			if(($db->multi_query($procedure)) === TRUE){
+				while ($db->more_results()){
+					$db->next_result();
+				}
+			}else{
+				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set for delete records.');
+		}
+	}
+
 	private function recordLoot($type, $amount, $date='%'){
 		global $db;
 		if(isset($this->id)){
@@ -375,6 +391,7 @@ class player{
 							$tempLoot['dateRecorded'] = $lootObj->date_recorded;
 							$tempLoot['statType'] = $lootObj->stat_type;
 							$tempLoot['statAmount'] = $lootObj->stat_amount;
+							$tempLoot['deletable'] = $lootObj->deletable == 1;
 							$statType = $tempLoot['statType'];
 							if(!isset($loot[$statType])){
 								$loot[$statType] = array();
