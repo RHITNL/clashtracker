@@ -46,7 +46,7 @@ foreach ($apiClasses as $key => $apiClass) {
 }
 $apiClasses = array_values($apiClasses);
 
-define('DEVELOPMENT', strpos(__DIR__, 'alexinman') !== FALSE);
+define('DEVELOPMENT', !isset($_ENV['PRODUCTION']));
 if(DEVELOPMENT){
 	//	Configuration for the MySQL Local Server
 	define('DBHOST', 'localhost');
@@ -54,11 +54,11 @@ if(DEVELOPMENT){
 	define('DBUSER', 'clash');
 	define('DBPASS', 'cl@sh!');
 }else{
-	$url = parse_url(getenv("CLEARDB_DATABASE_URL"));
-	define('DBHOST', $url["host"]);
-	define('DBNAME', substr($url["path"], 1));
-	define('DBUSER', $url["user"]);
-	define('DBPASS', $url["pass"]);
+	$url = parse_url($_ENV['CLEARDB_DATABASE_URL']);
+	define('DBHOST', $url['host']);
+	define('DBNAME', substr($url['path'], 1));
+	define('DBUSER', $url['user']);
+	define('DBPASS', $url['pass']);
 }
 
 // Create connection
