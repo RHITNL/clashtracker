@@ -11,7 +11,8 @@ class api{
 		$curl = curl_init();
 		$creds = null;
 		if(!DEVELOPMENT){
-			$creds = $this->determineProxy();
+			$env = $this->determineProxy();
+			$creds = parse_url($_ENV[$env]);
 			$proxyUrl = $creds['host'].":".$creds['port'];
 			$proxyAuth = $creds['user'].":".$creds['pass'];
 			curl_setopt($curl, CURLOPT_PROXY, $proxyUrl);
@@ -25,7 +26,7 @@ class api{
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		$rawResult = curl_exec($curl);
 		try{
-			$this->recordRequest($creds['user'], $url, $rawResult, $this->ip, $apiKey->get('apiKey'));
+			$this->recordRequest($env, $url, $rawResult, $this->ip, $apiKey->get('apiKey'));
 		}catch(Exception $e){
 			error_log($e->getMessage());
 			//ignore, I still want the response returned even if there is a problem recording the request
@@ -64,7 +65,7 @@ class api{
 						$env = $proxyObj->env;
 						$this->updateProxyCount($env, $count+1);
 						$this->ip = $proxyObj->ip;
-						return parse_url($env);
+						return $env;
 					}
 				}
 			}
