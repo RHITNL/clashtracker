@@ -16,11 +16,11 @@ $clanId = $_GET['clanId'];
 if($war->isClanInWar($clanId)){
 	$clan1 = new clan($clanId);
 	$clanId = $clan1->get('id');
-	$clan2 = new clan($war->getEnemy($clanId));
+	$clan2 = $war->getEnemy($clanId);
 }else{
 	$clanId = null;
-	$clan1 = new clan($war->get('firstClanId'));
-	$clan2 = new clan($war->get('secondClanId'));
+	$clan1 = $war->get('clan1');
+	$clan2 = $war->get('clan2');
 }
 
 if(!$war->isEditable()){
@@ -71,7 +71,7 @@ try{
 	exit;
 }
 
-$defenderClan = new clan($war->getEnemy($attackerClan->get('id')));
+$defenderClan = $war->getEnemy($attackerClan->get('id'));
 $defenders = $war->getMyWarPlayers($defenderClan);
 if(count($defenders) == 0){
 	$_SESSION['curError'] = 'No members in opposite clan to attack.';

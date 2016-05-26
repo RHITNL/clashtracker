@@ -1,0 +1,13 @@
+.destruction {
+    vertical-align: middle;
+    font-size: 0.8em;
+}
+.left {
+    text-align: left;
+}
+.right {
+    text-align: right;
+}
+.center {
+    text-align: center;
+}

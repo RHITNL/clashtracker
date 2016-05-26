@@ -32,6 +32,11 @@ class clanApi extends api{
 		return $this->request($extension);
 	}
 
+	public function getWarLog($tag){
+		$extension = 'clans/' . urlencode($tag) . '/warlog';
+		return $this->request($extension);
+	}
+
 	private function fake($tag){
 		$clan = new clan($tag);
 		$clanInfo = new StdClass();
@@ -52,6 +57,7 @@ class clanApi extends api{
 		$members = $clan->getMembers();
 		foreach ($members as $member) {
 			$apiMember = new StdClass();
+			$apiMember->tag = $member->get('tag');
 			$apiMember->name = $member->get('name');
 			if($apiMember->name == 'Barby Doll' || $apiMember->name == 'Johnny Boy'){
 				continue;
@@ -67,6 +73,7 @@ class clanApi extends api{
 			$clanInfo->memberList[] = $apiMember;
 		}
 		$fakeNewMember = new StdClass();
+		$fakeNewMember->tag = '#9DG28SH';
 		$fakeNewMember->name = 'Barby Doll';
 		$fakeNewMember->role = 'coLeader';
 		$fakeNewMember->expLevel = 93;
@@ -78,6 +85,7 @@ class clanApi extends api{
 		$fakeNewMember->league->iconUrls->small = 'https://api-assets.clashofclans.com/leagues/72/kSfTyNNVSvogX3dMvpFUTt72VW74w6vEsEFuuOV4osQ.png';
 		$clanInfo->memberList[] = $fakeNewMember;
 		$fakeNewMember = new StdClass();
+		$fakeNewMember->tag = '#28S0GRRR';
 		$fakeNewMember->name = 'Johnny Boy';
 		$fakeNewMember->role = 'admin';
 		$fakeNewMember->expLevel = 34;

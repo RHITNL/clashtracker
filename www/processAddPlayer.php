@@ -73,7 +73,7 @@ if(isset($clan)){
 	if(isset($playerClan) && $playerClan->get('id') == $clan->get('id')){
 		$_SESSION['curError'] = 'Player already in ' . htmlspecialchars($clan->get('name')) . '.';
 	}else{
-		$clan->addPlayer($player->get('id'));
+		$clan->addPlayer($player);
 		$_SESSION['curMessage'] = 'Member successfully added to the clan.';
 	}
 	header('Location: /clan.php?clanId=' . $clan->get('id'));

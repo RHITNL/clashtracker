@@ -16,11 +16,11 @@ $clanId = $_POST['clanId'];
 if($war->isClanInWar($clanId)){
 	$clan1 = new clan($clanId);
 	$clanId = $clan1->get('id');
-	$clan2 = new clan($war->getEnemy($clanId));
+	$clan2 = $war->getEnemy($clanId);
 }else{
 	$clanId = null;
-	$clan1 = new clan($war->get('firstClanId'));
-	$clan2 = new clan($war->get('secondClanId'));
+	$clan1 = $war->get('clan1');
+	$clan2 = $war->get('clan2');
 }
 
 if(!$war->isEditable()){

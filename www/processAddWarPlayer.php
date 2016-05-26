@@ -124,7 +124,7 @@ if(strlen($playerTag) != 0 || strlen($playerName) != 0){
 	$playerId = $player->get('id');
 	if(!$war->isPlayerInWar($playerId)){
 		if(!$addClan->isPlayerInClan($playerId)){
-			$addClan->addPlayer($playerId);
+			$addClan->addPlayer($player);
 		}
 		$war->addPlayer($playerId);
 		$_SESSION['curMessage'] .= 'Other player successfully added to war.';

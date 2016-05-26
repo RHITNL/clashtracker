@@ -9,22 +9,12 @@ $sort = isset($sort) ? $sort : 'trophies_desc';
 try{
 	$clan = new clan($clanId);
 	$clanId = $clan->get('id');
-	$apiResult = refreshClanInfo($clan, isset($force));
-	if($apiResult === false){
-		$apiMembers = array();
-	}else{
-		$apiMembers = $apiResult['members'];
-	}
+	refreshClanInfo($clan, isset($force));
 }catch(noResultFoundException $e){
 	$clan = new clan();
 	$clan->create($clanId);
 	$apiResult = refreshClanInfo($clan, isset($force));
 	if($apiResult === false){
-		$apiMembers = array();
-	}else{
-		$apiMembers = $apiResult['members'];
-	}
-	if($apiMembers === false){
 		$clan->delete();
 		$_SESSION['curError'] = 'Clan Tag was not found in Clash of Clans.';
 		header('Location: /clans.php');
@@ -38,7 +28,7 @@ try{
 }
 
 $members = $clan->getMembers(true, $sort);
-$wars = $clan->getMyWars();
+$wars = $clan->getWars();
 $war = $wars[0];
 $lootReport = $clan->getLootReports()[0];
 $userHasAccessToUpdateClan = userHasAccessToUpdateClan($clan);
@@ -150,7 +140,7 @@ require('header.php');
 				<br><br>
 			</div>
 		</div>
-	<?}if(count($members) > 0 || count($apiMembers) > 0){?>
+	<?}if(count($members) > 0){?>
 		<h3>Clan Members</h3>
 		<?if(count($members) > 0){?>
 			<div class="table-responsive">
@@ -186,81 +176,8 @@ require('header.php');
 					</tbody>
 				</table>
 			</div>
-		<?}if(count($apiMembers) > 0){
-			$dups = $apiResult['duplicates'];
-			$newMembers = count($apiMembers) - $dups;
-			$np = $newMembers>1;
-			if($dups == 0){?>
-				<div class="alert alert-info">
-					<strong>Oh no!</strong> The following member<?if($np){?>s are<?}else{?> is<?}?> not saved in our system. We need their <strong>player tag</strong> for a unique identifier. <?if($userHasAccessToUpdateClan){print "Please input them below and hit <strong>save</strong>.";}?>
-				</div>
-			<?}else{
-				if($newMembers == 0){?>
-					<div class="alert alert-info">
-						<strong>Oh no!</strong> The following members have the same name and we cannot distinguish between them. We need their <strong>player tag</strong> for a unique identifier. <?if($userHasAccessToUpdateClan){print "Please input them below and hit <strong>save</strong>.";}?>
-					</div>
-				<?}else{?>
-					<div class="alert alert-info">
-						<strong>Oh no!</strong> <?=$newMembers;?> of the following members <?if($np){?>are<?}else{?>is<?}?> not saved in our system. The other <?=$dups;?> have the same name and we cannot distinguish between them. We need their <strong>player tag</strong> for a unique identifier. <?if($userHasAccessToUpdateClan){print "Please input them below and hit <strong>save</strong>.";}?>
-					</div>
-				<?}
-			}?>
-			<form class="form-horizontal" action="/processAddMembersFromApi.php" method="POST">
-				<?if($userHasAccessToUpdateClan){?>
-					<div class="col-md-12 text-right">
-						<button type="submit" class="btn btn-success text-right">Save</button>
-					</div>
-				<?}?>
-				<input hidden name="clanId" value="<?=$clanId;?>">
-				<div class="table-responsive col-md-12">
-					<table class="table table-hover">
-						<thead>
-							<tr>
-								<th></th>
-								<th>Name</th>
-								<th>Rank</th>
-								<th>Trophies</th>
-								<th>Troops donated:</th>
-								<th>Troops received:</th>
-								<?if($userHasAccessToUpdateClan){?>
-									<th class="text-right">Player Tag</th>
-								<?}?>
-							</tr>
-						</thead>
-						<tbody>
-							<?foreach ($apiMembers as $apiMember) {?>
-								<tr>
-									<td width="20">
-										<?$url = $apiMember->league->iconUrls->small;
-										if(strlen($url)>0){?>
-											<img src="<?=$url;?>" height="20" width="20">
-										<?}?>
-									</td>
-									<td><?=htmlspecialchars($apiMember->name);?></td>
-									<td><?=rankFromCode(convertRank($apiMember->role));?></td>
-									<td><i class="fa fa-trophy" style="color: gold;"></i>&nbsp;<?=$apiMember->trophies;?></td>
-									<td><?=$apiMember->donations;?></td>
-									<td><?=$apiMember->donationsReceived;?></td>
-									<?if($userHasAccessToUpdateClan){?>
-										<td class="text-right">
-											<input type="text" class="form-control input-sm text-right" id="playerTags[]" name="playerTags[]" placeholder="<?=randomTag();?>">
-											<input hidden id="name[]" name="name[]" value="<?=htmlspecialchars($apiMember->name);?>">
-											<input hidden id="role[]" name="role[]" value="<?=htmlspecialchars($apiMember->role);?>">
-											<input hidden id="expLevel[]" name="expLevel[]" value="<?=htmlspecialchars($apiMember->expLevel);?>">
-											<input hidden id="trophies[]" name="trophies[]" value="<?=htmlspecialchars($apiMember->trophies);?>">
-											<input hidden id="donations[]" name="donations[]" value="<?=htmlspecialchars($apiMember->donations);?>">
-											<input hidden id="donationsReceived[]" name="donationsReceived[]" value="<?=htmlspecialchars($apiMember->donationsReceived);?>">
-											<input hidden id="leagueUrl[]" name="leagueUrl[]" value="<?=htmlspecialchars($apiMember->league->iconUrls->small);?>">
-										</td>
-									<?}?>
-								</tr>
-							<?}?>
-						</tbody>
-					</table>
-				</div>
-			</form>
-		<?}?>
-	<?}else{?>
+		<?}
+	}else{?>
 		<h6>&nbsp;</h6>
 		<div class="alert alert-info">
 			<strong>Oh no!</strong> There's no members currently in this clan.

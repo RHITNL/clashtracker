@@ -491,14 +491,6 @@ begin
 end //
 delimiter ;
 
-drop procedure if exists p_clan_get_wars;
-delimiter //
-create procedure p_clan_get_wars(varClanId int)
-begin
-	select * from war where first_clan_id = varClanId or second_clan_id = varClanId order by date_created desc;
-end //
-delimiter ;
-
 drop procedure if exists p_player_get_clans;
 delimiter //
 create procedure p_player_get_clans(varPlayerId int)
@@ -518,24 +510,8 @@ end if;
 end //
 delimiter ;
 
-drop procedure if exists p_get_wars;
-delimiter //
-create procedure p_get_wars(varPageSize int)
-begin
-	select * from war order by date_created desc limit varPageSize;
-end //
-delimiter ;
-
 alter table war add first_clan_stars int default 0;
 alter table war add second_clan_stars int default 0;
-
-drop procedure if exists p_player_get_wars;
-delimiter //
-create procedure p_player_get_wars(varPlayerId int)
-begin
-	select war.* from war_player join war on war.id = war_player.war_id where player_id = varPlayerId order by date_created desc;
-end //
-delimiter ;
 
 create table proxy_request_count(
 	count int default 0,
@@ -642,8 +618,6 @@ begin
 	update clan_member set war_rank = varWarRank, date_modified = varDateModified where clan_id = varClanId and player_id = varPlayerId;
 end //
 delimiter ;
-
-alter table clan add api_info varchar(50000) default null;
 
 create table clan_edit_requests(
 	clan_id int not null,
@@ -981,27 +955,6 @@ delimiter //
 create procedure p_user_link_clan(varUserId int, varClanId int, varDate datetime)
 begin
 	update user set clan_id = varClanId, date_modified = varDate where id = varUserId;
-end //
-delimiter ;
-
-drop procedure if exists p_clan_update_bulk;
-delimiter //
-create procedure p_clan_update_bulk(varId int, varName varchar(50), varType varchar(2), varDescription varchar(256), varFrequency varchar(2), varMinTrophies int, varMembers int, varClanPoints int, varClanLevel int, varWarWins int, varBadgeUrl varchar(200), varLocation varchar(50), varDateModified datetime, varApiInfo varchar(50000), varHourAgo datetime)
-begin
-	update clan set name=varName, clan_type=varType, description=varDescription, war_frequency=varFrequency, minimum_trophies=varMinTrophies, members=varMembers, clan_points=varClanPoints, clan_level=varClanLevel, war_wins=varWarWins, badge_url=varBadgeUrl, location=varLocation, date_modified=varDateModified, api_info=varApiInfo where id = varId;
-	if (varClanPoints <> (select stat_amount from clan_stats where clan_id = varId and stat_type = 'CP' order by date_recorded desc limit 1))
-		then insert into clan_stats (clan_id, date_recorded, stat_type, stat_amount) values (varId, varDateModified, 'CP', varClanPoints);
-	end if;
-	if (varClanLevel <> (select stat_amount from clan_stats where clan_id = varId and stat_type = 'CL' order by date_recorded desc limit 1))
-		then insert into clan_stats (clan_id, date_recorded, stat_type, stat_amount) values (varId, varDateModified, 'CL', varClanLevel);
-	end if;
-	if (varMembers <> (select stat_amount from clan_stats where clan_id = varId and stat_type = 'ME' order by date_recorded desc limit 1))
-		then insert into clan_stats (clan_id, date_recorded, stat_type, stat_amount) values (varId, varDateModified, 'ME', varMembers);
-	end if;
-	if (varWarWins <> (select stat_amount from clan_stats where clan_id = varId and stat_type = 'WW' order by date_recorded desc limit 1))
-		then insert into clan_stats (clan_id, date_recorded, stat_type, stat_amount) values (varId, varDateModified, 'WW', varWarWins);
-	end if;
-	update clan set api_info = null where api_info is not null and date_modified < varHourAgo;
 end //
 delimiter ;
 

@@ -95,14 +95,14 @@ class player{
 					throw new illegalQueryException('The database encountered an error. ' . $db->error);
 				}
 			}else{
-				throw new illegalArgumentException('Niether name nor tag can be blank.');
+				throw new illegalArgumentException('Neither name nor tag can be blank.');
 			}
 		}else{
 			throw new illegalFunctionCallException('ID set, cannot create.');
 		}
 	}
 
-	public function __construct($id=null){
+	public function __construct($id=null, $name=null){
 		$this->clanWarRank = array();
 		if($id!=null){
 			if(is_numeric($id)){
@@ -110,7 +110,7 @@ class player{
 				$this->load();
 			}else{
 				$this->tag = $id;
-				$this->loadByTag();
+				$this->loadByTag($name);
 			}
 		}
 	}
@@ -160,14 +160,11 @@ class player{
 		}
 	}
 
-	public function loadByTag($tag=null){
+	public function loadByTag($name=null){
 		global $db;
-		if(isset($this->tag) || $tag != null){
-			if($tag == null){
-				$tag = $this->tag;
-			}
-			$tag = correctTag($tag);
-			$procedure = buildProcedure('p_player_load_by_tag', $tag);
+		if(isset($this->tag)){
+			$this->tag = correctTag($this->tag);
+			$procedure = buildProcedure('p_player_load_by_tag', $this->tag);
 			if(($db->multi_query($procedure)) === TRUE){
 				$results = $db->store_result();
 				while ($db->more_results()){
@@ -199,7 +196,7 @@ class player{
 					$this->rankAttacked = $record->rank_attacked;
 					$this->rankDefended = $record->rank_defended;
 				}else{
-					throw new noResultFoundException('No player found with tag ' . $tag);
+					$this->create($name, $this->tag);
 				}
 			}else{
 				throw new illegalQueryException('The database encountered an error. ' . $db->error);
@@ -831,7 +828,7 @@ class player{
 		$wars = $this->getWars();
 		if(count($wars)>0){
 			$lastWarId = $wars[0]->get("id");
-			$clanWars = $this->getClan()->getMyWars();
+			$clanWars = $this->getClan()->getWars();
 			if(count($clanWars)>0){
 				$count = 0;
 				foreach ($clanWars as $war) {

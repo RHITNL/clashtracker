@@ -302,97 +302,69 @@ function convertLocation($location){
 }
 
 function refreshClanInfo($clan, $force=false){
+	$force = $force || DEVELOPEMENT;
 	try{
 		if(hourAgo() > strtotime($clan->get('dateModified')) || $force){
 			$api = new clanApi();
 			$clanInfo = $api->getClanInformation($clan->get('tag'));
+			$warLogInfo = $api->getWarLog($clan->get('tag'));
 		}else{
-			$apiInfo = $clan->get('apiInfo');
-			if(isset($apiInfo)){
-				$clanInfo = json_decode($apiInfo);
-				if(!isset($clanInfo)){
-					return array();
-				}
-			}else{
-				return array();
-			}
+			return true;
 		}
 	}catch(apiException $e){
 		error_log($e->getReasonMessage());
-		return false;
 	}catch(Exception $e){
 		error_log($e->getMessage());
+	}
+	if(!isset($clanInfo)){
 		return false;
 	}
 	$clan->updateFromApi($clanInfo);
-	$members = $clan->getMembers();
-	$possibleMemberMatches = array();
-	$possibleApiMemberMatches = array();
-	foreach ($clanInfo->memberList as $key => $apiMember) {
-		$possibleApiMemberMatches[$key] = array();
-		foreach ($members as $id => $member) {
-			if(!isset($possibleMemberMatches[$id])){
-				$possibleMemberMatches[$id] = array();
-			}
-			if($apiMember->name == $member->get('name')){
-				if($apiMember->expLevel >= $member->get('level')){
-					$possibleMemberMatches[$id][$key] = $apiMember;
-					$possibleApiMemberMatches[$key][$id] = $member;
+	foreach($clanInfo->memberList as $apiMember){
+		$player = new player($apiMember->tag, $apiMember->name);
+		$playerClan = $player->getClan();
+		if(!isset($playerClan) || $playerClan->get('id') != $clan->get('id')){
+			$clan->addPlayer($player);
+		}
+		$player->updateFromApi($apiMember);
+	}
+	if(isset($warLogInfo)){
+		$apiWars = $warLogInfo->items;
+		$wars = $clan->getWars();
+		foreach ($apiWars as $apiWar){
+			foreach ($wars as $key => $war){
+				if(warsMatch($apiWar, $war)){
+					unset($wars[$key]);
+					$war->updateFromApi($apiWar);
+					continue;
 				}
 			}
 		}
 	}
-	$result = findMemberWithNMatches($possibleMemberMatches, 1);
-	while($result !== false){
-		$id = $result;
-		$matches = $possibleMemberMatches[$result];
-		$match = each($matches);
-		$members[$id]->updateFromApi($match['value']);
-		$otherMatches = $possibleApiMemberMatches[$match['key']];
-		unset($possibleMemberMatches[$id]);
-		unset($otherMatches[$id]);
-		if(count($otherMatches)>0){
-			foreach ($otherMatches as $id => $member) {
-				unset($possibleMemberMatches[$id][$match['key']]);
-			}
-		}
-		unset($possibleApiMemberMatches[$match['key']]);
-		$result = findMemberWithNMatches($possibleMemberMatches, 1);
-	}
-	$result = findMemberWithNMatches($possibleMemberMatches, 0);
-	while($result !== false){
-		$id = $result;
-		$members[$id]->leaveClan();
-		unset($possibleMemberMatches[$id]);
-		$result = findMemberWithNMatches($possibleMemberMatches, 0);
-	}
-	$result = findMemberWithNMatches($possibleMemberMatches, 1, 1);
-	$duplicates = 0;
-	while($result !== false){
-		$id = $result;
-		unset($possibleMemberMatches[$id]);
-		$duplicates++;
-		$result = findMemberWithNMatches($possibleMemberMatches, 1, 1);
-	}
-	$apiMembers = array();
-	foreach ($possibleApiMemberMatches as $key => $value) {
-		$apiMembers[] = $clanInfo->memberList[$key];
-	}
-	return array('members' => $apiMembers, 'duplicates' => $duplicates);
+	return true;
 }
 
-function cpr($var, $limit=2, $tab="", $depth=0){
+function warsMatch($apiWar, $war){
+	if(($apiWar->clan->tag == $war->get('clan1')->get('tag') && $apiWar->opponent->tag == $war->get('clan2')->get('tag')) || ($apiWar->clan->tag == $war->get('clan2')->get('tag') && $apiWar->opponent->tag == $war->get('clan1')->get('tag'))){
+		return $apiWar->teamSize == $war->get('size');
+	}else{
+		return false;
+	}
+}
+
+function cpr($var, $limit=2, $tab=""){
+	$val = '';
 	if(is_array($var)){
-		if($depth>$limit){
+		if($limit<0){
 			return "DEPTH LIMIT REACHED";
 		}
 		$val .= "Array\n" . $tab . "(\n";
 		foreach ($var as $key => $value) {
-			$val .= $tab . "\t[" . $key . '] => ' . cpr($value, $limit, $tab."\t\t", $depth+1) . "\n";
+			$val .= $tab . "\t[" . $key . '] => ' . cpr($value, $limit-1, $tab."\t\t") . "\n";
 		}
 		$val .= $tab . ")";
 	}elseif(is_object($var)){
-		if($depth>$limit){
+		if($limit<0){
 			return "DEPTH LIMIT REACHED";
 		}
 		$class = get_class($var);
@@ -418,7 +390,7 @@ function cpr($var, $limit=2, $tab="", $depth=0){
 		}
 		$val .= $class . " Object\n" . $tab . "(\n";
 		foreach ($varArray as $key => $value) {
-			$val .= $tab . "\t[" . $key . '] => ' . cpr($value, $limit, $tab."\t\t", $depth+1) . "\n";
+			$val .= $tab . "\t[" . $key . '] => ' . cpr($value, $limit-1, $tab."\t\t") . "\n";
 		}
 		$val .= $tab . ")";
 	}else{
@@ -433,28 +405,6 @@ function cpr($var, $limit=2, $tab="", $depth=0){
 		}
 	}
 	return $val;
-}
-
-function findMemberWithNMatches($possibleMemberMatches, $n, $compare=0){
-	foreach ($possibleMemberMatches as $id => $matches) {
-		if(compare(count($matches), $n) === $compare){
-			return $id;
-		}
-	}
-	return false;
-}
-
-function compare($a, $b){
-	if($a > $b){
-		return 1;
-	}
-	if($a == $b){
-		return 0;
-	}
-	if($a < $b){
-		return -1;
-	}
-	return false;
 }
 
 function email($to, $subject, $message, $from){

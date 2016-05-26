@@ -17,7 +17,6 @@ class clan{
 	private $location;
 	private $accessType;
 	private $minRankAccess;
-	private $apiInfo;
 	private $currentMembers;
 	private $pastAndCurrentMembers;
 	private $firstAttackWeight;
@@ -47,7 +46,6 @@ class clan{
 		'clan_points' => 'clanPoints',
 		'war_wins' => 'warWins',
 		'location' => 'location',
-		'api_info' => 'apiInfo',
 		'badge_url' => 'badgeUrl',
 		'first_attack_weight' => 'firstAttackWeight',
 		'second_attack_weight' => 'secondAttackWeight',
@@ -73,7 +71,6 @@ class clan{
 		'location' => 'location',
 		'access_type' => 'accessType',
 		'min_rank_access' => 'minRankAccess',
-		'api_info' => 'apiInfo',
 		'badge_url' => 'badgeUrl',
 		'first_attack_weight' => 'firstAttackWeight',
 		'second_attack_weight' => 'secondAttackWeight',
@@ -151,7 +148,6 @@ class clan{
 					$this->location = $record->location;
 					$this->accessType = $record->access_type;
 					$this->minRankAccess = $record->min_rank_access;
-					$this->apiInfo = $record->api_info;
 					$this->firstAttackWeight = $record->first_attack_weight;
 					$this->secondAttackWeight = $record->second_attack_weight;
 					$this->totalStarsWeight = $record->total_stars_weight;
@@ -205,7 +201,6 @@ class clan{
 					$this->location = $record->location;
 					$this->accessType = $record->access_type;
 					$this->minRankAccess = $record->min_rank_access;
-					$this->apiInfo = $record->api_info;
 					$this->firstAttackWeight = $record->first_attack_weight;
 					$this->secondAttackWeight = $record->second_attack_weight;
 					$this->totalStarsWeight = $record->total_stars_weight;
@@ -244,7 +239,6 @@ class clan{
 		$this->location = $clanObj->location;
 		$this->accessType = $clanObj->access_type;
 		$this->minRankAccess = $clanObj->min_rank_access;
-		$this->apiInfo = $clanObj->api_info;
 		$this->firstAttackWeight = $clanObj->first_attack_weight;
 		$this->secondAttackWeight = $clanObj->second_attack_weight;
 		$this->totalStarsWeight = $clanObj->total_stars_weight;
@@ -306,8 +300,7 @@ class clan{
 				&& $this->clanLevel == $clanInfo->clanLevel
 				&& $this->warWins == $clanInfo->warWins
 				&& $this->badgeUrl == $clanInfo->badgeUrls->small
-				&& $this->location == convertLocation($clanInfo->location->name)
-				&& $this->apiInfo == json_encode($clanInfo)){
+				&& $this->location == convertLocation($clanInfo->location->name)){
 				return; //no changes will be made
 			}
 			$procedure = buildProcedure('p_clan_update_bulk', 
@@ -324,7 +317,6 @@ class clan{
 										$clanInfo->badgeUrls->small,
 										convertLocation($clanInfo->location->name),
 										date('Y-m-d H:i:s', time()),
-										json_encode($clanInfo),
 										date('Y-m-d H:i:s', hourAgo()));
 			if(($db->multi_query($procedure)) === TRUE){
 				while ($db->more_results()){
@@ -341,7 +333,6 @@ class clan{
 				$this->warWins = $clanInfo->warWins;
 				$this->badgeUrl = $clanInfo->badgeUrls->small;
 				$this->location = convertLocation($clanInfo->location->name);
-				$this->apiInfo = json_encode($clanInfo);
 			}else{
 				throw new illegalQueryException('The database encountered an error. ' . $db->error);
 			}
@@ -350,10 +341,10 @@ class clan{
 		}
 	}
 
-	public function addPlayer($playerId, $rank=4){
+	public function addPlayer($player, $rank=4){
 		global $db;
 		if(isset($this->id)){
-			$player = new player($playerId);
+			$playerId = $player->get('id');
 			$playerClan = $player->getClan();
 			if(isset($playerClan) && $playerClan->get('id') != $this->id){
 				$player->leaveClan();
@@ -383,10 +374,6 @@ class clan{
 		}else{
 			throw new illegalFunctionCallException('ID not set for add.');
 		}
-	}
-
-	public function updatePlayerRank($playerId, $rank){
-		$this->addPlayer($playerId, $rank);
 	}
 
 	public function getLeader(){
@@ -493,21 +480,7 @@ class clan{
 		}
 	}
 
-	public function kickPlayer($playerId){
-		if(isset($this->id)){
-			$player = new player($playerId);
-			$playerClan = $player->getClan();
-			if(isset($playerClan) && $playerClan->get('id') == $this->id){
-				$this->updatePlayerRank($playerId, 'KI');
-			}else{
-				throw new illegalClanManagementException('Cannot kick player. Player not in this clan.');
-			}
-		}else{
-			throw new illegalFunctionCallException('ID not set for kick.');
-		}
-	}
-
-	public function getMyWars(){
+	public function getWars(){
 		global $db;
 		if(isset($this->id)){
 			if(isset($this->wars)){
@@ -704,7 +677,7 @@ class clan{
 
 	public function delete(){
 		if(isset($this->id)){
-			$wars = $this->getMyWars();
+			$wars = $this->getWars();
 			$members = $this->getPastAndCurrentMembers();
 			if(count($wars) + count($members)==0){
 				global $db;

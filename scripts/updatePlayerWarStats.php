@@ -17,7 +17,7 @@ foreach ($players as $player) {
 
 $clans = clan::getClans(null, 10000);
 foreach ($clans as $clan) {
-	$wars = $clan->getMyWars();
+	$wars = $clan->getWars();
 	if(count($wars)>1){
 		foreach ($wars as $war) {
 			if($war != $wars[0]){
