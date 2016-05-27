@@ -732,14 +732,6 @@ update player set min_rank_access = 5 where min_rank_access_temp = 'EX';
 update player set min_rank_access = 5 where min_rank_access_temp = 'KI';
 alter table player drop column min_rank_access_temp;
 
-drop procedure if exists p_clan_get_leader;
-delimiter //
-create procedure p_clan_get_leader(varClanId int)
-begin
-	select player_id from clan_member where clan_id = varClanId and rank = 1;
-end //
-delimiter ;
-
 drop procedure if exists p_player_get_clan;
 delimiter //
 create procedure p_player_get_clan(varPlayerId int)

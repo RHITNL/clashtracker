@@ -57,3 +57,13 @@ begin
 	select war.*, clan1.name as first_clan_name, clan2.name as second_clan_name from war join clan as clan1 on war.first_clan_id = clan1.id join clan as clan2 on war.second_clan_id = clan2.id order by date_created desc limit varPageSize;
 end //
 delimiter ;
+
+drop procedure if exists p_get_players_and_clans_from_tags;
+delimiter //
+create procedure p_get_players_and_clans_from_tags(in varTags varchar(1000))
+begin
+  set @st := concat('select player.*, clan_member.clan_id, rank from player left join clan_member on player.id = clan_member.player_id where clan_member.rank != 5 and tag in ', varTags, ';');
+	prepare stmt from @st;
+	execute stmt;
+end //
+delimiter ;

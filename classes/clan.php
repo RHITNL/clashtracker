@@ -17,8 +17,6 @@ class clan{
 	private $location;
 	private $accessType;
 	private $minRankAccess;
-	private $currentMembers;
-	private $pastAndCurrentMembers;
 	private $firstAttackWeight;
 	private $secondAttackWeight;
 	private $totalStarsWeight;
@@ -374,35 +372,6 @@ class clan{
 		}else{
 			throw new illegalFunctionCallException('ID not set for add.');
 		}
-	}
-
-	public function getLeader(){
-		global $db;
-		if(isset($this->id)){
-			$procedure = buildProcedure('p_clan_get_leader', $this->id);
-			if(($db->multi_query($procedure)) === TRUE){
-				$results = $db->store_result();
-				while ($db->more_results()){
-					$db->next_result();
-				}
-				$leader = null;
-				if ($results->num_rows) {
-					$record = $results->fetch_object();
-					$results->close();
-					$leader = new player($record->player_id);
-				}
-				return $leader;
-			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
-			}
-		}else{
-			throw new illegalFunctionCallException('ID not set for get.');
-		}
-	}
-
-	public function hasLeader(){
-		$leader = $this->getLeader();
-		return isset($leader);
 	}
 
 	public function getMembers($force=false, $sort=null){

@@ -26,8 +26,6 @@ class player{
 	private $clanWarRank;
 	private $clan;
 	private $clanRank;
-	private $attacks;
-	private $defences;
 
 	private $acceptGet = array(
 		'id' => 'id',
@@ -102,7 +100,7 @@ class player{
 		}
 	}
 
-	public function __construct($id=null, $name=null){
+	public function __construct($id=null){
 		$this->clanWarRank = array();
 		if($id!=null){
 			if(is_numeric($id)){
@@ -110,7 +108,7 @@ class player{
 				$this->load();
 			}else{
 				$this->tag = $id;
-				$this->loadByTag($name);
+				$this->loadByTag();
 			}
 		}
 	}
@@ -160,7 +158,7 @@ class player{
 		}
 	}
 
-	public function loadByTag($name=null){
+	public function loadByTag(){
 		global $db;
 		if(isset($this->tag)){
 			$this->tag = correctTag($this->tag);
@@ -196,7 +194,7 @@ class player{
 					$this->rankAttacked = $record->rank_attacked;
 					$this->rankDefended = $record->rank_defended;
 				}else{
-					$this->create($name, $this->tag);
+					throw new noResultFoundException('No player found with tag ' . $this->tag);
 				}
 			}else{
 				throw new illegalQueryException('The database encountered an error. ' . $db->error);
@@ -1107,6 +1105,32 @@ class player{
 			}
 		}else{
 			throw new illegalFunctionCallException('ID not set for recording loot.');
+		}
+	}
+
+	public static function getPlayersAndTheirClansFromTags($tags){
+		global $db;
+		$procedure = buildProcedure('p_get_players_and_clans_from_tags', $tags);
+		if(($db->multi_query($procedure)) === TRUE){
+			$results = $db->store_result();
+			while ($db->more_results()){
+				$db->next_result();
+			}
+			$players = array();
+			if ($results->num_rows) {
+				while ($result = $results->fetch_object()) {
+					$clanObj = new stdClass();
+					$clanObj->id = $result->clan_id;
+					$clan = new clan();
+					$clan->loadByObj($clanObj);
+					$player = new player();
+					$player->loadByObj($result, $clan);
+					$players[$player->get('tag')] = $player;
+				}
+			}
+			return $players;
+		}else{
+			throw new illegalQueryException('The database encountered an error. ' . $db->error);
 		}
 	}
 }

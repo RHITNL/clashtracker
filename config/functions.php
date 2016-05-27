@@ -44,7 +44,16 @@ function buildProcedure(){
 		$procedure = 'CALL ' . $procedureName . '(';
 		foreach ($parameters as $parameter) {
 			if(isset($parameter)){
-				$procedure .= "'" . $db->escape_string($parameter) . "',";
+				if(is_array($parameter)){
+					$procedure .= "\"(";
+					foreach ($parameter as $param){
+						$procedure .= "'" . $db->escape_string($param) . "',";
+					}
+					$procedure = rtrim($procedure, ",");
+					$procedure .= ")\"";
+				}else{
+					$procedure .= "'" . $db->escape_string($parameter) . "',";
+				}
 			}else{
 				$procedure .= "NULL,";
 			}
@@ -320,13 +329,29 @@ function refreshClanInfo($clan, $force=false){
 		return false;
 	}
 	$clan->updateFromApi($clanInfo);
+	$tags = [];
 	foreach($clanInfo->memberList as $apiMember){
-		$player = new player($apiMember->tag, $apiMember->name);
-		$playerClan = $player->getClan();
+		$tags[] = $apiMember->tag;
+	}
+	$players = player::getPlayersAndTheirClansFromTags($tags);
+	$members = $clan->getMembers();
+	foreach($clanInfo->memberList as $apiMember){
+		$player = $players[$apiMember->tag];
+		if(!isset($player)){
+			$player = new player();
+			$player->create($apiMember->name, $apiMember->tag);
+			$playerClan = null;
+		}else{
+			$playerClan = $player->get('clan');
+		}
 		if(!isset($playerClan) || $playerClan->get('id') != $clan->get('id')){
 			$clan->addPlayer($player);
 		}
+		unset($members[$player->get('id')]);
 		$player->updateFromApi($apiMember);
+	}
+	foreach ($members as $member){
+		$member->leaveClan();
 	}
 	if(isset($warLogInfo)){
 		$apiWars = $warLogInfo->items;
