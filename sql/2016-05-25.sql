@@ -67,3 +67,5 @@ begin
 	execute stmt;
 end //
 delimiter ;
+
+drop table proxy_requests;
