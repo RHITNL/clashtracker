@@ -72,7 +72,7 @@ try{
 }
 
 $defenderClan = $war->getEnemy($attackerClan->get('id'));
-$defenders = $war->getMyWarPlayers($defenderClan);
+$defenders = $war->getPlayers($defenderClan);
 if(count($defenders) == 0){
 	$_SESSION['curError'] = 'No members in opposite clan to attack.';
 	if(isset($clanId)){

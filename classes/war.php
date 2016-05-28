@@ -108,9 +108,11 @@ class war{
 		$clan = new stdClass();
 		$clan->id = $this->firstClanId;
 		$clan->name = $warObj->first_clan_name;
+		$clan->tag = $warObj->first_clan_tag;
 		$this->clan1 = new clan();
 		$this->clan1->loadByObj($clan);
 		$this->secondClanId = $warObj->second_clan_id;
+		$clan->tag = $warObj->second_clan_tag;
 		$clan->id = $this->secondClanId;
 		$clan->name = $warObj->second_clan_name;
 		$this->clan2 = new clan();
@@ -195,7 +197,7 @@ class war{
 			$playerId = $player->get('id');
 			$clan = $player->getClan();
 			if(isset($clan) && $this->isClanInWar($clan->get('id'))){
-				if(count($this->getMyWarPlayers($clan)) < $this->size){
+				if(count($this->getPlayers($clan)) < $this->size){
 					global $db;
 					$procedure = buildProcedure('p_war_add_player', $this->id, $playerId, $clan->get('id'), date('Y-m-d H:i:s', time()));
 					if(($db->multi_query($procedure)) === TRUE){
@@ -243,7 +245,7 @@ class war{
 		}
 	}
 
-	public function getMyWarPlayers($clan=null){
+	public function getPlayers($clan=null){
 		global $db;
 		if(isset($this->id)){
 			if(isset($clan)){
@@ -271,6 +273,7 @@ class war{
 					while ($playerObj = $results->fetch_object()) {
 						$player = new player();
 						$player->loadByObj($playerObj);
+						$this->playerRanks[$player->get('id')] = $playerObj->rank;
 						$players[] = $player;
 					}
 				}
@@ -289,7 +292,7 @@ class war{
 	}
 
 	public function isPlayerInWar($playerId){
-		$warPlayers = $this->getMyWarPlayers();
+		$warPlayers = $this->getPlayers();
 		foreach ($warPlayers as $warPlayer) {
 			if($warPlayer->get('id') == $playerId){
 				return true;
@@ -611,7 +614,7 @@ class war{
 			$this->updateRanks($this->get('clan2'));
 			return;
 		}
-		$warPlayers = $this->getMyWarPlayers($clan);
+		$warPlayers = $this->getPlayers($clan);
 		$clanId = $clan->get('id');
 		for ($i=1; $i < count($warPlayers); $i++) { 
 			$j=$i;
@@ -859,7 +862,7 @@ class war{
 		if(count($wars)>1){
 			$war = $wars[1];
 			$war->getAttacks();
-			$players = $war->getMyWarPlayers($clan);
+			$players = $war->getPlayers($clan);
 			foreach ($players as $player) {
 				$attacks = $war->getPlayerAttacks($player);
 				$player->set('attacksUsed', $player->get('attacksUsed') + count($attacks));

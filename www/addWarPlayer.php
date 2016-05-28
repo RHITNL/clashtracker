@@ -63,7 +63,7 @@ if($war->isClanInWar($addClanId)){
 	exit;
 }
 
-$warPlayers = $war->getMyWarPlayers($addClan);
+$warPlayers = $war->getPlayers($addClan);
 $limit = $war->get('size') - count($warPlayers);
 $allMembers = $addClan->getMembers();
 $members = array();

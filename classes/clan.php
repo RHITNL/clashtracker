@@ -363,8 +363,8 @@ class clan{
 				if($isNewMember){
 					$this->pastAndCurrentMembers[] = $player;
 					$this->currentMembers[] = $player;
-					$warRank = $this->getHighestWarRank() + 1;
-					$this->updatePlayerWarRank($playerId, $warRank);
+					$this->highestWarRank = $this->getHighestWarRank() + 1;
+					$this->updatePlayerWarRank($playerId, $this->highestWarRank);
 				}
 			}else{
 				throw new illegalQueryException('The database encountered an error. ' . $db->error);
@@ -550,6 +550,9 @@ class clan{
 
 	public function getHighestWarRank(){
 		if(isset($this->id)){
+			if(isset($this->highestWarRank)){
+				return $this->highestWarRank;
+			}
 			global $db;
 			$procedure = buildProcedure('p_clan_get_highest_war_rank', $this->id);
 			if(($db->multi_query($procedure)) === TRUE){
@@ -557,13 +560,13 @@ class clan{
 				while ($db->more_results()){
 					$db->next_result();
 				}
-				$warRank = 0;
+				$this->highestWarRank = 0;
 				if ($results->num_rows) {
 					$record = $results->fetch_object();
 					$results->close();
-					$warRank = $record->war_rank;
+					$this->highestWarRank = $record->war_rank;
 				}
-				return $warRank;
+				return $this->highestWarRank;
 			}else{
 				throw new illegalQueryException('The database encountered an error. ' . $db->error);
 			}

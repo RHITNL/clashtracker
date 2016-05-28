@@ -22,7 +22,7 @@ foreach ($clans as $clan) {
 		foreach ($wars as $war) {
 			if($war != $wars[0]){
 				$war->getAttacks();
-				$players = $war->getMyWarPlayers($clan);
+				$players = $war->getPlayers($clan);
 				foreach ($players as $player) {
 					$attacks = $war->getPlayerAttacks($player);
 					$player->set('attacksUsed', $player->get('attacksUsed') + count($attacks));

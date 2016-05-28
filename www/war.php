@@ -22,8 +22,8 @@ if($clan2->get('id') == $clanId){
 	$clan2 = $temp;
 }
 
-$clan1Players = $war->getMyWarPlayers($clan1);
-$clan2Players = $war->getMyWarPlayers($clan2);
+$clan1Players = $war->getPlayers($clan1);
+$clan2Players = $war->getPlayers($clan2);
 
 $warPlayers = array();
 foreach (array_merge($clan1Players, $clan2Players) as $player) {

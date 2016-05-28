@@ -87,8 +87,8 @@ class player{
 					while ($db->more_results()){
 						$db->next_result();
 					}
-					$this->id = $result->id;
-					$this->load();
+					$this->newPlayer = true;
+					$this->loadByObj($result);
 				}else{
 					throw new illegalQueryException('The database encountered an error. ' . $db->error);
 				}
@@ -478,6 +478,9 @@ class player{
 	}
 
 	public function getClan(){
+		if($this->newPlayer){
+			return $this->clan;
+		}
 		global $db;
 		if(isset($this->id)){
 			if(isset($this->clan)){
@@ -524,6 +527,9 @@ class player{
 	}
 
 	public function getClanRank($clanId=null){
+		if($this->newPlayer){
+			return $this->clanRank;
+		}
 		if(!isset($clanId)){
 			if(isset($this->clanRank)){
 				return $this->clanRank;
@@ -645,8 +651,18 @@ class player{
 			$players = array();
 			if ($results->num_rows) {
 				while ($playerObj = $results->fetch_object()) {
+					$clanObj = new stdClass();
+					if(isset($playerObj->clan_id)){
+						$clanObj->id = $playerObj->clan_id;
+					}else{
+						$clanObj->id = 0;
+						$playerObj->rank = '';
+					}
+					$clanObj->name = $playerObj->clan_name;
+					$clan = new clan();
+					$clan->loadByObj($clanObj);
 					$player = new player();
-					$player->loadByObj($playerObj);
+					$player->loadByObj($playerObj, $clan);
 					$players[] = $player;
 				}
 			}
@@ -698,11 +714,17 @@ class player{
 					$db->next_result();
 				}
 				$this->attacks = array();
+				$loadedWars = array();
 				if ($results->num_rows) {
 					while ($warAttackObj = $results->fetch_object()) {
 						$warAttack = array();
 						$warAttack['warId'] = $warAttackObj->war_id;
-						$war = new war($warAttack['warId']);
+						if(isset($loadedWars[$warAttack['warId']])){
+							$war = $loadedWars[$warAttack['warId']];
+						}else{
+							$war = new war($warAttack['warId']);
+							$loadedWars[$warAttack['warId']] = $war;
+						}
 						$warAttack['attackerId'] = $warAttackObj->attacker_id;
 						$warAttack['defenderId'] = $warAttackObj->defender_id;
 						$warAttack['attackerClanId'] = $warAttackObj->attacker_clan_id;
@@ -844,26 +866,6 @@ class player{
 		}
 		$this->warsSinceLastParticipated = $count;
 		return $count;
-	}
-
-	public static function getIdsForPlayersWithName($name){
-		global $db;
-		$procedure = buildProcedure('p_get_players_with_name', $name);
-		if(($db->multi_query($procedure)) === TRUE){
-			$results = $db->store_result();
-			while ($db->more_results()){
-				$db->next_result();
-			}
-			$playerIds = array();
-			if ($results->num_rows) {
-				while ($playerObj = $results->fetch_object()) {
-					$playerIds[] = $playerObj->id;
-				}
-			}
-			return $playerIds;
-		}else{
-			throw new illegalQueryException('The database encountered an error. ' . $db->error);
-		}		
 	}
 
 	public function removeAllLootValues($type, $date='%'){
@@ -1119,10 +1121,12 @@ class player{
 			$players = array();
 			if ($results->num_rows) {
 				while ($result = $results->fetch_object()) {
-					$clanObj = new stdClass();
-					$clanObj->id = $result->clan_id;
-					$clan = new clan();
-					$clan->loadByObj($clanObj);
+					if(isset($result->clan_id)){
+						$clanObj = new stdClass();
+						$clanObj->id = $result->clan_id;
+						$clan = new clan();
+						$clan->loadByObj($clanObj);
+					}
 					$player = new player();
 					$player->loadByObj($result, $clan);
 					$players[$player->get('tag')] = $player;
