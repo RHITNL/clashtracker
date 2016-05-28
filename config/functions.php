@@ -311,12 +311,13 @@ function convertLocation($location){
 }
 
 function refreshClanInfo($clan, $force=false){
-	$force = $force || DEVELOPEMENT;
 	try{
-		if(hourAgo() > strtotime($clan->get('dateModified')) || $force){
+		if(hourAgo() > strtotime($clan->get('dateModified')) || $force || DEVELOPEMENT){
 			$api = new clanApi();
 			$clanInfo = $api->getClanInformation($clan->get('tag'));
-			$warLogInfo = $api->getWarLog($clan->get('tag'));
+			if($clanInfo->isWarLogPublic){
+				$warLogInfo = $api->getWarLog($clan->get('tag'));
+			}
 		}else{
 			return true;
 		}
