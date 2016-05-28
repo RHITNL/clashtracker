@@ -150,6 +150,7 @@ class lootReport{
 					$db->next_result();
 				}
 				$this->results = array();
+				$loadedPlayers = array();
 				if ($results->num_rows) {
 					while ($resultObj = $results->fetch_object()) {
 						$lootType = $resultObj->loot_type;
@@ -157,8 +158,13 @@ class lootReport{
 							$this->results[$lootType] = array();
 						}
 						$result = array();
-						$player = new player();
-						$player->loadByObj($resultObj);
+						if(isset($loadedPlayers[$resultObj->id])){
+							$player = $loadedPlayers[$resultObj->id];
+						}else{
+							$player = new player();
+							$player->loadByObj($resultObj);
+							$loadedPlayers[$resultObj->id] = $player;
+						}
 						$result['player'] = $player;
 						$result['amount'] = $resultObj->loot_amount;
 						$this->results[$lootType][] = $result;

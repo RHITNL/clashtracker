@@ -26,8 +26,6 @@ class player{
 	private $clanWarRank;
 	private $clan;
 	private $clanRank;
-	private $attacks;
-	private $defences;
 
 	private $acceptGet = array(
 		'id' => 'id',
@@ -89,13 +87,13 @@ class player{
 					while ($db->more_results()){
 						$db->next_result();
 					}
-					$this->id = $result->id;
-					$this->load();
+					$this->newPlayer = true;
+					$this->loadByObj($result);
 				}else{
 					throw new illegalQueryException('The database encountered an error. ' . $db->error);
 				}
 			}else{
-				throw new illegalArgumentException('Niether name nor tag can be blank.');
+				throw new illegalArgumentException('Neither name nor tag can be blank.');
 			}
 		}else{
 			throw new illegalFunctionCallException('ID set, cannot create.');
@@ -160,14 +158,11 @@ class player{
 		}
 	}
 
-	public function loadByTag($tag=null){
+	public function loadByTag(){
 		global $db;
-		if(isset($this->tag) || $tag != null){
-			if($tag == null){
-				$tag = $this->tag;
-			}
-			$tag = correctTag($tag);
-			$procedure = buildProcedure('p_player_load_by_tag', $tag);
+		if(isset($this->tag)){
+			$this->tag = correctTag($this->tag);
+			$procedure = buildProcedure('p_player_load_by_tag', $this->tag);
 			if(($db->multi_query($procedure)) === TRUE){
 				$results = $db->store_result();
 				while ($db->more_results()){
@@ -199,7 +194,7 @@ class player{
 					$this->rankAttacked = $record->rank_attacked;
 					$this->rankDefended = $record->rank_defended;
 				}else{
-					throw new noResultFoundException('No player found with tag ' . $tag);
+					throw new noResultFoundException('No player found with tag ' . $this->tag);
 				}
 			}else{
 				throw new illegalQueryException('The database encountered an error. ' . $db->error);
@@ -483,6 +478,9 @@ class player{
 	}
 
 	public function getClan(){
+		if($this->newPlayer){
+			return $this->clan;
+		}
 		global $db;
 		if(isset($this->id)){
 			if(isset($this->clan)){
@@ -529,6 +527,9 @@ class player{
 	}
 
 	public function getClanRank($clanId=null){
+		if($this->newPlayer){
+			return $this->clanRank;
+		}
 		if(!isset($clanId)){
 			if(isset($this->clanRank)){
 				return $this->clanRank;
@@ -650,8 +651,18 @@ class player{
 			$players = array();
 			if ($results->num_rows) {
 				while ($playerObj = $results->fetch_object()) {
+					$clanObj = new stdClass();
+					if(isset($playerObj->clan_id)){
+						$clanObj->id = $playerObj->clan_id;
+					}else{
+						$clanObj->id = 0;
+						$playerObj->rank = '';
+					}
+					$clanObj->name = $playerObj->clan_name;
+					$clan = new clan();
+					$clan->loadByObj($clanObj);
 					$player = new player();
-					$player->loadByObj($playerObj);
+					$player->loadByObj($playerObj, $clan);
 					$players[] = $player;
 				}
 			}
@@ -703,11 +714,17 @@ class player{
 					$db->next_result();
 				}
 				$this->attacks = array();
+				$loadedWars = array();
 				if ($results->num_rows) {
 					while ($warAttackObj = $results->fetch_object()) {
 						$warAttack = array();
 						$warAttack['warId'] = $warAttackObj->war_id;
-						$war = new war($warAttack['warId']);
+						if(isset($loadedWars[$warAttack['warId']])){
+							$war = $loadedWars[$warAttack['warId']];
+						}else{
+							$war = new war($warAttack['warId']);
+							$loadedWars[$warAttack['warId']] = $war;
+						}
 						$warAttack['attackerId'] = $warAttackObj->attacker_id;
 						$warAttack['defenderId'] = $warAttackObj->defender_id;
 						$warAttack['attackerClanId'] = $warAttackObj->attacker_clan_id;
@@ -831,7 +848,7 @@ class player{
 		$wars = $this->getWars();
 		if(count($wars)>0){
 			$lastWarId = $wars[0]->get("id");
-			$clanWars = $this->getClan()->getMyWars();
+			$clanWars = $this->getClan()->getWars();
 			if(count($clanWars)>0){
 				$count = 0;
 				foreach ($clanWars as $war) {
@@ -849,26 +866,6 @@ class player{
 		}
 		$this->warsSinceLastParticipated = $count;
 		return $count;
-	}
-
-	public static function getIdsForPlayersWithName($name){
-		global $db;
-		$procedure = buildProcedure('p_get_players_with_name', $name);
-		if(($db->multi_query($procedure)) === TRUE){
-			$results = $db->store_result();
-			while ($db->more_results()){
-				$db->next_result();
-			}
-			$playerIds = array();
-			if ($results->num_rows) {
-				while ($playerObj = $results->fetch_object()) {
-					$playerIds[] = $playerObj->id;
-				}
-			}
-			return $playerIds;
-		}else{
-			throw new illegalQueryException('The database encountered an error. ' . $db->error);
-		}		
 	}
 
 	public function removeAllLootValues($type, $date='%'){
@@ -1064,9 +1061,9 @@ class player{
 		$sa = ($this->starsOnDefence / $this->numberOfWars) * $dw;
 		$aa = ($this->numberOfDefences / $this->numberOfWars) * $nodw;
 		$aa = ($aa == 0) ? 1 : $aa;
-		$ra = ($this->rankAttacked / $this->attacksUsed) * $raw;
-		$rd = ($this->rankDefended / $this->numberOfDefences) * $rdw;
 		$au = $this->attacksUsed / $this->numberOfWars;
+		$ra = $au == 0 ? 0 : ($this->rankAttacked / $this->attacksUsed) * $raw;
+		$rd = $aa == 0 ? 0 : ($this->rankDefended / $this->numberOfDefences) * $rdw;
 		$wslp = $this->warsSinceLastParticipated();
 		$wslp = ($wslp == INF) ? 0 : $wslp;
 
@@ -1110,6 +1107,34 @@ class player{
 			}
 		}else{
 			throw new illegalFunctionCallException('ID not set for recording loot.');
+		}
+	}
+
+	public static function getPlayersAndTheirClansFromTags($tags){
+		global $db;
+		$procedure = buildProcedure('p_get_players_and_clans_from_tags', $tags);
+		if(($db->multi_query($procedure)) === TRUE){
+			$results = $db->store_result();
+			while ($db->more_results()){
+				$db->next_result();
+			}
+			$players = array();
+			if ($results->num_rows) {
+				while ($result = $results->fetch_object()) {
+					if(isset($result->clan_id)){
+						$clanObj = new stdClass();
+						$clanObj->id = $result->clan_id;
+						$clan = new clan();
+						$clan->loadByObj($clanObj);
+					}
+					$player = new player();
+					$player->loadByObj($result, $clan);
+					$players[$player->get('tag')] = $player;
+				}
+			}
+			return $players;
+		}else{
+			throw new illegalQueryException('The database encountered an error. ' . $db->error);
 		}
 	}
 }

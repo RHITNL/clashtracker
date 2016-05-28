@@ -25,12 +25,6 @@ class api{
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $this->headers);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		$rawResult = curl_exec($curl);
-		try{
-			$this->recordRequest($env, $url, $rawResult, $this->ip, $apiKey->get('apiKey'));
-		}catch(Exception $e){
-			error_log($e->getMessage());
-			//ignore, I still want the response returned even if there is a problem recording the request
-		}
 		$result = json_decode($rawResult);
 		curl_close($curl);
 		if($result->reason){
@@ -70,19 +64,6 @@ class api{
 				}
 			}
 			throw new apiException('noRequestsLeft', 'The request limits for all available proxies have been reached.');
-		}else{
-			throw new illegalQueryException('The database encountered an error. ' . $db->error);
-		}
-	}
-
-	private function recordRequest($proxy, $url, $response, $ip, $auth){
-		global $db;
-		$date = date('Y-m-d H:i:s', time());
-		$procedure = buildProcedure('p_proxy_request_create', $proxy, $url, $response, $ip, $auth, $date);
-		if(($db->multi_query($procedure)) === TRUE){
-			while ($db->more_results()){
-				$db->next_result();
-			}
 		}else{
 			throw new illegalQueryException('The database encountered an error. ' . $db->error);
 		}

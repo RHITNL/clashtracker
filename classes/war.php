@@ -11,6 +11,9 @@ class war{
 	private $clanAttacks;
 	private $playerAttacks;
 	private $warAttacks;
+	private $starsLocked;
+	private $destruction;
+	private $experience;
 
 	private $acceptGet = array(
 		'id' => 'id',
@@ -18,7 +21,8 @@ class war{
 		'second_clan_id' => 'secondClanId',
 		'size' => 'size',
 		'date_created' => 'dateCreated',
-		'date_modified' => 'dateModified'
+		'date_modified' => 'dateModified',
+		'stars_locked' => 'starsLocked'
 	);
 
 	private $acceptSet = array(
@@ -82,6 +86,11 @@ class war{
 					$this->dateModified = $record->date_modified;
 					$this->clanStars[$this->firstClanId] = $record->first_clan_stars;
 					$this->clanStars[$this->secondClanId] = $record->second_clan_stars;
+					$this->starsLocked = $record->stars_locked == 1;
+					$this->destruction[$this->firstClanId] = $record->first_clan_destruction;
+					$this->destruction[$this->secondClanId] = $record->second_clan_destruction;
+					$this->experience[$this->firstClanId] = $record->first_clan_experience;
+					$this->experience[$this->secondClanId] = $record->second_clan_experience;
 				}else{
 					throw new noResultFoundException('No clan found with id ' . $this->id);
 				}
@@ -96,12 +105,28 @@ class war{
 	public function loadByObj($warObj){
 		$this->id = $warObj->id;
 		$this->firstClanId = $warObj->first_clan_id;
+		$clan = new stdClass();
+		$clan->id = $this->firstClanId;
+		$clan->name = $warObj->first_clan_name;
+		$clan->tag = $warObj->first_clan_tag;
+		$this->clan1 = new clan();
+		$this->clan1->loadByObj($clan);
 		$this->secondClanId = $warObj->second_clan_id;
+		$clan->tag = $warObj->second_clan_tag;
+		$clan->id = $this->secondClanId;
+		$clan->name = $warObj->second_clan_name;
+		$this->clan2 = new clan();
+		$this->clan2->loadByObj($clan);
 		$this->size = $warObj->size;
 		$this->dateCreated = $warObj->date_created;
 		$this->dateModified = $warObj->date_modified;
 		$this->clanStars[$this->firstClanId] = $warObj->first_clan_stars;
 		$this->clanStars[$this->secondClanId] = $warObj->second_clan_stars;
+		$this->starsLocked = $warObj->stars_locked == 1;
+		$this->destruction[$this->firstClanId] = $warObj->first_clan_destruction;
+		$this->destruction[$this->secondClanId] = $warObj->second_clan_destruction;
+		$this->experience[$this->firstClanId] = $warObj->first_clan_experience;
+		$this->experience[$this->secondClanId] = $warObj->second_clan_experience;
 	}
 
 	public function get($prpty){
@@ -172,7 +197,7 @@ class war{
 			$playerId = $player->get('id');
 			$clan = $player->getClan();
 			if(isset($clan) && $this->isClanInWar($clan->get('id'))){
-				if(count($this->getMyWarPlayers($clan)) < $this->size){
+				if(count($this->getPlayers($clan)) < $this->size){
 					global $db;
 					$procedure = buildProcedure('p_war_add_player', $this->id, $playerId, $clan->get('id'), date('Y-m-d H:i:s', time()));
 					if(($db->multi_query($procedure)) === TRUE){
@@ -220,7 +245,7 @@ class war{
 		}
 	}
 
-	public function getMyWarPlayers($clan=null){
+	public function getPlayers($clan=null){
 		global $db;
 		if(isset($this->id)){
 			if(isset($clan)){
@@ -248,6 +273,7 @@ class war{
 					while ($playerObj = $results->fetch_object()) {
 						$player = new player();
 						$player->loadByObj($playerObj);
+						$this->playerRanks[$player->get('id')] = $playerObj->rank;
 						$players[] = $player;
 					}
 				}
@@ -266,7 +292,7 @@ class war{
 	}
 
 	public function isPlayerInWar($playerId){
-		$warPlayers = $this->getMyWarPlayers();
+		$warPlayers = $this->getPlayers();
 		foreach ($warPlayers as $warPlayer) {
 			if($warPlayer->get('id') == $playerId){
 				return true;
@@ -462,7 +488,7 @@ class war{
 	}
 
 	public function getClanStars($clan, $force=false){
-		if(!$force){
+		if(!$force || $this->starsLocked){
 			return (int)$this->clanStars[$clan->get('id')];
 		}
 		$clanAttacks = $this->getAttacks($clan);
@@ -476,24 +502,20 @@ class war{
 		return $count;
 	}
 
-	public function getWinner(){
-		$clan1Stars = $this->getClanStars($this->get('clan1'));
-		$clan2Stars = $this->getClanStars($this->get('clan2'));
-		if($clan1Stars > $clan2Stars){
-			return $this->firstClanId;
-		}else if($clan2Stars > $clan1Stars){
-			return $this->secondClanId;
-		}else{
-			return null;
-		}
+	public function getDestruction($clan){
+		return $this->destruction[$clan->get('id')];
+	}
+
+	public function getExperience($clan){
+		return $this->experience[$clan->get('id')];
 	}
 
 	public function getEnemy($clanId){
 		if($this->isClanInWar($clanId)){
 			if($clanId == $this->firstClanId){
-				return $this->secondClanId;
+				return $this->get('clan2');
 			}else{
-				return $this->firstClanId;
+				return $this->get('clan1');
 			}
 		}else{
 			throw new illegalWarClanException('Clan not in war.');
@@ -592,7 +614,7 @@ class war{
 			$this->updateRanks($this->get('clan2'));
 			return;
 		}
-		$warPlayers = $this->getMyWarPlayers($clan);
+		$warPlayers = $this->getPlayers($clan);
 		$clanId = $clan->get('id');
 		for ($i=1; $i < count($warPlayers); $i++) { 
 			$j=$i;
@@ -675,11 +697,11 @@ class war{
 
 	public function isEditable(){
 		$clan1 = $this->get('clan1');
-		$clan1Wars = $clan1->getMyWars();
+		$clan1Wars = $clan1->getWars();
 		$isClan1CurrWar = $clan1Wars[0]->get('id') == $this->id;
 
 		$clan2 = $this->get('clan2');
-		$clan2Wars = $clan2->getMyWars();
+		$clan2Wars = $clan2->getWars();
 		$isClan2CurrWar = $clan2Wars[0]->get('id') == $this->id;
 
 		return $isClan1CurrWar && $isClan2CurrWar;
@@ -836,11 +858,11 @@ class war{
 	}
 
 	private function updateClanWarStats($clan){
-		$wars = $clan->getMyWars();
+		$wars = $clan->getWars();
 		if(count($wars)>1){
 			$war = $wars[1];
 			$war->getAttacks();
-			$players = $war->getMyWarPlayers($clan);
+			$players = $war->getPlayers($clan);
 			foreach ($players as $player) {
 				$attacks = $war->getPlayerAttacks($player);
 				$player->set('attacksUsed', $player->get('attacksUsed') + count($attacks));
@@ -869,6 +891,45 @@ class war{
 				$player->set('starsOnDefence', $player->get('starsOnDefence') + $stars);
 				$player->set('numberOfWars', $player->get('numberOfWars') + 1);
 			}
+		}
+	}
+
+	public function updateFromApi($apiWar){
+		global $db;
+		if(isset($this->id)){
+			if($this->get('clan1')->get('tag') == $apiWar->clan->tag){
+				$apiClan1 = $apiWar->clan;
+				$apiClan2 = $apiWar->opponent;
+			}elseif($this->get('clan2')->get('tag') == $apiWar->clan->tag){
+				$apiClan1 = $apiWar->opponent;
+				$apiClan2 = $apiWar->clan;
+			}else{
+				throw new illegalArgumentException('apiWar does not match war.');
+			}
+			if($apiClan1->expEarned == $this->experience[$this->firstClanId] && $apiClan2->expEarned == $this->experience[$this->secondClanId]){
+				return;
+			}
+			if(!isset($this->experience[$this->firstClanId])){
+				$this->experience[$this->firstClanId] = $apiClan1->expEarned;
+			}
+			if(!isset($this->experience[$this->secondClanId])){
+				$this->experience[$this->secondClanId] = $apiClan2->expEarned;
+			}
+			$procedure = buildProcedure('p_war_update_bulk', $this->id, $apiClan1->stars, $apiClan2->stars, $apiClan1->destructionPercentage, $apiClan2->destructionPercentage, $this->experience[$this->firstClanId], $this->experience[$this->secondClanId]);
+			if(($db->multi_query($procedure)) === TRUE){
+				while ($db->more_results()){
+					$db->next_result();
+				}
+				$this->starsLocked = true;
+				$this->clanStars[$this->firstClanId] = $apiClan1->stars;
+				$this->clanStars[$this->secondClanId] = $apiClan2->stars;
+				$this->firstClanDestruction = $apiClan1->destructionPercentage;
+				$this->secondClanDestruction = $apiClan2->destructionPercentage;
+			}else{
+				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			}
+		}else{
+			throw new illegalFunctionCallException('ID not set for update.');
 		}
 	}
 }

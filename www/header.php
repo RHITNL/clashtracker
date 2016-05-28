@@ -16,6 +16,7 @@
 		<link href="css/bootstrap-slider.css" rel="stylesheet">
 		<link href="css/blog.css" rel="stylesheet">
 		<link href="css/dashboard.css" rel="stylesheet">
+		<link href="css/clashtracker.css" rel="stylesheet">
 		<script src="js/jquery-1.11.3.min.js"></script>
 		<script src="js/bootstrap.js"></script>
 		<script src="js/Chart.js"></script>

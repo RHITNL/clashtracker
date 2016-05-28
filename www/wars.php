@@ -23,7 +23,7 @@ if(!isset($clanId)){
 $title = 'Wars';
 try{
 	if(isset($clanId)){
-		$wars = $clan->getMyWars();
+		$wars = $clan->getWars();
 		$clanName = $clan->get('name');
 		if($clanName[strlen($clanName)-1] == 's'){
 			$clanName .= "'";
@@ -47,7 +47,7 @@ try{
 	$_SESSION['curError'] = $e->getMessage();
 }
 
-
+$clanWars = isset($clanId);
 require('header.php');
 ?>
 <div class="col-md-12">
@@ -75,8 +75,13 @@ require('header.php');
 							<th>Second Attack</th>
 							<th>Defence</th>
 						<?}?>
-						<th>Size</th>
-						<th>Score</th>
+						<th class="center">Size</th>
+						<?if($clanWars){?>
+							<th class="center">Experience</th>
+						<?}?>
+						<th></th>
+						<th class="center">Score</th>
+						<th></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -89,7 +94,7 @@ require('header.php');
 						<tr style="cursor: pointer;" onclick="clickRow('war.php?warId=<?=$war->get("id") . $clanUrl;?>');">
 							<?if(isset($clanId)){
 								$clan1 = $clan;
-								$clan2 = new clan($war->getEnemy($clanId));
+								$clan2 = $war->getEnemy($clanId);
 							}else{
 								$clan1 = $war->get('clan1');
 								$clan2 = $war->get('clan2');
@@ -146,8 +151,28 @@ require('header.php');
 									<?}?>
 								</td>
 							<?}?>
-							<td><?=$war->get('size');?>v<?=$war->get('size');?></td>
-							<td><i class="fa fa-star" style="color: gold;"></i> <?=$score;?> <i class="fa fa-star" style="color: gold;"></i></td>
+							<td class="center"><?=$war->get('size');?>v<?=$war->get('size');?></td>
+							<?if($clanWars){
+								$xp = $war->getExperience($clan);?>
+								<td class="center">
+									<?if(isset($xp)){?>
+										<i class="fa fa-certificate" style="color: #43BBE9;"></i> <?=$xp;?>
+									<?}?>
+								</td>
+							<?}?>
+							<td class="destruction right">
+								<? $des = $war->getDestruction($clan1);
+								if(isset($des)){?>
+									<?=number_format($des, 2);?>%
+								<?}?>
+							</td>
+							<td class="center"><i class="fa fa-star" style="color: gold;"></i> <?=$score;?> <i class="fa fa-star" style="color: gold;"></i></td>
+							<td class="destruction left">
+								<? $des = $war->getDestruction($clan2);
+								if(isset($des)){?>
+									<?=number_format($des, 2);?>%
+								<?}?>
+							</td>
 						</tr>
 					<?}?>
 				</tbody>
