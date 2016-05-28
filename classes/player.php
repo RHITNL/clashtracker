@@ -1061,9 +1061,9 @@ class player{
 		$sa = ($this->starsOnDefence / $this->numberOfWars) * $dw;
 		$aa = ($this->numberOfDefences / $this->numberOfWars) * $nodw;
 		$aa = ($aa == 0) ? 1 : $aa;
-		$ra = ($this->rankAttacked / $this->attacksUsed) * $raw;
-		$rd = ($this->rankDefended / $this->numberOfDefences) * $rdw;
 		$au = $this->attacksUsed / $this->numberOfWars;
+		$ra = $au == 0 ? 0 : ($this->rankAttacked / $this->attacksUsed) * $raw;
+		$rd = $aa == 0 ? 0 : ($this->rankDefended / $this->numberOfDefences) * $rdw;
 		$wslp = $this->warsSinceLastParticipated();
 		$wslp = ($wslp == INF) ? 0 : $wslp;
 
