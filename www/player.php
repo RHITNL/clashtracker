@@ -148,7 +148,7 @@ require('header.php');
 			</div>
 		</div>
 		<div class="col-xs-12 col-md-4 text-right">
-			<?if($userHasAccessToUpdatePlayer){?>
+			<?if($userHasAccessToUpdatePlayer && !isset($playerClan)){?>
 				<div id="editNameButtonDiv">
 					<button type="button" class="btn btn-primary" onclick="showEditNameForm();">Edit Name</button>
 				</div>

@@ -1126,6 +1126,8 @@ class player{
 						$clanObj->id = $result->clan_id;
 						$clan = new clan();
 						$clan->loadByObj($clanObj);
+					}else{
+						$clan = null;
 					}
 					$player = new player();
 					$player->loadByObj($result, $clan);

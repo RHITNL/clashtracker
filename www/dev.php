@@ -13,7 +13,7 @@ $totalRequests = 0;
 $totalLimit = 0;
 
 $apiKeys = apiKey::getKeys();
-$daysInMonth = (strtotime(date('d-m-Y h:m:s'))-strtotime(date('01-m-Y')))/DAY;
+$daysInMonth = (strtotime(date('d-m-Y h:i:s'))-strtotime(date('01-m-Y')))/DAY;
 
 $query = $_POST['query'];
 if(strlen($query)>0){
@@ -82,7 +82,7 @@ require('header.php');
 							<td>
 								<?if($requestsPerDay != 0){
 									$daysUntilExhaustion = $proxy->limit / $requestsPerDay;
-									print date('F j, Y g:m:s A', strtotime(date('01-m-Y')) + $daysUntilExhaustion*DAY);
+									print date('F j, Y g:i:s A', strtotime(date('01-m-Y')) + $daysUntilExhaustion*DAY);
 								}?>
 							</td>
 							<td class="text-right"><?=$proxy->ip;?></td>
@@ -97,7 +97,7 @@ require('header.php');
 						<td>
 							<?if($requestsPerDay != 0){
 								$daysUntilExhaustion = $totalLimit / $requestsPerDay;
-								print date('F j, Y g:m:s A', strtotime(date('01-m-Y')) + $daysUntilExhaustion*DAY);
+								print date('F j, Y g:i:s A', strtotime(date('01-m-Y')) + $daysUntilExhaustion*DAY);
 							}?>
 						</td>
 						<td></td>
