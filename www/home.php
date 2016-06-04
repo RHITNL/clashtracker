@@ -43,7 +43,6 @@ require('showMessages.php');
 				<h2 class="blog-post-title">How To Get Started</h2>
 				<p>If this is the first time you or any of your clanmates are using Clash&nbsp;Tracker, the very first step is to add your Clan to the website. Go to the Clans page, click Add Clan and enter your Clan Tag. The Clash&nbsp;Tracker system will automagically retrieve general information about your clan from Clash of Clans, including War Wins, Clan Points, Member Information, etc. and keep this information up to date.</p>
 				<p>Although it is not necessary to do so, it is recommended to create an account and link your account to your clan and to your player. This can be done in your account settings. Doing so allows you to restrict access to who can input information for your clan and player and reduce incorrect information.</p>
-				<p>The next step, is to enter your clan members' Player Tags, which can be found in each of their Player Profiles in Clash of Clans. These are needed for a unique identifier in order to tell players with the same name apart. This will need to be done for each new member that joins your clan as well.</p>
 				<p>Once this has been done, you're good to go! You can record loot achievements and add wars to start tracking what you want for your clan and your players. If you need help with anything else, <a href="/help.php">click here.</a></p>
 			</div>
 			<?if(isset($blogPost)){?>

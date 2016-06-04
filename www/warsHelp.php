@@ -20,17 +20,11 @@ if(isset($clan)){
 		<h3>Updating a War</h3>
 		<p>If you haven't just created the war, go to <?=$yourClanPage;?> and click 'Current War' to get to the current war. </p>
 		<div class="row">
-			<div class="col-md-8">
+			<div class="col-md-12">
 				<h4>Adding Members to a War</h4>
 				<p>Once a war has been created, you need to add the players from both clans into the war. This can be done by clicking 'Add Players' on the war page. You will be directed to a page where you must select the players in the clan that are in the war or add players who are not currently in the clan. If you accidentally add a player who is not in the war, you can easily remove them by clicking the &times;.</p>
 				<p>You can reorder the players in the war for each clan using the up and down arrows beside each of their names.</p>
 				<p>Once you've added the players to the war for both clans, the next step is to add the attacks.</p>
-			</div>
-			<div class="col-md-4 blog-sidebar">
-				<div class="sidebar-module sidebar-module-inset">
-					<h4>Tip!</h4>
-					<p>You can go to the opponent's clan page to add the players in the war to the clan. Doing this avoids the need to input each player's name and tag individually; all players can be added at once by inputting their player tags and then later selected quickly on the Add Players to War page.</p>
-				</div>
 			</div>
 		</div>
 		<div class="row">
