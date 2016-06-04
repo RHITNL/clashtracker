@@ -8,7 +8,7 @@ $months = array();
 foreach ($blogPosts as $blogPost) {
 	$months[] = date('F Y', strtotime($blogPost->get('dateCreated')));
 }
-$blogPosts = array_unique($blogPosts);
+$months = array_unique($months);
 $blogPost = $blogPosts[0];
 $months = array_slice($months, 0, 12);
 
