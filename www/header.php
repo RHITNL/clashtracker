@@ -12,7 +12,7 @@
 		<link href="css/bootstrap-theme.css" rel="stylesheet">
 		<link href="css/sticky-footer.css" rel="stylesheet">
 		<link href="/css/font-awesome.css" rel="stylesheet" type="text/css">
-		<link href="/css/custom-font-icons.css" rel="stylesheet" type="text/css"></link>
+		<link href="/css/custom-font-icons.css" rel="stylesheet" type="text/css">
 		<link href="css/bootstrap-slider.css" rel="stylesheet">
 		<link href="css/blog.css" rel="stylesheet">
 		<link href="css/dashboard.css" rel="stylesheet">

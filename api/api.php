@@ -77,9 +77,6 @@ class api{
 				$db->next_result();
 			}
 		}else{
-			$message = "Hello Alex!\nAn error occurred when trying to update the count for $env. We tried to update the count to $count but the database gave the following error:\n" . $db->error;
-			$message .= "\nSorry for the inconvenience.\nCheers,\nClash Tracker";
-			email('alexinmann@gmail.com', 'Update Proxy Request Count Error', $message, 'error_logging@clashtracker.ca');
 			throw new illegalQueryException('The database encountered an error. ' . $db->error);
 		}
 	}
