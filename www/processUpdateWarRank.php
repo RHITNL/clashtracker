@@ -2,17 +2,17 @@
 require('init.php');
 require('session.php');
 
-$warId = $_GET['warId'];
+$warId = $_POST['warId'];
 try{
 	$war = new war($warId);
 	$warId = $war->get('id');
 }catch(Exception $e){
-	$_SESSION['curError'] = 'No war with id ' . $warId . ' found.';
-	header('Location: /wars.php');
+	$error = 'No war with id ' . $warId . ' found.';
+	echo json_encode(array('error' => $error));
 	exit;
 }
 
-$clanId = $_GET['clanId'];
+$clanId = $_POST['clanId'];
 if($war->isClanInWar($clanId)){
 	$clan1 = new clan($clanId);
 	$clanId = $clan1->get('id');
@@ -26,56 +26,57 @@ if($war->isClanInWar($clanId)){
 }
 
 if(!userHasAccessToUpdateClan($war->get('clan1'))){
-	$_SESSION['curError'] = NO_ACCESS;
-	header('Location: /war.php?warId=' . $war->get('id') . $clanIdText);
+	$error = NO_ACCESS;
+	echo json_encode(array('error' => $error));
 	exit;
 }
 
-$playerId = $_GET['playerId'];
+$playerId = $_POST['playerId'];
 if($war->isPlayerInWar($playerId)){
 	$player = new player($playerId);
 	$playerId = $player->get('id');
 }else{
-	$_SESSION['curError'] = 'Player not in war.';
-	if(isset($clanId)){
-		header('Location: /war.php?warId=' . $war->get('id') . '&clanId=' . $clanId);
-	}else{
-		header('Location: /war.php?warId=' . $war->get('id'));
-	}
+	$error = 'Player not in war.';
+	echo json_encode(array('error' => $error));
 	exit;
 }
 
 $clan = $war->getPlayerWarClan($player->get('id'));
-$rank = $war->getPlayerRank($player->get('id'));
+$warRank = $war->getPlayerRank($player->get('id'));
 
-$action = $_GET['action'];
-if($action=='up'){
-	$newRank = $rank-1;
-}elseif($action=='down'){
-	$newRank = $rank+1;
+$action = $_POST['action'];
+if($action=='up' && $warRank>1){
+	$newWarRank = $warRank-1;
+}elseif($action=='down' && $warRank<count($war->getPlayers($clan))){
+	$newWarRank = $warRank+1;
 }else{
-	$_SESSION['curError'] = 'Invalid action.';
-	if(isset($clanId)){
-		header('Location: /war.php?warId=' . $war->get('id') . '&clanId=' . $clanId);
-	}else{
-		header('Location: /war.php?warId=' . $war->get('id'));
-	}
+	$error = 'Invalid action.';
+	echo json_encode(array('error' => $error));
 	exit;
 }
-$otherPlayer = $war->getPlayerByRank($newRank, $clan->get('id'));
-$war->updatePlayerRank($player->get('id'), $newRank);
-$war->updatePlayerRank($otherPlayer->get('id'), $rank);
+$otherPlayer = $war->getPlayerByRank($newWarRank, $clan->get('id'));
+$war->updatePlayerRank($otherPlayer->get('id'), $warRank);
+$war->updatePlayerRank($player->get('id'), $newWarRank);
 
-$rank = $player->get('warRank', $clan->get('id'));
-$newRank = $otherPlayer->get('warRank', $clan->get('id'));
+$clanRank = $player->get('warRank', $clan->get('id'));
+$newClanRank = $otherPlayer->get('warRank', $clan->get('id'));
 
-$clan->updatePlayerWarRank($player->get('id'), $newRank);
-$clan->updatePlayerWarRank($otherPlayer->get('id'), $rank);
+$clan->updatePlayerWarRank($player->get('id'), $newClanRank);
+$clan->updatePlayerWarRank($otherPlayer->get('id'), $clanRank);
 
-$_SESSION['curMessage'] = 'War rank successfully changed.';
-if(isset($clanId)){
-	header('Location: /war.php?warId=' . $war->get('id') . '&clanId=' . $clanId);
-}else{
-	header('Location: /war.php?warId=' . $war->get('id'));
-}
+echo json_encode(array(
+	'message' => 'War rank successfully changed.', 
+	'player1' => array(
+		'id' => $player->get('id'),
+		'rank' => "$newWarRank.&nbsp;" . displayName($player->get('name')),
+		'hideUp' => $newWarRank<=1,
+		'hideDown' => $newWarRank>=count($war->getPlayers($clan))
+	),
+	'player2' => array(
+		'id' => $otherPlayer->get('id'),
+		'rank' => "$warRank.&nbsp;" . displayName($otherPlayer->get('name')),
+		'hideUp' => $warRank<=1,
+		'hideDown' => $warRank>=count($war->getPlayers($clan))
+	)
+));
 exit;
