@@ -28,14 +28,14 @@ if(isset($name)){
 	try{
 		$player = new player($playerTag);
 	}catch(Exception $e){
-		$player = new player();
+		$player = new Player();
 		$player->create($name, $playerTag);
 	}
 }
 
 try{
 	$loggedInUser->linkWithPlayer($playerTag);
-}catch(noResultFoundException $e){
+}catch(NoResultFoundException $e){
 	header('Location: /linkPlayer.php?playerTag=' . $playerTag);
 	exit;
 }catch(Exception $e){

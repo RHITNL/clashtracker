@@ -3,7 +3,7 @@ require('init.php');
 require('session.php');
 require('header.php');
 
-$blogPosts = blogPost::getBlogPosts();
+$blogPosts = BlogPost::getBlogPosts();
 $months = array();
 foreach ($blogPosts as $blogPost) {
 	$months[] = date('F Y', strtotime($blogPost->get('dateCreated')));

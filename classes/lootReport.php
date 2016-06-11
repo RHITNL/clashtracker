@@ -1,5 +1,5 @@
 <?
-class lootReport{
+class LootReport{
 	private $id;
 	private $clanId;
 	private $dateCreated;
@@ -32,13 +32,13 @@ class lootReport{
 						throw $e;
 					}
 				}else{
-					throw new illegalQueryException('The database encountered an error. ' . $db->error);
+					throw new SQLQueryException('The database encountered an error. ' . $db->error);
 				}
 			}else{
-				throw new illegalArgumentException('Clan must be able to generate loot report.');
+				throw new ArgumentException('Clan must be able to generate loot report.');
 			}
 		}else{
-			throw new illegalFunctionCallException('ID set, cannot create.');
+			throw new FunctionCallException('ID set, cannot create.');
 		}
 	}
 
@@ -56,10 +56,10 @@ class lootReport{
 				$this->clanId = $result->clan_id;
 				$this->dateCreated = $result->date_created;
 			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				throw new SQLQueryException('The database encountered an error. ' . $db->error);
 			}
 		}else{
-			throw new illegalFunctionCallException('ID set, cannot create.');
+			throw new FunctionCallException('ID set, cannot create.');
 		}
 	}
 
@@ -77,7 +77,7 @@ class lootReport{
 			}
 			$this->load();
 		}else{
-			throw new illegalFunctionCallException('ID not set, cannot generate.');
+			throw new FunctionCallException('ID not set, cannot generate.');
 		}
 	}
 
@@ -90,10 +90,10 @@ class lootReport{
 					$db->next_result();
 				}
 			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				throw new SQLQueryException('The database encountered an error. ' . $db->error);
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set, cannot generate.');
+			throw new FunctionCallException('ID not set, cannot generate.');
 		}
 	}
 
@@ -121,13 +121,13 @@ class lootReport{
 					$this->dateCreated = $record->date_created;
 					$this->getResults();
 				}else{
-					throw new noResultFoundException('No loot report found with id ' . $this->id);
+					throw new NoResultFoundException('No loot report found with id ' . $this->id);
 				}
 			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				throw new SQLQueryException('The database encountered an error. ' . $db->error);
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set for load.');
+			throw new FunctionCallException('ID not set for load.');
 		}
 	}
 
@@ -161,7 +161,7 @@ class lootReport{
 						if(isset($loadedPlayers[$resultObj->id])){
 							$player = $loadedPlayers[$resultObj->id];
 						}else{
-							$player = new player();
+							$player = new Player();
 							$player->loadByObj($resultObj);
 							$loadedPlayers[$resultObj->id] = $player;
 						}
@@ -172,10 +172,10 @@ class lootReport{
 				}
 				return $this->results;
 			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				throw new SQLQueryException('The database encountered an error. ' . $db->error);
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set for results.');
+			throw new FunctionCallException('ID not set for results.');
 		}
 	}
 
@@ -191,10 +191,10 @@ class lootReport{
 			}elseif($prpty == 'results'){
 				return $this->getResults();
 			}else{
-				throw new illegalOperationException('Property is not in accept get.');
+				throw new OperationException('Property is not in accept get.');
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set for get.');
+			throw new FunctionCallException('ID not set for get.');
 		}
 	}
 
@@ -207,10 +207,10 @@ class lootReport{
 					$db->next_result();
 				}
 			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				throw new SQLQueryException('The database encountered an error. ' . $db->error);
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set for delete.');
+			throw new FunctionCallException('ID not set for delete.');
 		}
 	}
 }

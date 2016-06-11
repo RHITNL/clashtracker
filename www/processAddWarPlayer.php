@@ -108,7 +108,7 @@ if(strlen($playerTag) != 0 || strlen($playerName) != 0){
 	try{
 		$player = new player($playerTag);
 	}catch(Exception $e){
-		$player = new player();
+		$player = new Player();
 		if(strlen($playerName) == 0){
 			$_SESSION['curError'] = 'Player Name cannot be blank.';
 			if(isset($clanId)){

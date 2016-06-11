@@ -1,5 +1,5 @@
 <?php
-class apiException extends Exception {
+class APIException extends Exception {
 	public function __construct($reason, $message) {
 		$this->reason = $reason;
 		$this->message = $message;

@@ -27,7 +27,7 @@ try{
 	header('Location: /clan.php?clanId=' . $clan->get('id'));
 	exit;
 }catch(Exception $e){
-	$clan = new clan();
+	$clan = new Clan();
 	$clan->create($clanTag);
 }
 unsetAll();

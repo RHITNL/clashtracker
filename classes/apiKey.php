@@ -1,5 +1,5 @@
 <?
-class apiKey{
+class APIKey{
 	private $ip;
 	private $apiKey;
 
@@ -21,13 +21,13 @@ class apiKey{
 					$this->ip = $result->ip;
 					$this->apiKey = $result->api_key;
 				}else{
-					throw new illegalQueryException('The database encountered an error. ' . $db->error);
+					throw new SQLQueryException('The database encountered an error. ' . $db->error);
 				}
 			}else{
-				throw new illegalArgumentException('Niether ip address nor api key can be blank.');
+				throw new ArgumentException('Niether ip address nor api key can be blank.');
 			}
 		}else{
-			throw new illegalFunctionCallException('IP set, cannot create.');
+			throw new FunctionCallException('IP set, cannot create.');
 		}
 	}
 
@@ -53,13 +53,13 @@ class apiKey{
 					$this->ip = $record->ip;
 					$this->apiKey = $record->api_key;
 				}else{
-					throw new noResultFoundException('No api key found with IP ' . $this->ip);
+					throw new NoResultFoundException('No api key found with IP ' . $this->ip);
 				}
 			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				throw new SQLQueryException('The database encountered an error. ' . $db->error);
 			}
 		}else{
-			throw new illegalFunctionCallException('IP not set for load.');
+			throw new FunctionCallException('IP not set for load.');
 		}
 	}
 
@@ -73,10 +73,10 @@ class apiKey{
 			if(in_array($prpty, $this->acceptGet)){
 				return $this->$prpty;
 			}else{
-				throw new illegalOperationException('Property is not in accept get.');
+				throw new OperationException('Property is not in accept get.');
 			}
 		}else{
-			throw new illegalFunctionCallException('IP not set for get.');
+			throw new FunctionCallException('IP not set for get.');
 		}
 	}
 
@@ -89,10 +89,10 @@ class apiKey{
 					$db->next_result();
 				}
 			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				throw new SQLQueryException('The database encountered an error. ' . $db->error);
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set for delete.');
+			throw new FunctionCallException('ID not set for delete.');
 		}
 	}
 
@@ -107,14 +107,14 @@ class apiKey{
 			$apiKeys = array();
 			if ($results->num_rows) {
 				while ($apiKeyObj = $results->fetch_object()) {
-					$apiKey = new apiKey();
+					$apiKey = new APIKey();
 					$apiKey->loadByObj($apiKeyObj);
 					$apiKeys[] = $apiKey;
 				}
 			}
 			return $apiKeys;
 		}else{
-			throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			throw new SQLQueryException('The database encountered an error. ' . $db->error);
 		}
 	}
 }

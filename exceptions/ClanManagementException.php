@@ -1,5 +1,5 @@
 <?php
-class illegalArgumentException extends Exception {
+class ClanManagementException extends Exception {
 	public function __construct($description) {
 		parent::__construct($description);
 	}

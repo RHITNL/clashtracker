@@ -35,7 +35,7 @@ try{
 		header('Location: /signup.php');
 		exit;
 	}catch(Exception $e){
-		$user = new user();
+		$user = new User();
 		$user->create($email, $password);
 	}
 }catch(Exception $e){
