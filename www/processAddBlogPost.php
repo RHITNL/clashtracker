@@ -24,7 +24,7 @@ if(strlen($name)>50000){
 }
 
 try{
-	$post = new blogPost();
+	$post = new BlogPost();
 	$post->create($name, $content);
 	$_SESSION['curMessage'] = 'Post successfully created.';
 }catch(Exception $e){

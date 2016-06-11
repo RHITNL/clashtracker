@@ -8,11 +8,11 @@ if(!isset($loggedInUser) || $loggedInUser->get('email') != 'alexinmann@gmail.com
 	exit;
 }
 
-$proxies = api::getProxyInformation();
+$proxies = API::getProxyInformation();
 $totalRequests = 0;
 $totalLimit = 0;
 
-$apiKeys = apiKey::getKeys();
+$apiKeys = APIKey::getKeys();
 $daysInMonth = (strtotime(date('d-m-Y h:i:s'))-strtotime(date('01-m-Y')))/DAY;
 
 $query = $_POST['query'];
@@ -58,52 +58,54 @@ require('header.php');
 	<h3>Proxy Information</h3>
 	<div class="col-md-12">
 		<div class="table-responsive">
-			<table class="table table-hover">
-				<thead>
-					<tr>
-						<th>ENV</th>
-						<th>Count</th>
-						<th>Limit</th>
-						<th>Requests/Day</th>
-						<th>Expected Date of Exhaustion</th>
-						<th class="text-right">IP</th>
-					</tr>
-				</thead>
-				<tbody>
-					<?foreach ($proxies as $proxy) {?>
+			<form id="updateProxyForm" action="/processUpdateProxyCount.php" method="POST">
+				<table class="table table-hover">
+					<thead>
 						<tr>
-							<?$totalRequests += $proxy->count;
-							$totalLimit += $proxy->limit;
-							$requestsPerDay = $proxy->count/$daysInMonth;?>
-							<td><?=$proxy->env;?></td>
-							<td><?=$proxy->count;?></td>
-							<td><?=$proxy->limit;?></td>
+							<th>ENV</th>
+							<th>Count</th>
+							<th>Limit</th>
+							<th>Requests/Day</th>
+							<th>Expected Date of Exhaustion</th>
+							<th class="text-right">IP</th>
+						</tr>
+					</thead>
+					<tbody>
+						<?foreach ($proxies as $proxy) {?>
+							<tr>
+								<?$totalRequests += $proxy->count;
+								$totalLimit += $proxy->limit;
+								$requestsPerDay = $proxy->count/$daysInMonth;?>
+								<td><?=$proxy->env;?></td>
+								<td id="<?=$proxy->env;?>" style="cursor: pointer;" onclick="updateProxyCount('<?=$proxy->env;?>');"><?=$proxy->count;?></td>
+								<td><?=$proxy->limit;?></td>
+								<td><?=number_format($requestsPerDay, 2);?></td>
+								<td>
+									<?if($requestsPerDay != 0){
+										$daysUntilExhaustion = $proxy->limit / $requestsPerDay;
+										print date('F j, Y g:i:s A', strtotime(date('01-m-Y')) + $daysUntilExhaustion*DAY);
+									}?>
+								</td>
+								<td class="text-right"><?=$proxy->ip;?></td>
+							</tr>
+						<?}?>
+						<tr>
+							<th class="text-right">Total</th>
+							<?$requestsPerDay = $totalRequests/$daysInMonth;?>
+							<td><?=$totalRequests;?></td>
+							<td><?=$totalLimit;?></td>
 							<td><?=number_format($requestsPerDay, 2);?></td>
 							<td>
 								<?if($requestsPerDay != 0){
-									$daysUntilExhaustion = $proxy->limit / $requestsPerDay;
+									$daysUntilExhaustion = $totalLimit / $requestsPerDay;
 									print date('F j, Y g:i:s A', strtotime(date('01-m-Y')) + $daysUntilExhaustion*DAY);
 								}?>
 							</td>
-							<td class="text-right"><?=$proxy->ip;?></td>
+							<td></td>
 						</tr>
-					<?}?>
-					<tr>
-						<th class="text-right">Total</th>
-						<?$requestsPerDay = $totalRequests/$daysInMonth;?>
-						<td><?=$totalRequests;?></td>
-						<td><?=$totalLimit;?></td>
-						<td><?=number_format($requestsPerDay, 2);?></td>
-						<td>
-							<?if($requestsPerDay != 0){
-								$daysUntilExhaustion = $totalLimit / $requestsPerDay;
-								print date('F j, Y g:i:s A', strtotime(date('01-m-Y')) + $daysUntilExhaustion*DAY);
-							}?>
-						</td>
-						<td></td>
-					</tr>
-				</tbody>
-			</table>
+					</tbody>
+				</table>
+			</form>
 		</div>
 	</div>
 	<h3>API Keys</h3>
@@ -222,5 +224,19 @@ require('header.php');
 		</form>
 	</div>
 </div>
+<script type="text/javascript">
+	var formAvailable = false;
+	function updateProxyCount(id){
+		var value = $('#' + id).html();
+		$('#' + id).css('padding', '6px').html('<input class="inline-input form-control" name="'+id+'" value="'+value+'">');
+		$('#' + id).prop('onclick',null).off('click');
+		formAvailable = true;
+	}
+	$(document).keypress(function(e) {
+	    if(e.which == 13 && formAvailable) {
+	        $('#updateProxyForm').submit();
+	    }
+	});
+</script>
 <?
 require('footer.php');

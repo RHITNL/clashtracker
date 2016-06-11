@@ -61,7 +61,7 @@ try{
 
 try{
 	$attackerClan = $war->getPlayerWarClan($attacker->get('id'));
-}catch(illegalWarPlayerException $e){
+}catch(WarPlayerException $e){
 	$_SESSION['curError'] = 'Player not in war.';
 	if(isset($clanId)){
 		header('Location: /war.php?warId=' . $war->get('id') . '&clanId=' . $clanId);

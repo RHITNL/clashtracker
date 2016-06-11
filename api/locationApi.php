@@ -1,5 +1,5 @@
 <?
-class locationApi extends api{
+class LocationAPI extends API{
 	public function getLocations(){
 		$extension = 'locations';
 		return $this->request($extension);

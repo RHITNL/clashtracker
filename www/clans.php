@@ -7,7 +7,7 @@ $sort = isset($sort) ? $sort : 'clan_points_desc';
 
 $clans = array();
 try{
-	$clans = clan::getClans($sort);
+	$clans = Clan::getClans($sort);
 }catch(Exception $e){
 	$_SESSION['curError'] = $e->getMessage();
 }

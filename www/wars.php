@@ -41,7 +41,7 @@ try{
 		}
 		$title = $playerName . ' ' . $title;
 	}else{
-		$wars = war::getWars();
+		$wars = War::getWars();
 	}
 }catch(Exception $e){
 	$_SESSION['curError'] = $e->getMessage();

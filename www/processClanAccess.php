@@ -32,7 +32,7 @@ switch ($accessType){
 				if(strlen($email)>0){
 					if(filter_var($email, FILTER_VALIDATE_EMAIL)){
 						try{
-							$user = new user($email);
+							$user = new User($email);
 							$loggedInUserClan->grantUserAccess($user);
 						}catch(Exception $e){
 							$errors = true;

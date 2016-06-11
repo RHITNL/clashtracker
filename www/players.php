@@ -7,7 +7,7 @@ $sort = isset($sort) ? $sort : 'trophies_desc';
 
 $players = array();
 try{
-	$players = player::getPlayers($sort);
+	$players = Player::getPlayers($sort);
 }catch(Exception $e){
 	$_SESSION['curError'] = $e->getMessage();
 }

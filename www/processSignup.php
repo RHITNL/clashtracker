@@ -30,12 +30,12 @@ if($password != $confirmPassword){
 
 try{
 	try{
-		$user = new user($email);
+		$user = new User($email);
 		$_SESSION['curError'] = 'Account already exists with email: ' . $email;
 		header('Location: /signup.php');
 		exit;
 	}catch(Exception $e){
-		$user = new user();
+		$user = new User();
 		$user->create($email, $password);
 	}
 }catch(Exception $e){

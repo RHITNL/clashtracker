@@ -81,7 +81,7 @@ foreach ($loot as $playerId => $playerLoot) {
 		try{
 			$player->recordGold($playerLoot['gold']);
 			$updates = true;
-		}catch(illegalLootAmountException $e){
+		}catch(LootAmountException $e){
 			$errors = true;
 			$_SESSION['curError'] .= htmlspecialchars($player->get('name')) . ' has already stolen ' . $e->getMinimumLoot() . ' gold. New value must be greater than this.<br>';
 		}
@@ -90,7 +90,7 @@ foreach ($loot as $playerId => $playerLoot) {
 		try{
 			$player->recordElixir($playerLoot['elixir']);
 			$updates = true;
-		}catch(illegalLootAmountException $e){
+		}catch(LootAmountException $e){
 			$errors = true;
 			$_SESSION['curError'] .= htmlspecialchars($player->get('name')) . ' has already stolen ' . $e->getMinimumLoot() . ' elixir. New value must be greater than this.<br>';
 		}
@@ -99,7 +99,7 @@ foreach ($loot as $playerId => $playerLoot) {
 		try{
 			$player->recordDarkElixir($playerLoot['darkElixir']);
 			$updates = true;
-		}catch(illegalLootAmountException $e){
+		}catch(LootAmountException $e){
 			$errors = true;
 			$_SESSION['curError'] .= htmlspecialchars($player->get('name')) . ' has already stolen ' . $e->getMinimumLoot() . ' dark elixir. New value must be greater than this.<br>';
 		}

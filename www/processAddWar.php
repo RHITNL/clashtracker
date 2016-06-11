@@ -46,7 +46,7 @@ if(strlen($enemyClanTag) == 0){
 try{
 	$enemyClan = new clan($enemyClanTag);
 }catch(Exception $e){
-	$enemyClan = new clan();
+	$enemyClan = new Clan();
 	$enemyClan->create($enemyClanTag);
 	if(refreshClanInfo($enemyClan) === false){
 		$enemyClan->delete();
@@ -62,9 +62,19 @@ if($enemyClan->get('id') == $clan->get('id')){
 	exit;
 }
 
-$war = new war();
-$war->create($clan, $enemyClan, $size);
-$_SESSION['curMessage'] = 'Clan War created successully.';
+$war = new War();
 unsetAll();
-header('Location: /war.php?warId=' . $war->get('id') . '&clanId=' . $clan->get('id'));
+try{
+	$war->create($clan, $enemyClan, $size);
+	$_SESSION['curMessage'] = 'Clan War created successully.';
+	header('Location: /war.php?warId=' . $war->get('id') . '&clanId=' . $clan->get('id'));
+}catch(Exception $e){
+	try{
+		$war->delete();
+	}catch(Exception $e){
+		//ignore
+	}
+	$_SESSION['curError'] = 'There was an error trying to create the war. Please try again.';
+	header('Location: /clan.php?clanId=' . $clan->get('id'));
+}
 exit;

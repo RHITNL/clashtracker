@@ -18,11 +18,11 @@ if(strlen($newEmail)==0){
 }
 
 try{
-	$user = new user($newEmail);
+	$user = new User($newEmail);
 	$_SESSION['curError'] = 'New email is already in use.';
 	header('Location: /accountSettings.php?tab=general');
 	exit;
-}catch(noResultFoundException $e){
+}catch(NoResultFoundException $e){
 	//ignore, this should happen
 }catch(Exception $e){
 	$_SESSION['curError'] = $e->getMessage();

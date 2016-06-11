@@ -6,7 +6,7 @@ $query = $_GET['query'];
 $api = $_GET['api'];
 
 try{
-	$players = player::searchPlayers($query);
+	$players = Player::searchPlayers($query);
 }catch(Exception $e){
 	$players = array();
 	$_SESSION['curError'] .= $e->getMessage();
@@ -29,7 +29,7 @@ $minClanPoints = ($minClanPoints > 0) ? $minClanPoints : 1;
 
 if(isset($api)){
 	$query = strlen($query)>3 ? $query : null;
-	$clanApi = new clanApi();
+	$clanApi = new ClanAPI();
 	try{
 		$apiClans = $clanApi->searchClans($query, $warFrequency, $minMembers, $maxMembers, $minClanLevel, $minClanPoints);
 	}catch(Exception $e){
@@ -38,7 +38,7 @@ if(isset($api)){
 }
 
 try{
-	$clans = clan::searchClans($query, $warFrequency, $minMembers, $maxMembers, $minClanLevel, $minClanPoints);
+	$clans = Clan::searchClans($query, $warFrequency, $minMembers, $maxMembers, $minClanLevel, $minClanPoints);
 }catch(Exception $e){
 	$clans = array();
 	$_SESSION['curError'] = $e->getMessage();

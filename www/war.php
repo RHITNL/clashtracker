@@ -294,35 +294,25 @@ require('header.php');
 											$starsAgainst = $defence['totalStars'];
 										}
 									}?>
-									<tr style="cursor: pointer;" onclick="clickRow('player.php?playerId=<?=$player->get("id");?>');">
+									<tr class="playerRow-<?=$player->get('id');?>">
 										<?if($userCanEdit){?>
 											<td style="line-height: 1;">
-												<?if(isset($clanId)){
-													if($rank!=1){?>
-														<a href="/processUpdateWarRank.php?warId=<?=$war->get('id');?>&playerId=<?=$player->get('id');?>&action=up&clanId=<?=$clanId;?>" style="color: black;">
-															<i class="fa fa-caret-up"></i><br>
-														</a>
-													<?}
-													if($rank!=$war->get('size')){?>
-														<a href="/processUpdateWarRank.php?warId=<?=$war->get('id');?>&playerId=<?=$player->get('id');?>&action=down&clanId=<?=$clanId;?>" style="color: black;">
-															<i class="fa fa-caret-down"></i><br>
-														</a>
-													<?}
-												}else{
-													if($rank!=1){?>
-														<a href="/processUpdateWarRank.php?warId=<?=$war->get('id');?>&playerId=<?=$player->get('id');?>&action=up" style="color: black;">
-															<i class="fa fa-caret-up"></i><br>
-														</a>
-													<?}
-													if($rank!=$war->get('size')){?>
-														<a href="/processUpdateWarRank.php?warId=<?=$war->get('id');?>&playerId=<?=$player->get('id');?>&action=down" style="color: black;">
-															<i class="fa fa-caret-down"></i><br>
-														</a>
-													<?}
+												<?$upHidden='';
+												$downHidden='';
+												if($rank<=1){
+													$upHidden = 'hidden';
+												}if($rank>=count($war->getPlayers($clan1))){
+													$downHidden = 'hidden';
 												}?>
+												<a id="up-<?=$player->get('id');?>" class="<?=$upHidden;?>" style="color: black; cursor: pointer;" onclick="changeOrder('<?=$player->get('id');?>', '<?=$clanId;?>', 'up');">
+													<i class="fa fa-caret-up"></i><br>
+												</a>
+												<a id="down-<?=$player->get('id');?>" class="<?=$downHidden;?>" style="color: black; cursor: pointer;" onclick="changeOrder('<?=$player->get('id');?>', '<?=$clanId;?>', 'down');">
+													<i class="fa fa-caret-down"></i><br>
+												</a>
 											</td>
 										<?}?>
-										<td><?=$rank . '.&nbsp;' . displayName($player->get('name'));?></td>
+										<td class="rank-<?=$player->get('id');?>" style="cursor: pointer;" onclick="clickRow('player.php?playerId=<?=$player->get("id");?>');"><?=$rank . '.&nbsp;' . displayName($player->get('name'));?></td>
 										<td>
 											<?if(isset($firstAttack)){
 												for($i=$firstAttack['totalStars']-$firstAttack['newStars'];$i>0;$i--){?>
@@ -444,35 +434,25 @@ require('header.php');
 											$starsAgainst = $defence['totalStars'];
 										}
 									}?>
-									<tr style="cursor: pointer;" onclick="clickRow('player.php?playerId=<?=$player->get("id");?>');">
+									<tr class="playerRow-<?=$player->get('id');?>">
 										<?if($userCanEdit){?>
 											<td style="line-height: 1;">
-												<?if(isset($clanId)){
-													if($rank!=1){?>
-														<a href="/processUpdateWarRank.php?warId=<?=$war->get('id');?>&playerId=<?=$player->get('id');?>&action=up&clanId=<?=$clanId;?>" style="color: black;">
-															<i class="fa fa-caret-up"></i><br>
-														</a>
-													<?}
-													if($rank!=$war->get('size')){?>
-														<a href="/processUpdateWarRank.php?warId=<?=$war->get('id');?>&playerId=<?=$player->get('id');?>&action=down&clanId=<?=$clanId;?>" style="color: black;">
-															<i class="fa fa-caret-down"></i><br>
-														</a>
-													<?}
-												}else{
-													if($rank!=1){?>
-														<a href="/processUpdateWarRank.php?warId=<?=$war->get('id');?>&playerId=<?=$player->get('id');?>&action=up" style="color: black;">
-															<i class="fa fa-caret-up"></i><br>
-														</a>
-													<?}
-													if($rank!=$war->get('size')){?>
-														<a href="/processUpdateWarRank.php?warId=<?=$war->get('id');?>&playerId=<?=$player->get('id');?>&action=down" style="color: black;">
-															<i class="fa fa-caret-down"></i><br>
-														</a>
-													<?}
+												<?$upHidden='';
+												$downHidden='';
+												if($rank<=1){
+													$upHidden = 'hidden';
+												}if($rank>=count($war->getPlayers($clan2))){
+													$downHidden = 'hidden';
 												}?>
+												<a id="up-<?=$player->get('id');?>" class="<?=$upHidden;?>" style="color: black; cursor: pointer;" onclick="changeOrder('<?=$player->get('id');?>', '<?=$clanId;?>', 'up');">
+													<i class="fa fa-caret-up"></i><br>
+												</a>
+												<a id="down-<?=$player->get('id');?>" class="<?=$downHidden;?>" style="color: black; cursor: pointer;" onclick="changeOrder('<?=$player->get('id');?>', '<?=$clanId;?>', 'down');">
+													<i class="fa fa-caret-down"></i><br>
+												</a>
 											</td>
 										<?}?>
-										<td><?=$rank . '.&nbsp;' . displayName($player->get('name'));?></td>
+										<td class="rank-<?=$player->get('id');?>" style="cursor: pointer;" onclick="clickRow('player.php?playerId=<?=$player->get("id");?>');"><?=$rank . '.&nbsp;' . displayName($player->get('name'));?></td>
 										<td>
 											<?if(isset($firstAttack)){
 												for($i=$firstAttack['totalStars']-$firstAttack['newStars'];$i>0;$i--){?>
@@ -571,7 +551,7 @@ require('header.php');
 						$newStars = $attack['newStars'];?>
 						<tr>
 							<?if($attackerClanId == $clan1->get('id')){?>
-								<td class="text-left"><strong><?=$attackerRank . '.&nbsp;' . displayName($attacker->get('name'));?></strong>&nbsp;<i class="fa fa-star"></i><br>
+								<td class="text-left"><strong class="rank-<?=$attacker->get('id');?>"><?=$attackerRank . '.&nbsp;' . displayName($attacker->get('name'));?></strong>&nbsp;<i class="fa fa-star"></i><br>
 									<?for($i=$totalStars-$newStars;$i>0;$i--){?>
 										<i class="fa fa-star" style="color: silver;"></i>
 									<?}
@@ -593,7 +573,7 @@ require('header.php');
 										<?}?>
 									</td>
 								<?}?>
-								<td class="text-right"><i class="fa fa-shield"></i>&nbsp;<strong><?=$defenderRank . '. ' . displayName($defender->get('name'));?></strong><br>
+								<td class="text-right"><i class="fa fa-shield"></i>&nbsp;<strong class="rank-<?=$defender->get('id');?>"><?=$defenderRank . '. ' . displayName($defender->get('name'));?></strong><br>
 									<?if($totalStars==0){?>
 										<i>Defended</i>
 									<?}else{?>
@@ -601,7 +581,7 @@ require('header.php');
 									<?}?>
 								</td>
 							<?}else{?>
-								<td class="text-left"><strong><?=$defenderRank . '. ' . displayName($defender->get('name'));?></strong>&nbsp;<i class="fa fa-shield"></i><br>
+								<td class="text-left"><strong class="rank-<?=$defender->get('id');?>"><?=$defenderRank . '. ' . displayName($defender->get('name'));?></strong>&nbsp;<i class="fa fa-shield"></i><br>
 									<?if($totalStars==0){?>
 										<i>Defended</i>
 									<?}else{?>
@@ -619,7 +599,7 @@ require('header.php');
 										<?}?>
 									</td>
 								<?}?>
-								<td class="text-right"><i class="fa fa-star"></i>&nbsp;<strong><?=$attackerRank . '.&nbsp;' . displayName($attacker->get('name'));?></strong><br>
+								<td class="text-right"><i class="fa fa-star"></i>&nbsp;<strong class="rank-<?=$attacker->get('id');?>"><?=$attackerRank . '.&nbsp;' . displayName($attacker->get('name'));?></strong><br>
 									<?for($i=$totalStars-$newStars;$i>0;$i--){?>
 										<i class="fa fa-star" style="color: silver;"></i>
 									<?}
@@ -751,6 +731,60 @@ require('header.php');
 	</div>
 </div>
 <script type="text/javascript">
+function changeOrder(playerId, clanId, action){
+	var warId = '<?=$war->get('id');?>';
+	$.ajax({
+		url: '/processUpdateWarRank.php',
+		method: 'POST',
+		data: {
+			warId: warId,
+			playerId: playerId,
+			clanId: clanId,
+			action: action
+		}
+	}).done(function(msg){
+		msg = jQuery.parseJSON(msg);
+		if(msg.error){
+			alert(msg.error);
+		}else{
+			var player1Id = msg.player1.id;
+			var player2Id = msg.player2.id;
+			var row1 = $('.playerRow-' + player1Id);
+			var row2 = $('.playerRow-' + player2Id);
+			var temp = row1.html();
+			row1.html(row2.html());
+			row2.html(temp);
+			row1Class = row1.attr('class');
+			row2Class = row2.attr('class');
+			row1.removeClass(row1Class).addClass(row2Class);
+			row2.removeClass(row2Class).addClass(row1Class);
+			var up = $('#up-' + player1Id);
+			up.removeClass('hidden');
+			if(msg.player1.hideUp){
+				up.addClass('hidden');
+			}
+			var down = $('#down-' + player1Id);
+			down.removeClass('hidden');
+			if(msg.player1.hideDown){
+				down.addClass('hidden');
+			}
+			var up = $('#up-' + player2Id);
+			up.removeClass('hidden');
+			if(msg.player2.hideUp){
+				up.addClass('hidden');
+			}
+			var down = $('#down-' + player2Id);
+			down.removeClass('hidden');
+			if(msg.player2.hideDown){
+				down.addClass('hidden');
+			}
+			$('.rank-' + player1Id).html(msg.player1.rank);
+			$('.rank-' + player2Id).html(msg.player2.rank);
+		}
+	}).fail(function(xhr, textStatus){
+		alert('There was an unexpected error. Please refresh the page and try again.');
+	});
+}
 function clickRow(href){
 	window.document.location = href;
 }

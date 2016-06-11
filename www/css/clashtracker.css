@@ -11,3 +11,7 @@
 .center {
     text-align: center;
 }
+.inline-input {
+	height: 24px;
+	width: 50px;
+}

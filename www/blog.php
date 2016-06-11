@@ -9,7 +9,7 @@ if(isset($month)){
 	$afterDate = strtotime($month);
 	$beforeDate = strtotime("+1 month", $afterDate);
 }
-$blogPosts = blogPost::getBlogPosts($beforeDate, $afterDate);
+$blogPosts = BlogPost::getBlogPosts($beforeDate, $afterDate);
 ?>
 <div class="col-md-12">
 	<ol class="breadcrumb">

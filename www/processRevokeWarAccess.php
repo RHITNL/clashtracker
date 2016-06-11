@@ -20,7 +20,7 @@ $clanIdText = (isset($clan)) ? '&clanId=' . $clan->get('id') : '';
 
 $userId = $_GET['userId'];
 try{
-	$user = new user($userId);
+	$user = new User($userId);
 	$userId = $user->get('id');
 }catch(Exception $e){
 	$_SESSION['curError'] = 'No user with id ' . $warId . ' found.';
