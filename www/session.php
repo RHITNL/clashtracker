@@ -2,7 +2,7 @@
 if(isset($_SESSION['user_id'])){
 	$userId = $_SESSION['user_id'];
 	try{
-		$loggedInUser = new user($userId);
+		$loggedInUser = new User($userId);
 		$loggedInUserPlayer = $loggedInUser->get("player");
 		$loggedInUserClan = $loggedInUser->get("clan");
 	}catch(Exception $e){

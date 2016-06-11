@@ -18,7 +18,7 @@ if(strlen($newEmail)==0){
 }
 
 try{
-	$user = new user($newEmail);
+	$user = new User($newEmail);
 	$_SESSION['curError'] = 'New email is already in use.';
 	header('Location: /accountSettings.php?tab=general');
 	exit;

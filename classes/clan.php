@@ -702,7 +702,7 @@ class clan{
 					$users = array();
 					if ($results->num_rows) {
 						while ($userObj = $results->fetch_object()) {
-							$user = new user($userObj->user_id);
+							$user = new User($userObj->user_id);
 							$users[] = $user;
 						}
 					}
@@ -750,7 +750,7 @@ class clan{
 	public function revokeUserAccess($userId){
 		global $db;
 		if(isset($this->id)){
-			$user = new user($userId);
+			$user = new User($userId);
 			$procedure = buildProcedure('p_clan_disallow_user', $this->id, $user->get('id'));
 			if(($db->multi_query($procedure)) === TRUE){
 				while ($db->more_results()){
@@ -775,7 +775,7 @@ class clan{
 				}
 				if ($result->num_rows){
 					$userObj = $result->fetch_object();
-					return new user($userObj->id);
+					return new User($userObj->id);
 				}else{
 					return null;
 				}
@@ -932,7 +932,7 @@ class clan{
 					while ($editRequestObj = $results->fetch_object()) {
 						$editRequest = new stdClass();
 						$editRequest->clan = $this;
-						$user = new user();
+						$user = new User();
 						$user->loadByObj($editRequestObj);
 						$editRequest->user = $user;
 						$editRequest->message = $editRequestObj->message;

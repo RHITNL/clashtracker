@@ -30,12 +30,12 @@ if($password != $confirmPassword){
 
 try{
 	try{
-		$user = new user($email);
+		$user = new User($email);
 		$_SESSION['curError'] = 'Account already exists with email: ' . $email;
 		header('Location: /signup.php');
 		exit;
 	}catch(Exception $e){
-		$user = new user();
+		$user = new User();
 		$user->create($email, $password);
 	}
 }catch(Exception $e){
@@ -46,7 +46,7 @@ try{
 
 $_SESSION['user_id'] = $user->get('id');
 if(!DEVELOPMENT){
-	email('alexinmann@gmail.com', 'New Clash Tracker User!', 'There is a new user using Clash Tracker! Their email is ' . $email . ". Welcome them to the site!\n\nClash on!", 'activity@clashtracker.ca');
+	email('alexinmann@gmail.com', 'New Clash Tracker User!', 'There is a new User using Clash Tracker! Their email is ' . $email . ". Welcome them to the site!\n\nClash on!", 'activity@clashtracker.ca');
 }
 unsetAll();
 header('Location: /home.php');

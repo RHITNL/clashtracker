@@ -17,7 +17,7 @@ $email = $_POST['email'];
 $_SESSION['email'] = $email;
 
 try{
-	$user = new user($email);
+	$user = new User($email);
 }catch(Exception $e){
 	$_SESSION['curError'] = 'User account not found with specified email.';
 	header('Location: /forgotPassword.php');

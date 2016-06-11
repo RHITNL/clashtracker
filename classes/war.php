@@ -739,7 +739,7 @@ class war{
 				$users = array();
 				if ($results->num_rows) {
 					while ($userObj = $results->fetch_object()) {
-						$user = new user($userObj->user_id);
+						$user = new User($userObj->user_id);
 						$users[] = $user;
 					}
 				}
@@ -771,7 +771,7 @@ class war{
 	public function revokeUserAccess($userId){
 		global $db;
 		if(isset($this->id)){
-			$user = new user($userId);
+			$user = new User($userId);
 			$procedure = buildProcedure('p_war_disallow_user', $this->id, $user->get('id'));
 			if(($db->multi_query($procedure)) === TRUE){
 				while ($db->more_results()){
@@ -831,7 +831,7 @@ class war{
 					while ($editRequestObj = $results->fetch_object()) {
 						$editRequest = new stdClass();
 						$editRequest->war = $this;
-						$user = new user();
+						$user = new User();
 						$user->loadByObj($editRequestObj);
 						$editRequest->user = $user;
 						$editRequest->message = $editRequestObj->message;
