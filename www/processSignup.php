@@ -46,7 +46,7 @@ try{
 
 $_SESSION['user_id'] = $user->get('id');
 if(!DEVELOPMENT){
-	email('alexinmann@gmail.com', 'New Clash Tracker User!', 'There is a new User using Clash Tracker! Their email is ' . $email . ". Welcome them to the site!\n\nClash on!", 'activity@clashtracker.ca');
+	email('alexinmann@gmail.com', 'New Clash Tracker User!', 'There is a new user using Clash Tracker! Their email is ' . $email . ". Welcome them to the site!\n\nClash on!", 'activity@clashtracker.ca');
 }
 unsetAll();
 header('Location: /home.php');
