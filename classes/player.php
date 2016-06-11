@@ -514,7 +514,6 @@ class player{
 		if(isset($this->id)){
 			$procedure = buildProcedure('p_player_leave_clan', $this->id, date('Y-m-d H:i:s', time()));
 			if(($db->multi_query($procedure)) === TRUE){
-				$results = $db->store_result();
 				while ($db->more_results()){
 					$db->next_result();
 				}
@@ -1096,9 +1095,9 @@ class player{
 				$this->bestResult = array();
 				if ($results->num_rows) {
 					while ($result = $results->fetch_object()) {
-						$loot_type = $result->loot_type;
+						$lootType = $result->loot_type;
 						$amount = $result->max;
-						$this->bestResult[$loot_type] = $amount;
+						$this->bestResult[$lootType] = $amount;
 					}
 				}
 				return $this->bestResult[$type];
