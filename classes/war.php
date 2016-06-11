@@ -932,4 +932,23 @@ class war{
 			throw new illegalFunctionCallException('ID not set for update.');
 		}
 	}
+
+	public function delete(){
+		if(isset($this->id)){
+			$players = $this->getPlayers();
+			if(count($players)==0){
+				global $db;
+				$procedure = buildProcedure('p_war_delete', $this->id);
+				if(($db->multi_query($procedure)) === TRUE){
+					while ($db->more_results()){
+						$db->next_result();
+					}
+				}else{
+					throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				}
+			}
+		}else{
+			throw illegalFunctionCallException('ID not set for delete.');
+		}
+	}
 }
