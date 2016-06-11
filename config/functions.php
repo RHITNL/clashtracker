@@ -311,6 +311,10 @@ function convertLocation($location){
 }
 
 function refreshClanInfo($clan, $force=false){
+	global $loggedInUser;
+	if(!$force && isset($loggedInUser) && $loggedInUser->get('email') == 'alexinmann@gmail.com'){
+		return true; //Temporary to help reduce API calls (#37)
+	}
 	try{
 		if(hourAgo() > strtotime($clan->get('dateModified')) || $force || DEVELOPEMENT){
 			$api = new clanApi();
