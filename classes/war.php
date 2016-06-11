@@ -1,5 +1,5 @@
 <?
-class war{
+class War{
 	private $id;
 	private $firstClanId;
 	private $clan1;
@@ -48,10 +48,10 @@ class war{
 				$this->updateClanWarStats($clan1);
 				$this->updateClanWarStats($clan2);
 			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				throw new SQLQueryException('The database encountered an error. ' . $db->error);
 			}
 		}else{
-			throw new illegalFunctionCallException('ID set, cannot create.');
+			throw new FunctionCallException('ID set, cannot create.');
 		}
 	}
 
@@ -92,13 +92,13 @@ class war{
 					$this->experience[$this->firstClanId] = $record->first_clan_experience;
 					$this->experience[$this->secondClanId] = $record->second_clan_experience;
 				}else{
-					throw new noResultFoundException('No clan found with id ' . $this->id);
+					throw new NoResultFoundException('No clan found with id ' . $this->id);
 				}
 			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				throw new SQLQueryException('The database encountered an error. ' . $db->error);
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set for load.');
+			throw new FunctionCallException('ID not set for load.');
 		}
 	}
 
@@ -109,13 +109,13 @@ class war{
 		$clan->id = $this->firstClanId;
 		$clan->name = $warObj->first_clan_name;
 		$clan->tag = $warObj->first_clan_tag;
-		$this->clan1 = new clan();
+		$this->clan1 = new Clan();
 		$this->clan1->loadByObj($clan);
 		$this->secondClanId = $warObj->second_clan_id;
 		$clan->tag = $warObj->second_clan_tag;
 		$clan->id = $this->secondClanId;
 		$clan->name = $warObj->second_clan_name;
-		$this->clan2 = new clan();
+		$this->clan2 = new Clan();
 		$this->clan2->loadByObj($clan);
 		$this->size = $warObj->size;
 		$this->dateCreated = $warObj->date_created;
@@ -148,10 +148,10 @@ class war{
 					return $this->clan2;
 				}
 			}else{
-				throw new illegalOperationException('Property is not in accept get.');
+				throw new OperationException('Property is not in accept get.');
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set for get.');
+			throw new FunctionCallException('ID not set for get.');
 		}
 	}
 
@@ -177,13 +177,13 @@ class war{
 						$this->$prpty = $value;
 					}
 				}else{
-					throw new illegalQueryException('The database encountered an error. ' . $db->error);
+					throw new SQLQueryException('The database encountered an error. ' . $db->error);
 				}
 			}else{
-				throw new illegalOperationException('Property is not in accept set.');
+				throw new OperationException('Property is not in accept set.');
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set for set.');
+			throw new FunctionCallException('ID not set for set.');
 		}
 	}
 
@@ -208,16 +208,16 @@ class war{
 						$this->clanWarPlayers[$clan->get('id')][] = $player;
 						$this->updateRanks($clan);
 					}else{
-						throw new illegalQueryException('The database encountered an error. ' . $db->error);
+						throw new SQLQueryException('The database encountered an error. ' . $db->error);
 					}
 				}else{
-					throw new illegalWarPlayerException('Cannot add player to war. Already ' . $this->size . ' members for this clan.');
+					throw new WarPlayerException('Cannot add player to war. Already ' . $this->size . ' members for this clan.');
 				}
 			}else{
-				throw new illegalWarPlayerException('Cannot add player to war. Player not in either war clan.');
+				throw new WarPlayerException('Cannot add player to war. Player not in either war clan.');
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set to add players.');
+			throw new FunctionCallException('ID not set to add players.');
 		}
 	}
 
@@ -235,13 +235,13 @@ class war{
 					}
 					$this->updateRanks($playerClan);
 				}else{
-					throw new illegalQueryException('The database encountered an error. ' . $db->error);
+					throw new SQLQueryException('The database encountered an error. ' . $db->error);
 				}
 			}else{
-				throw new illegalWarPlayerException('Cannot remove player from war. Player not in war.');
+				throw new WarPlayerException('Cannot remove player from war. Player not in war.');
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set to remove players.');
+			throw new FunctionCallException('ID not set to remove players.');
 		}
 	}
 
@@ -251,7 +251,7 @@ class war{
 			if(isset($clan)){
 				$clanId = $clan->get('id');
 				if(!$this->isClanInWar($clanId)){
-					throw new illegalWarClanException('Clan not in war.');
+					throw new WarClanException('Clan not in war.');
 				}
 				if(isset($this->clanWarPlayers[$clanId])){
 					return $this->clanWarPlayers[$clanId];
@@ -271,7 +271,7 @@ class war{
 				$players = array();
 				if ($results->num_rows) {
 					while ($playerObj = $results->fetch_object()) {
-						$player = new player();
+						$player = new Player();
 						$player->loadByObj($playerObj);
 						$this->playerRanks[$player->get('id')] = $playerObj->rank;
 						$players[] = $player;
@@ -284,10 +284,10 @@ class war{
 				}
 				return $players;
 			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				throw new SQLQueryException('The database encountered an error. ' . $db->error);
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set to get war players.');
+			throw new FunctionCallException('ID not set to get war players.');
 		}
 	}
 
@@ -319,19 +319,19 @@ class war{
 								$db->next_result();
 							}
 						}else{
-							throw new illegalQueryException('The database encountered an error. ' . $db->error);
+							throw new SQLQueryException('The database encountered an error. ' . $db->error);
 						}
 					}else{
 						throw new Exception('Invalid amount of stars for an attack. Must be between 0-3.');
 					}
 				}else{
-					throw new illegalWarPlayerException('Attacker and defender cannot be from the same clan.');
+					throw new WarPlayerException('Attacker and defender cannot be from the same clan.');
 				}
 			}else{
-				throw new illegalWarPlayerException('Attacker and/or defender not in war.');
+				throw new WarPlayerException('Attacker and/or defender not in war.');
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set to add war attacks.');
+			throw new FunctionCallException('ID not set to add war attacks.');
 		}
 	}
 
@@ -350,10 +350,10 @@ class war{
 					$db->next_result();
 				}
 			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				throw new SQLQueryException('The database encountered an error. ' . $db->error);
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set to remove war attacks.');
+			throw new FunctionCallException('ID not set to remove war attacks.');
 		}
 	}
 
@@ -363,7 +363,7 @@ class war{
 			if(isset($clan)){
 				$clanId = $clan->get('id');
 				if(!$this->isClanInWar($clanId)){
-					throw new illegalWarClanException('Clan not in war.');
+					throw new WarClanException('Clan not in war.');
 				}
 				if(isset($this->clanAttacks[$clanId])){
 					return $this->clanAttacks[$clanId];
@@ -423,10 +423,10 @@ class war{
 					return $this->warAttacks;
 				}
 			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				throw new SQLQueryException('The database encountered an error. ' . $db->error);
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set to get war attacks.');
+			throw new FunctionCallException('ID not set to get war attacks.');
 		}
 	}
 
@@ -450,7 +450,7 @@ class war{
 			}
 			return null;
 		}else{
-			throw new illegalFunctionCallException('ID not set to remove war attacks.');
+			throw new FunctionCallException('ID not set to remove war attacks.');
 		}
 	}
 
@@ -458,21 +458,21 @@ class war{
 		if(isset($this->id)){
 			$playerId = $player->get('id');
 			if(!$this->isPlayerInWar($playerId)){
-				throw new illegalWarPlayerException('Player not in war.');
+				throw new WarPlayerException('Player not in war.');
 			}
 			if(!isset($this->playerAttacks)){
 				$this->getAttacks();
 			}
 			return $this->playerAttacks[$playerId];
 		}else{
-			throw new illegalFunctionCallException('ID not set to get war attacks.');
+			throw new FunctionCallException('ID not set to get war attacks.');
 		}
 	}
 
 	public function getPlayerDefences($playerId){
 		if(isset($this->id)){
 			if(!$this->isPlayerInWar($playerId)){
-				throw new illegalWarPlayerException('Player not in war.');
+				throw new WarPlayerException('Player not in war.');
 			}
 			if(!isset($this->playerDefences)){
 				$this->getAttacks();
@@ -483,7 +483,7 @@ class war{
 				return array();
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set to get war attacks.');
+			throw new FunctionCallException('ID not set to get war attacks.');
 		}
 	}
 
@@ -518,7 +518,7 @@ class war{
 				return $this->get('clan1');
 			}
 		}else{
-			throw new illegalWarClanException('Clan not in war.');
+			throw new WarClanException('Clan not in war.');
 		}
 	}
 
@@ -533,14 +533,14 @@ class war{
 			$wars = array();
 			if ($results->num_rows) {
 				while ($warObj = $results->fetch_object()) {
-					$war = new war();
+					$war = new War();
 					$war->loadByObj($warObj);
 					$wars[] = $war;
 				}
 			}
 			return $wars;
 		}else{
-			throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			throw new SQLQueryException('The database encountered an error. ' . $db->error);
 		}
 	}
 
@@ -561,10 +561,10 @@ class war{
 				}
 				return $clan;
 			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				throw new SQLQueryException('The database encountered an error. ' . $db->error);
 			}
 		}else{
-			throw new illegalWarPlayerException('Player not in war.');
+			throw new WarPlayerException('Player not in war.');
 		}
 	}
 
@@ -577,10 +577,10 @@ class war{
 					$db->next_result();
 				}
 			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				throw new SQLQueryException('The database encountered an error. ' . $db->error);
 			}			
 		}else{
-			throw new illegalFunctionCallException('ID not set for war ranks.');
+			throw new FunctionCallException('ID not set for war ranks.');
 		}
 	}
 
@@ -601,10 +601,10 @@ class war{
 				}
 				return $rank;
 			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				throw new SQLQueryException('The database encountered an error. ' . $db->error);
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set for war ranks.');
+			throw new FunctionCallException('ID not set for war ranks.');
 		}
 	}
 
@@ -657,13 +657,13 @@ class war{
 					$this->playerRanks[$playerId] = $rank;
 					return $rank;
 				}else{
-					throw new illegalQueryException('The database encountered an error. ' . $db->error);
+					throw new SQLQueryException('The database encountered an error. ' . $db->error);
 				}
 			}else{
-				throw new illegalWarPlayerException('Player not in war.');
+				throw new WarPlayerException('Player not in war.');
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set for war ranks.');
+			throw new FunctionCallException('ID not set for war ranks.');
 		}
 	}
 
@@ -685,13 +685,13 @@ class war{
 					}
 					return $player;
 				}else{
-					throw new illegalQueryException('The database encountered an error. ' . $db->error);
+					throw new SQLQueryException('The database encountered an error. ' . $db->error);
 				}
 			}else{
-				throw new illegalWarClanException('Clan not in war.');
+				throw new WarClanException('Clan not in war.');
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set for war ranks.');
+			throw new FunctionCallException('ID not set for war ranks.');
 		}
 	}
 
@@ -716,10 +716,10 @@ class war{
 					$db->next_result();
 				}
 			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				throw new SQLQueryException('The database encountered an error. ' . $db->error);
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set for revoke.');
+			throw new FunctionCallException('ID not set for revoke.');
 		}	
 	}
 
@@ -745,10 +745,10 @@ class war{
 				}
 				return $users;
 			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				throw new SQLQueryException('The database encountered an error. ' . $db->error);
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set for get.');
+			throw new FunctionCallException('ID not set for get.');
 		}
 	}
 
@@ -761,10 +761,10 @@ class war{
 					$db->next_result();
 				}
 			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				throw new SQLQueryException('The database encountered an error. ' . $db->error);
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set for grant.');
+			throw new FunctionCallException('ID not set for grant.');
 		}	
 	}
 
@@ -778,10 +778,10 @@ class war{
 					$db->next_result();
 				}
 			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				throw new SQLQueryException('The database encountered an error. ' . $db->error);
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set for revoke.');
+			throw new FunctionCallException('ID not set for revoke.');
 		}
 	}
 
@@ -794,10 +794,10 @@ class war{
 					$db->next_result();
 				}
 			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				throw new SQLQueryException('The database encountered an error. ' . $db->error);
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set for request.');
+			throw new FunctionCallException('ID not set for request.');
 		}
 	}
 
@@ -810,10 +810,10 @@ class war{
 					$db->next_result();
 				}
 			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				throw new SQLQueryException('The database encountered an error. ' . $db->error);
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set for delete request.');
+			throw new FunctionCallException('ID not set for delete request.');
 		}
 	}
 
@@ -831,7 +831,7 @@ class war{
 					while ($editRequestObj = $results->fetch_object()) {
 						$editRequest = new stdClass();
 						$editRequest->war = $this;
-						$user = new user();
+						$user = new User();
 						$user->loadByObj($editRequestObj);
 						$editRequest->user = $user;
 						$editRequest->message = $editRequestObj->message;
@@ -840,10 +840,10 @@ class war{
 				}
 				return $editRequests;
 			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				throw new SQLQueryException('The database encountered an error. ' . $db->error);
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set to get requests.');
+			throw new FunctionCallException('ID not set to get requests.');
 		}
 	}
 
@@ -904,7 +904,7 @@ class war{
 				$apiClan1 = $apiWar->opponent;
 				$apiClan2 = $apiWar->clan;
 			}else{
-				throw new illegalArgumentException('apiWar does not match war.');
+				throw new ArgumentException('apiWar does not match war.');
 			}
 			if($apiClan1->expEarned == $this->experience[$this->firstClanId] && $apiClan2->expEarned == $this->experience[$this->secondClanId]){
 				return;
@@ -926,10 +926,10 @@ class war{
 				$this->firstClanDestruction = $apiClan1->destructionPercentage;
 				$this->secondClanDestruction = $apiClan2->destructionPercentage;
 			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				throw new SQLQueryException('The database encountered an error. ' . $db->error);
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set for update.');
+			throw new FunctionCallException('ID not set for update.');
 		}
 	}
 
@@ -944,11 +944,11 @@ class war{
 						$db->next_result();
 					}
 				}else{
-					throw new illegalQueryException('The database encountered an error. ' . $db->error);
+					throw new SQLQueryException('The database encountered an error. ' . $db->error);
 				}
 			}
 		}else{
-			throw illegalFunctionCallException('ID not set for delete.');
+			throw FunctionCallException('ID not set for delete.');
 		}
 	}
 }

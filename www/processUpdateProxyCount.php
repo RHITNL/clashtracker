@@ -8,7 +8,7 @@ if(!isset($loggedInUser) || $loggedInUser->get('email') != 'alexinmann@gmail.com
 	exit;
 }
 
-$api = new api();
+$api = new API();
 foreach ($_POST as $env => $count) {
 	try{
 		$api->updateProxyCount($env, $count);

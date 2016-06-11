@@ -21,7 +21,7 @@ foreach ($members as $member) {
 			if($weekAgoStat !== false){
 				$lootReport = getCorrectLootReport($lootReports, $date);
 				if($lootReport === false){
-					$lootReport = new lootReport();
+					$lootReport = new LootReport();
 					$lootReport->createWithoutGeneration($clan, $date);
 					$lootReports[] = $lootReport;
 				}

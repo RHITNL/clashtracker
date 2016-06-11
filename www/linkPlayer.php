@@ -16,7 +16,7 @@ if(strlen($playerTag)==0){
 
 try{
 	$loggedInUser->linkWithPlayer($playerTag);
-}catch(noResultFoundException $e){
+}catch(NoResultFoundException $e){
 	//ignore, that's what this page is for
 }catch(Exception $e){
 	$_SESSION['curError'] = $e->getMessage();

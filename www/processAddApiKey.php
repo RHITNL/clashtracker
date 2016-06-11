@@ -19,7 +19,7 @@ foreach ($ips as $ip) {
 		}catch(Exception $e){
 			//ignore
 		}
-		$apiKey = new apiKey();
+		$apiKey = new APIKey();
 		$apiKey->create($ip, $key);
 	}
 }

@@ -1,5 +1,5 @@
 <?
-class user{
+class User{
 	private $id;
 	private $email;
 	private $password;
@@ -38,19 +38,19 @@ class user{
 						$this->id = $result->id;
 						$this->load();
 					}else{
-						throw new illegalQueryException('The database encountered an error. ' . $db->error);
+						throw new SQLQueryException('The database encountered an error. ' . $db->error);
 					}
 					if(isset($playerId)){
 						$this->linkWithPlayer($playerId);
 					}
 				}else{
-					throw new illegalArgumentException('Password is not safe.');
+					throw new ArgumentException('Password is not safe.');
 				}
 			}else{
-				throw new illegalArgumentException('Email must be valid address.');
+				throw new ArgumentException('Email must be valid address.');
 			}
 		}else{
-			throw new illegalFunctionCallException('ID set, cannot create.');
+			throw new FunctionCallException('ID set, cannot create.');
 		}
 	}
 
@@ -89,13 +89,13 @@ class user{
 					$this->dateModified = $record->date_modified;
 					$this->lastLogin = $record->last_login;
 				}else{
-					throw new noResultFoundException('No player found with id ' . $this->id);
+					throw new NoResultFoundException('No player found with id ' . $this->id);
 				}
 			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				throw new SQLQueryException('The database encountered an error. ' . $db->error);
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set for load.');
+			throw new FunctionCallException('ID not set for load.');
 		}
 	}
 
@@ -122,13 +122,13 @@ class user{
 					$this->dateModified = $record->date_modified;
 					$this->lastLogin = $record->last_login;
 				}else{
-					throw new noResultFoundException('No player found with email ' . $this->email);
+					throw new NoResultFoundException('No player found with email ' . $this->email);
 				}
 			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				throw new SQLQueryException('The database encountered an error. ' . $db->error);
 			}
 		}else{
-			throw new illegalFunctionCallException('Email not set for load.');
+			throw new FunctionCallException('Email not set for load.');
 		}
 	}
 
@@ -166,10 +166,10 @@ class user{
 					return null;
 				}
 			}else{
-				throw new illegalOperationException('Property is not in accept get.');
+				throw new OperationException('Property is not in accept get.');
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set for get.');
+			throw new FunctionCallException('ID not set for get.');
 		}
 	}
 
@@ -185,16 +185,16 @@ class user{
 						}
 						$this->$prpty = $value;
 					}else{
-						throw new illegalQueryException('The database encountered an error. ' . $db->error);
+						throw new SQLQueryException('The database encountered an error. ' . $db->error);
 					}
 				}else{
-					throw new illegalArgumentException('Email must be valid address.');
+					throw new ArgumentException('Email must be valid address.');
 				}
 			}else{
-				throw new illegalOperationException('Property is not in accept set.');
+				throw new OperationException('Property is not in accept set.');
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set for set.');
+			throw new FunctionCallException('ID not set for set.');
 		}
 	}
 
@@ -210,13 +210,13 @@ class user{
 					}
 					$this->password = $newPassword;
 				}else{
-					throw new illegalQueryException('The database encountered an error. ' . $db->error);
+					throw new SQLQueryException('The database encountered an error. ' . $db->error);
 				}
 			}else{
-				throw new illegalArgumentException('New password is not safe.');	
+				throw new ArgumentException('New password is not safe.');	
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set for change password.');
+			throw new FunctionCallException('ID not set for change password.');
 		}
 	}
 
@@ -233,13 +233,13 @@ class user{
 					}
 					$this->player = $player;
 				}else{
-					throw new illegalQueryException('The database encountered an error. ' . $db->error);
+					throw new SQLQueryException('The database encountered an error. ' . $db->error);
 				}
 			}else{
-				throw new illegalArgumentException('Cannot link to player who is already linked to another account.');
+				throw new ArgumentException('Cannot link to player who is already linked to another account.');
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set for link.');
+			throw new FunctionCallException('ID not set for link.');
 		}
 	}
 
@@ -253,10 +253,10 @@ class user{
 				}
 				$this->player = null;
 			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				throw new SQLQueryException('The database encountered an error. ' . $db->error);
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set for unlink.');
+			throw new FunctionCallException('ID not set for unlink.');
 		}
 	}
 
@@ -273,13 +273,13 @@ class user{
 					}
 					$this->clan = $clan;
 				}else{
-					throw new illegalQueryException('The database encountered an error. ' . $db->error);
+					throw new SQLQueryException('The database encountered an error. ' . $db->error);
 				}
 			}else{
-				throw new illegalArgumentException('Cannot link to clan which is already linked to another account.');
+				throw new ArgumentException('Cannot link to clan which is already linked to another account.');
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set for link.');
+			throw new FunctionCallException('ID not set for link.');
 		}
 	}
 
@@ -293,10 +293,10 @@ class user{
 				}
 				$this->clan = null;
 			}else{
-				throw new illegalQueryException('The database encountered an error. ' . $db->error);
+				throw new SQLQueryException('The database encountered an error. ' . $db->error);
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set for unlink.');
+			throw new FunctionCallException('ID not set for unlink.');
 		}
 	}
 
@@ -311,13 +311,13 @@ class user{
 					}
 					return true;
 				} else {
-					throw new illegalQueryException('The database encountered an error. ' . $db->error);
+					throw new SQLQueryException('The database encountered an error. ' . $db->error);
 				}
 			}else{
 				return false;
 			}
 		}else{
-			throw new illegalFunctionCallException('ID not set for login.');
+			throw new FunctionCallException('ID not set for login.');
 		}
 	}
 }
