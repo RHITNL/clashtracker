@@ -1,5 +1,5 @@
 <?php
-class api{
+class API{
 	private $headers;
 
 	public function __construct(){
@@ -28,12 +28,12 @@ class api{
 		$result = json_decode($rawResult);
 		curl_close($curl);
 		if($result->reason){
-			throw new apiException($result->reason, $result->message);
+			throw new APIException($result->reason, $result->message);
 		}
 		if(isset($result)){
 			return $result;
 		}else{
-			throw new apiException('Nothing was returned from Clash of Clans API.', 'No Result');
+			throw new APIException('Nothing was returned from Clash of Clans API.', 'No Result');
 		}
 	}
 
@@ -63,9 +63,9 @@ class api{
 					}
 				}
 			}
-			throw new apiException('noRequestsLeft', 'The request limits for all available proxies have been reached.');
+			throw new APIException('noRequestsLeft', 'The request limits for all available proxies have been reached.');
 		}else{
-			throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			throw new SQLQueryException('The database encountered an error. ' . $db->error);
 		}
 	}
 
@@ -77,7 +77,7 @@ class api{
 				$db->next_result();
 			}
 		}else{
-			throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			throw new SQLQueryException('The database encountered an error. ' . $db->error);
 		}
 	}
 
@@ -101,7 +101,7 @@ class api{
 					if($proxy->month != $currentMonth){
 						$proxy->month = $currentMonth;
 						$proxy->count = 0;
-						$api = new api();
+						$api = new API();
 						$api->updateProxyCount($proxy->env, $proxy->count);
 					}else{
 						$proxy->count = $proxyObj->count;
@@ -111,7 +111,7 @@ class api{
 			}
 			return $proxies;
 		}else{
-			throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			throw new SQLQueryException('The database encountered an error. ' . $db->error);
 		}
 	}
 }

@@ -8,11 +8,11 @@ if(!isset($loggedInUser) || $loggedInUser->get('email') != 'alexinmann@gmail.com
 	exit;
 }
 
-$proxies = api::getProxyInformation();
+$proxies = API::getProxyInformation();
 $totalRequests = 0;
 $totalLimit = 0;
 
-$apiKeys = apiKey::getKeys();
+$apiKeys = APIKey::getKeys();
 $daysInMonth = (strtotime(date('d-m-Y h:i:s'))-strtotime(date('01-m-Y')))/DAY;
 
 $query = $_POST['query'];

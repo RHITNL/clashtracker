@@ -10,8 +10,8 @@ try{
 	$clan = new clan($clanId);
 	$clanId = $clan->get('id');
 	refreshClanInfo($clan, isset($force));
-}catch(noResultFoundException $e){
-	$clan = new clan();
+}catch(NoResultFoundException $e){
+	$clan = new Clan();
 	$clan->create($clanId);
 	$apiResult = refreshClanInfo($clan, isset($force));
 	if($apiResult === false){

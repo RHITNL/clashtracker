@@ -46,7 +46,7 @@ if(strlen($enemyClanTag) == 0){
 try{
 	$enemyClan = new clan($enemyClanTag);
 }catch(Exception $e){
-	$enemyClan = new clan();
+	$enemyClan = new Clan();
 	$enemyClan->create($enemyClanTag);
 	if(refreshClanInfo($enemyClan) === false){
 		$enemyClan->delete();
@@ -62,7 +62,7 @@ if($enemyClan->get('id') == $clan->get('id')){
 	exit;
 }
 
-$war = new war();
+$war = new War();
 unsetAll();
 try{
 	$war->create($clan, $enemyClan, $size);

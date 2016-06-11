@@ -1,5 +1,5 @@
 <?
-class blogPost{
+class BlogPost{
 	private $name;
 	private $content;
 	private $dateCreated;
@@ -22,7 +22,7 @@ class blogPost{
 			$this->content = $content;
 			$this->dateCreated = $date;
 		}else{
-			throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			throw new SQLQueryException('The database encountered an error. ' . $db->error);
 		}
 	}
 
@@ -37,10 +37,10 @@ class blogPost{
 			if(in_array($prpty, $this->acceptGet)){
 				return $this->$prpty;
 			}else{
-				throw new illegalOperationException('Property is not in accept get.');
+				throw new OperationException('Property is not in accept get.');
 			}
 		}else{
-			throw new illegalFunctionCallException('Not set for get.');
+			throw new FunctionCallException('Not set for get.');
 		}
 	}
 
@@ -57,14 +57,14 @@ class blogPost{
 			$blogPosts = array();
 			if ($results->num_rows) {
 				while ($blogPostObj = $results->fetch_object()) {
-					$blogPost = new blogPost();
+					$blogPost = new BlogPost();
 					$blogPost->loadByObj($blogPostObj);
 					$blogPosts[] = $blogPost;
 				}
 			}
 			return $blogPosts;
 		}else{
-			throw new illegalQueryException('The database encountered an error. ' . $db->error);
+			throw new SQLQueryException('The database encountered an error. ' . $db->error);
 		}
 	}
 }

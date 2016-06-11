@@ -28,14 +28,14 @@ if(isset($name)){
 	try{
 		$clan = new clan($clanTag);
 	}catch(Exception $e){
-		$clan = new clan();
+		$clan = new Clan();
 		$clan->create($name, $clanTag);
 	}
 }
 
 try{
 	$loggedInUser->linkWithClan($clanTag);
-}catch(noResultFoundException $e){
+}catch(NoResultFoundException $e){
 	header('Location: /linkClan.php?clanTag=' . $clanTag);
 	exit;
 }catch(Exception $e){

@@ -64,7 +64,7 @@ try{
 		}
 		exit;
 	}
-	$player = new player();
+	$player = new Player();
 	$player->create($name, $playerTag);
 }
 

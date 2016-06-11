@@ -1,14 +1,14 @@
 <?
-class clanApi extends api{
+class ClanAPI extends API{
 	public function searchClans($name=null, $warFrequency=null, $minMembers=null, $maxMembers=null, $minClanLevel=null, $minClanPoints=null){
 		if(is_null($name)&&is_null($warFrequency)&&is_null($minMembers)&&is_null($maxMembers)&&is_null($minClanLevel)){
-			throw new illegalArgumentException('At least one search parameter cannot be blank to search in Clash of Clans API.');
+			throw new ArgumentException('At least one search parameter cannot be blank to search in Clash of Clans API.');
 		}
 		if(!is_null($name) && strlen($name)<3){
-			throw new illegalArgumentException('Clan name must be at least 3 characters long to search in Clash of Clans API.');	
+			throw new ArgumentException('Clan name must be at least 3 characters long to search in Clash of Clans API.');	
 		}
 		if(!is_null($minMembers) && !is_null($maxMembers) && $maxMembers<$minMembers){
-			throw new illegalArgumentException('Max. Members must be greater than or equal to Min. Members to search in Clash of Clans API.');
+			throw new ArgumentException('Max. Members must be greater than or equal to Min. Members to search in Clash of Clans API.');
 		}
 		$queryData = array();
 		if(!is_null($name)) $queryData['name'] = $name;
