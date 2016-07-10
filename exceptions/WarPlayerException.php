@@ -1,5 +1,5 @@
 <?php
-class WarPlayerException extends Exception {
+class WarPlayerException extends ClashTrackerException {
 	public function __construct($description) {
 		parent::__construct($description);
 	}

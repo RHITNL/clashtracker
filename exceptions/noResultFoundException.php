@@ -1,5 +1,5 @@
 <?
-class NoResultFoundException extends Exception {
+class NoResultFoundException extends ClashTrackerException {
 	public function __construct($description) {
 		parent::__construct($description);
 	}
