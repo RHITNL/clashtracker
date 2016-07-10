@@ -319,6 +319,7 @@ function refreshClanInfo($clan, $force=false){
 		if(hourAgo() > strtotime($clan->get('dateModified')) || $force || DEVELOPEMENT){
 			$api = new ClanAPI();
 			$clanInfo = $api->getClanInformation($clan->get('tag'));
+			error_log(cpr($clanInfo));
 			if($clanInfo->isWarLogPublic){
 				$warLogInfo = $api->getWarLog($clan->get('tag'));
 			}
@@ -334,29 +335,31 @@ function refreshClanInfo($clan, $force=false){
 		return false;
 	}
 	$clan->updateFromApi($clanInfo);
-	$tags = [];
-	foreach($clanInfo->memberList as $apiMember){
-		$tags[] = $apiMember->tag;
-	}
-	$players = Player::getPlayersAndTheirClansFromTags($tags);
-	$members = $clan->getMembers();
-	foreach($clanInfo->memberList as $apiMember){
-		$player = $players[$apiMember->tag];
-		if(!isset($player)){
-			$player = new Player();
-			$player->create($apiMember->name, $apiMember->tag);
-			$playerClan = null;
-		}else{
-			$playerClan = $player->get('clan');
+	if($clanInfo->members > 0){
+		$tags = [];
+		foreach($clanInfo->memberList as $apiMember){
+			$tags[] = $apiMember->tag;
 		}
-		if(!isset($playerClan) || $playerClan->get('id') != $clan->get('id')){
-			$clan->addPlayer($player);
+		$players = Player::getPlayersAndTheirClansFromTags($tags);
+		$members = $clan->getMembers();
+		foreach($clanInfo->memberList as $apiMember){
+			$player = $players[$apiMember->tag];
+			if(!isset($player)){
+				$player = new Player();
+				$player->create($apiMember->name, $apiMember->tag);
+				$playerClan = null;
+			}else{
+				$playerClan = $player->get('clan');
+			}
+			if(!isset($playerClan) || $playerClan->get('id') != $clan->get('id')){
+				$clan->addPlayer($player);
+			}
+			unset($members[$player->get('id')]);
+			$player->updateFromApi($apiMember);
 		}
-		unset($members[$player->get('id')]);
-		$player->updateFromApi($apiMember);
-	}
-	foreach ($members as $member){
-		$member->leaveClan();
+		foreach ($members as $member){
+			$member->leaveClan();
+		}
 	}
 	if(isset($warLogInfo)){
 		$apiWars = $warLogInfo->items;
