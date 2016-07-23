@@ -46,3 +46,17 @@ create procedure p_clan_update_bulk(varId int, varName varchar(50), varType varc
         end if;
     end //
 delimiter ;
+
+alter table user add column admin boolean;
+
+drop procedure if exists p_user_create;
+delimiter //
+create procedure p_user_create(varEmail varchar(254), varPassword varchar(255), varDate datetime)
+begin
+    if exists (select * from user limit 1)
+    then insert into user(email, password, date_created, admin) values(varEmail, varPassword, varDate, false);
+    else insert into user(email, password, date_created, admin) values(varEmail, varPassword, varDate, true);
+    end if;
+    select last_insert_id() as id;
+end //
+delimiter ;

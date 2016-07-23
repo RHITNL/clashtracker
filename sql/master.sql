@@ -852,15 +852,6 @@ begin
 end //
 delimiter ;
 
-drop procedure if exists p_user_create;
-delimiter //
-create procedure p_user_create(varEmail varchar(254), varPassword varchar(255), varDate datetime)
-begin
-	insert into user(email, password, date_created) values(varEmail, varPassword, varDate);
-	select last_insert_id() as id;
-end //
-delimiter ;
-
 drop procedure if exists p_user_change_password;
 delimiter //
 create procedure p_user_change_password(varId int, varPassword varchar(255), varDate datetime)

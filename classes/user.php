@@ -10,16 +10,19 @@ class User{
 	private $clan;
 	private $clanId;
 	private $lastLogin;
+	private $admin;
 
 	private $acceptGet = array(
 		'id' => 'id',
 		'email' => 'email',
 		'date_created' => 'dateCreated',
 		'date_modified' => 'dateModified',
+		'admin' => 'admin',
 		'last_login' => 'lastLogin'
 	);
 
 	private $acceptSet = array(
+		'admin' => 'admin',
 		'email' => 'email'
 	);
 
@@ -88,6 +91,7 @@ class User{
 					$this->dateCreated = $record->date_created;
 					$this->dateModified = $record->date_modified;
 					$this->lastLogin = $record->last_login;
+					$this->admin = $record->admin == 1;
 				}else{
 					throw new NoResultFoundException('No player found with id ' . $this->id);
 				}
@@ -121,6 +125,7 @@ class User{
 					$this->dateCreated = $record->date_created;
 					$this->dateModified = $record->date_modified;
 					$this->lastLogin = $record->last_login;
+					$this->admin = $record->admin == 1;
 				}else{
 					throw new NoResultFoundException('No player found with email ' . $this->email);
 				}
@@ -143,6 +148,7 @@ class User{
 		$this->dateCreated = $userObj->date_created;
 		$this->dateModified = $userObj->date_modified;
 		$this->lastLogin = $userObj->last_login;
+		$this->admin = $userObj->admin == 1;
 	}
 
 	public function get($prpty){
@@ -318,6 +324,27 @@ class User{
 			}
 		}else{
 			throw new FunctionCallException('ID not set for login.');
+		}
+	}
+
+	public function isAdmin(){
+		return $this->get('admin');
+	}
+
+	public static function getAdmin(){
+		$procedure = buildProcedure('p_user_get_admin');
+		if (($db->multi_query($procedure)) === TRUE) {
+			while ($db->more_results()) {
+				$db->next_result();
+			}
+			if ($result->num_rows){
+				$userObj = $result->fetch_object();
+				return new User($userObj);
+			}else{
+				return null;
+			}
+		} else {
+			throw new SQLQueryException('The database encountered an error. ' . $db->error);
 		}
 	}
 }

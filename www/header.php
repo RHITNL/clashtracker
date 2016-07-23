@@ -45,7 +45,7 @@
 							<li><a href="/clans.php">Clans</a></li>
 							<li><a href="/login.php">Log In</a></li>
 						<?}else{
-							if($loggedInUser->get('email') == 'alexinmann@gmail.com'){?>
+							if($loggedInUser->isAdmin()){?>
 								<li><a href="/dev.php">Dev</a></li>
 							<?}if(isset($loggedInUserPlayer)){?>
 								<li><a href="/player.php?playerId=<?=$loggedInUserPlayer->get('id');?>">My Player</a></li>
