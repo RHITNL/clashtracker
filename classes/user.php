@@ -335,7 +335,8 @@ class User{
 		global $db;
 		$procedure = buildProcedure('p_user_get_admin');
 		if (($db->multi_query($procedure)) === TRUE) {
-			while ($db->more_results()) {
+			$results = $db->store_result();
+			while ($db->more_results()){
 				$db->next_result();
 			}
 			if ($result->num_rows){
