@@ -24,10 +24,11 @@ foreach ($classes as $key => $class) {
 		unset($classes[$key]);
 	}
 }
+include(APPROOT . '/exceptions/clashTrackerException.php');
 $classes = array_values($classes);
 $exceptions = scandir(APPROOT . '/exceptions');
 foreach ($exceptions as $key => $exception) {
-	if(strpos($exception, '.php') !== false){
+	if(strpos($exception, '.php') !== false && strpos($exception, 'clashTracker') === false){
 		include(APPROOT . '/exceptions/' . $exception);
 		$exceptions[$key] = substr($exception, 0, -4);
 	}else{

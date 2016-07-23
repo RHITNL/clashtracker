@@ -211,14 +211,14 @@ require('header.php');
 			<h3><i class="fa fa-coins" style="color: gold;"></i>&nbsp;Loot</h3>
 			<?if($userHasAccessToUpdatePlayer){?>
 				<div class="col-md-12">
-					<div id="lootButtonsDiv" class="col-md-12">
+					<div id="lootButtonsDiv" class="col-md-12" style="margin-bottom: 6px;">
 						<button type="button" class="btn btn-primary" onclick="showRecordLootForm();">Record Loot</button>
 						<?if($showDelete){?>
 							<button type="button" class="btn btn-primary" onclick="showDeleteLootForm();">Delete Previous Records</button>
 						<?}?>
 					</div>
 					<?if($showDelete){?>
-						<div id="deleteLootDiv" hidden class="col-md-12">
+						<div id="deleteLootDiv" hidden class="col-md-12" style="margin-bottom: 6px;">
 							<form class="form" action="/processDeleteLoot.php" method="POST">
 								<input hidden name="playerId" value="<?=$player->get('id');?>">
 								<?if(isset($clan)){?>
@@ -234,7 +234,7 @@ require('header.php');
 							</form>
 						</div>
 					<?}?>
-					<div id="recordLootDiv" hidden class="col-md-12" style="margin-bottom: 10px;">
+					<div id="recordLootDiv" hidden class="col-md-12">
 						<form class="form-inline" action="/processRecordLoot.php" method="POST">
 							<input hidden name="type" value="single">
 							<input hidden name="playerId" value="<?=$player->get('id');?>">

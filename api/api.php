@@ -114,4 +114,16 @@ class API{
 			throw new SQLQueryException('The database encountered an error. ' . $db->error);
 		}
 	}
+
+	public static function addENV($env, $limit, $ip){
+		global $db;
+		$procedure = buildProcedure('p_proxy_env_add', $env, $limit, $ip, date('F'));
+		if(($db->multi_query($procedure)) === TRUE){
+			while ($db->more_results()){
+				$db->next_result();
+			}
+		}else{
+			throw new SQLQueryException('The database encountered an error. ' . $db->error);
+		}
+	}
 }

@@ -28,7 +28,7 @@ try{
 	$newPassword = generateRandomPassword();
 	$user->changePassword($newPassword);
 }catch(Exception $e){
-	$_SESSION['curError'] = 'There was an error trying to reset your password. Please try again or email alexinmann@gmail.com if the problem persists.';
+	$_SESSION['curError'] = 'There was an error trying to reset your password. Please try again or email ' + User::getAdmin()->get('email') + ' if the problem persists.';
 	header('Location: /forgotPassword.php');
 	exit;
 }
@@ -43,7 +43,7 @@ if(email($email, $subject, $message, 'password@clashtracker.ca')){
 		$_SESSION['curError'] = 'Your password was reset however sending emails is disabled on the development version of Clash Tracker. Check the Error Logs for your new password.';
 		error_log($newPassword);
 	}else{
-		$_SESSION['curError'] = 'There was an error trying to send you your new password. Please email alexinmann@gmail.com for help.';
+		$_SESSION['curError'] = 'There was an error trying to send you your new password. Please email ' + User::getAdmin()->get('email') + ' for help.';
 	}
 	header('Location: /forgotPassword.php');
 }

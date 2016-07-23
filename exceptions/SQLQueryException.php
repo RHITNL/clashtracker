@@ -1,5 +1,5 @@
 <?
-class SQLQueryException extends Exception {
+class SQLQueryException extends ClashTrackerException {
 	public function __construct($description) {
 		parent::__construct($description);
 	}

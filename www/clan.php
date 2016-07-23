@@ -137,7 +137,7 @@ require('header.php');
 				if($canRequest){?>
 					<a type="button" class="btn btn-success" href="/requestClanAccess.php?clanId=<?=$clanId;?>">Request Access</a>
 				<?}
-				if(!isset($force) && isset($loggedInUser) && $loggedInUser->get('email') == 'alexinmann@gmail.com'){?>
+				if(!isset($force) && isset($loggedInUser) && $loggedInUser->isAdmin()){?>
 					<a type="button" class="btn btn-danger" href="/clan.php?clanId=<?=$clanId;?>&force=force">Force Update</a>
 				<?}?>
 				<br><br>

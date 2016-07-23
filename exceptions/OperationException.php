@@ -1,5 +1,5 @@
 <?php
-class OperationException extends Exception {
+class OperationException extends ClashTrackerException {
 	public function __construct($description) {
 		parent::__construct($description);
 	}

@@ -1,5 +1,5 @@
 <?php
-class APIException extends Exception {
+class APIException extends ClashTrackerException {
 	public function __construct($reason, $message) {
 		$this->reason = $reason;
 		$this->message = $message;

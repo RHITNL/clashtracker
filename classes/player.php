@@ -284,7 +284,8 @@ class Player{
 				&& $this->trophies == $apiMember->trophies
 				&& $this->donations == $apiMember->donations
 				&& $this->received == $apiMember->donationsReceived
-				&& $this->leagueUrl == $apiMember->league->iconUrls->small){
+				&& $this->leagueUrl == $apiMember->league->iconUrls->small
+				&& $this->name == $apiMember->name){
 				return false; //no changes will be made
 			}
 			$date = date('Y-m-d H:i:s', time());
@@ -296,7 +297,8 @@ class Player{
 										$apiMember->donations, 
 										$apiMember->donationsReceived,
 										$apiMember->league->iconUrls->small,
-										$date);
+										$date,
+										$apiMember->name);
 			if(($db->multi_query($procedure)) === TRUE){
 				while ($db->more_results()){
 					$db->next_result();
@@ -307,6 +309,7 @@ class Player{
 				$this->donations = $apiMember->donations;
 				$this->received = $apiMember->donationsReceived;
 				$this->leagueUrl = $apiMember->league->iconUrls->small;
+				$this->name = $apiMember->name;
 				return true;
 			}else{
 				throw new SQLQueryException('The database encountered an error. ' . $db->error);

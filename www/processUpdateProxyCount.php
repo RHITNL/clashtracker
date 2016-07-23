@@ -2,7 +2,7 @@
 require('init.php');
 require('session.php');
 
-if(!isset($loggedInUser) || $loggedInUser->get('email') != 'alexinmann@gmail.com'){
+if(!isset($loggedInUser) || $loggedInUser->isAdmin()){
 	$_SESSION['curError'] = NO_ACCESS;
 	header('Location: /home.php');
 	exit;
@@ -18,7 +18,7 @@ foreach ($_POST as $env => $count) {
 }
 
 if(!isset($_SESSION['curError'])){
-	$_SESSION['curMessage'] = 'Successfully update proxy request count.';
+	$_SESSION['curMessage'] = 'Successfully updated proxy request count.';
 }
 header('Location: /dev.php');
 exit;
