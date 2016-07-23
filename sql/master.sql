@@ -373,7 +373,7 @@ alter table clan add members int default 0;
 alter table clan add clan_level int default 1;
 alter table clan add clan_points int default 0;
 alter table clan add war_wins int default 0;
-alter table clan add badgeUrl varchar(200) default null;
+alter table clan add badge_url varchar(200) default null;
 
 alter table player add level int default 1;
 alter table player add trophies int default 0;
@@ -852,15 +852,6 @@ begin
 end //
 delimiter ;
 
-drop procedure if exists p_user_create;
-delimiter //
-create procedure p_user_create(varEmail varchar(254), varPassword varchar(255), varDate datetime)
-begin
-	insert into user(email, password, date_created) values(varEmail, varPassword, varDate);
-	select last_insert_id() as id;
-end //
-delimiter ;
-
 drop procedure if exists p_user_change_password;
 delimiter //
 create procedure p_user_change_password(varId int, varPassword varchar(255), varDate datetime)
@@ -1041,7 +1032,6 @@ create procedure p_player_delete_record(varId int, varType varchar(2))
 	end //
 delimiter ;
 
-alter table clan drop column api_info;
 alter table war add column stars_locked boolean;
 alter table war add column first_clan_destruction float;
 alter table war add column second_clan_destruction float;
@@ -1124,9 +1114,9 @@ delimiter ;
 
 drop procedure if exists p_player_update_bulk;
 delimiter //
-create procedure p_player_update_bulk(varId int, varRank varchar(2), varLevel int, varTrophies int, varDonations int, varReceived int, varLeagueUrl varchar(200), varDate datetime)
+create procedure p_player_update_bulk(varId int, varRank varchar(2), varLevel int, varTrophies int, varDonations int, varReceived int, varLeagueUrl varchar(200), varDate datetime, varName varchar(50))
 begin
-    update player set level=varLevel, trophies=varTrophies, donations=varDonations, received=varReceived, league_url=varLeagueUrl where id = varId;
+    update player set name=varName, level=varLevel, trophies=varTrophies, donations=varDonations, received=varReceived, league_url=varLeagueUrl where id = varId;
     update clan_member set rank=varRank where player_id = varId and rank != 5;
     if (varLevel <> (select stat_amount from player_stats where player_id = varId and stat_type = 'LV' order by date_recorded desc limit 1)
         or not exists (select * from player_stats where player_id = varId and stat_type = 'LV' limit 1))
@@ -1169,4 +1159,34 @@ create procedure p_clan_update_bulk(varId int, varName varchar(50), varType varc
         then insert into clan_stats (clan_id, date_recorded, stat_type, stat_amount) values (varId, varDateModified, 'WW', varWarWins);
         end if;
     end //
+delimiter ;
+
+alter table user add column admin boolean;
+
+drop procedure if exists p_user_create;
+delimiter //
+create procedure p_user_create(varEmail varchar(254), varPassword varchar(255), varDate datetime)
+begin
+    if exists (select * from user limit 1)
+    then insert into user(email, password, date_created, admin) values(varEmail, varPassword, varDate, false);
+    else insert into user(email, password, date_created, admin) values(varEmail, varPassword, varDate, true);
+    end if;
+    select last_insert_id() as id;
+end //
+delimiter ;
+
+drop procedure if exists p_proxy_env_add;
+delimiter //
+create procedure p_proxy_env_add(varEnv varchar(200), varLimit int, varIp varchar(39), varMonth varchar(10))
+begin
+    insert into proxy_request_count(count, month, monthly_limit, env, ip) values (0, varMonth, varLimit, varEnv, varIp);
+end //
+delimiter ;
+
+drop procedure if exists p_user_get_admin;
+delimiter //
+create procedure p_user_get_admin()
+begin
+    select * from user where admin = true order by id limit 1;
+end //
 delimiter ;

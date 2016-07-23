@@ -5,7 +5,6 @@ function stringContainsSubstring($string, $substring){
 }
 
 unset($_SESSION['user_id']);
-error_log(cpr($_SERVER));
 $referer = $_SERVER['HTTP_REFERER'];
 if(stringContainsSubstring($referer, 'accountSettings') ||
 	stringContainsSubstring($referer, 'dev') ||
