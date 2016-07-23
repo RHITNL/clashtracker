@@ -335,13 +335,15 @@ class User{
 		global $db;
 		$procedure = buildProcedure('p_user_get_admin');
 		if (($db->multi_query($procedure)) === TRUE) {
-			$results = $db->store_result();
+			$result = $db->store_result();
 			while ($db->more_results()){
 				$db->next_result();
 			}
 			if ($result->num_rows){
 				$userObj = $result->fetch_object();
-				return new User($userObj);
+				$user = new User();
+				$user->loadByObj($userObj);
+				return $user;
 			}else{
 				return null;
 			}
