@@ -309,7 +309,7 @@ class User{
 	public function login($password){
 		if(isset($this->id)) {
 			if (password_verify($password, $this->password)){
-					global $db;
+				global $db;
 				$procedure = buildProcedure('p_user_login', $this->id, date('Y-m-d H:i:s', time()));
 				if (($db->multi_query($procedure)) === TRUE) {
 					while ($db->more_results()) {
@@ -332,6 +332,7 @@ class User{
 	}
 
 	public static function getAdmin(){
+		global $db;
 		$procedure = buildProcedure('p_user_get_admin');
 		if (($db->multi_query($procedure)) === TRUE) {
 			while ($db->more_results()) {
