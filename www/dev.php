@@ -2,7 +2,7 @@
 require('init.php');
 require('session.php');
 
-if(!isset($loggedInUser) || $loggedInUser->isAdmin()){
+if(!isset($loggedInUser) || !$loggedInUser->isAdmin()){
 	$_SESSION['curError'] = NO_ACCESS;
 	header('Location: /home.php');
 	exit;
@@ -55,8 +55,8 @@ require('header.php');
 ?>
 <div class="col-md-12">
 	<?require('showMessages.php');?>
-	<h3>Proxy Information</h3>
 	<div class="col-md-12">
+		<h3>Proxy Information</h3>
 		<div class="table-responsive">
 			<form id="updateProxyForm" action="/processUpdateProxyCount.php" method="POST">
 				<table class="table table-hover">
@@ -107,40 +107,57 @@ require('header.php');
 				</table>
 			</form>
 		</div>
-	</div>
-	<h3>API Keys</h3>
-	<div class="col-md-12">
+		<h4>Add ENV</h4>
 		<div class="col-md-12">
-			<div class="table-responsive">
-				<table class="table table-hover">
-					<thead>
+			<form class="form-inline" action="/processAddEnv.php" method="POST">
+				<div class="form-group">
+					<label for="env">ENV Variable Name: </label>
+					<input type="text" class="form-control" id="env" name="env" placeholder="FIXIE_URL">
+				</div>
+				<div class="form-group">
+					<label for="limit">Monthly Limit: </label>
+					<input type="text" class="form-control" id="limit" name="limit" placeholder="500">
+				</div>
+				<div class="form-group">
+					<label for="ip">IP: </label>
+					<input type="text" class="form-control" id="ip" name="ip" placeholder="0.0.0.0">
+				</div>
+				<button type="submit" class="btn btn-primary text-right">Add</button>
+			</form>
+		</div>
+	</div>
+	<div class="col-md-12">
+		<hr>
+		<h3>API Keys</h3>
+		<div class="table-responsive">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>IP</th>
+						<th class="text-right">Key</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?foreach ($apiKeys as $apiKey) {?>
 						<tr>
-							<th>IP</th>
-							<th class="text-right">Key</th>
+							<td><?=$apiKey->get('ip');?></td>
+							<?$key = $apiKey->get('apiKey');
+							$key = substr($key, 0, 20) . '...' . substr($key, strlen($key)-20, 20);?>
+							<td class="text-right"><?=$key;?></td>
 						</tr>
-					</thead>
-					<tbody>
-						<?foreach ($apiKeys as $apiKey) {?>
-							<tr>
-								<td><?=$apiKey->get('ip');?></td>
-								<?$key = $apiKey->get('apiKey');
-								$key = substr($key, 0, 20) . '...' . substr($key, strlen($key)-20, 20);?>
-								<td class="text-right"><?=$key;?></td>
-							</tr>
-						<?}?>
-					</tbody>
-				</table>
-			</div>
+					<?}?>
+				</tbody>
+			</table>
 		</div>
 		<h4>Add API Key</h4>
 		<div class="col-md-12">
 			<form class="form-inline" action="/processAddApiKey.php" method="POST">
 				<div class="form-group">
-					<label for="ips">IPs </label>
+					<label for="ips">IPs: </label>
 					<input type="text" class="form-control" id="ips" name="ips" placeholder="0.0.0.0">
 				</div>
 				<div class="form-group">
-					<label for="key">Key</label>
+					<label for="key">Key: </label>
 					<input type="text" class="form-control" id="key" name="key" placeholder="eyJ0eXAiOiJKV1QiLCJh...69SRf18_wG4i147Ge0hQ">
 				</div>
 				<button type="submit" class="btn btn-primary text-right">Save</button>
@@ -148,7 +165,8 @@ require('header.php');
 		</div>
 	</div>
 	<div class="col-md-12">
-		<br><h3>MySQL</h3>
+		<hr>
+		<h3>MySQL</h3>
 		<div class="col-md-12">
 			<form class="form-horizontal" action="/dev.php" method="POST">
 				<div class="form-group col-md-11">
@@ -199,7 +217,8 @@ require('header.php');
 		<?}?>
 	</div>
 	<div class="col-md-12">
-		<br><h3>Add Blog Post</h3>
+		<hr>
+		<h3>Add Blog Post</h3>
 		<form class="form-horizontal" action="/processAddBlogPost.php" method="POST">
 			<div class="col-sm-12">
 				<div class="form-group">

@@ -60,3 +60,11 @@ begin
     select last_insert_id() as id;
 end //
 delimiter ;
+
+drop procedure if exists p_proxy_env_add;
+delimiter //
+create procedure p_proxy_env_add(varEnv varchar(200), varLimit int, varIp varchar(39), varMonth varchar(10))
+begin
+    insert into proxy_request_count(count, month, monthly_limit, env, ip) values (0, varMonth, varLimit, varEnv, varIp);
+end //
+delimiter ;
