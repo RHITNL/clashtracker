@@ -18,7 +18,7 @@ foreach ($_POST as $env => $count) {
 }
 
 if(!isset($_SESSION['curError'])){
-	$_SESSION['curMessage'] = 'Successfully update proxy request count.';
+	$_SESSION['curMessage'] = 'Successfully updated proxy request count.';
 }
 header('Location: /dev.php');
 exit;

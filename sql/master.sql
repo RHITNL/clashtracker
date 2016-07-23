@@ -373,7 +373,7 @@ alter table clan add members int default 0;
 alter table clan add clan_level int default 1;
 alter table clan add clan_points int default 0;
 alter table clan add war_wins int default 0;
-alter table clan add badgeUrl varchar(200) default null;
+alter table clan add badge_url varchar(200) default null;
 
 alter table player add level int default 1;
 alter table player add trophies int default 0;
@@ -1041,7 +1041,6 @@ create procedure p_player_delete_record(varId int, varType varchar(2))
 	end //
 delimiter ;
 
-alter table clan drop column api_info;
 alter table war add column stars_locked boolean;
 alter table war add column first_clan_destruction float;
 alter table war add column second_clan_destruction float;
@@ -1124,9 +1123,9 @@ delimiter ;
 
 drop procedure if exists p_player_update_bulk;
 delimiter //
-create procedure p_player_update_bulk(varId int, varRank varchar(2), varLevel int, varTrophies int, varDonations int, varReceived int, varLeagueUrl varchar(200), varDate datetime)
+create procedure p_player_update_bulk(varId int, varRank varchar(2), varLevel int, varTrophies int, varDonations int, varReceived int, varLeagueUrl varchar(200), varDate datetime, varName varchar(50))
 begin
-    update player set level=varLevel, trophies=varTrophies, donations=varDonations, received=varReceived, league_url=varLeagueUrl where id = varId;
+    update player set name=varName, level=varLevel, trophies=varTrophies, donations=varDonations, received=varReceived, league_url=varLeagueUrl where id = varId;
     update clan_member set rank=varRank where player_id = varId and rank != 5;
     if (varLevel <> (select stat_amount from player_stats where player_id = varId and stat_type = 'LV' order by date_recorded desc limit 1)
         or not exists (select * from player_stats where player_id = varId and stat_type = 'LV' limit 1))
