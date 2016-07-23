@@ -15,7 +15,7 @@ Add the following add-ons to your app:
  - <a href='https://elements.heroku.com/addons/fixie'>Fixie</a>*
  - <a href='https://elements.heroku.com/addons/quotaguardstatic'>QuotaGuard Static</a>*
 
-* Only need one of these, but it's good to have both
+*Only need one of these, but it's good to have both
 
 ## Config Vars
 In Heroku, go to your App Settings and click on 'Reveal Config Vars', there you can see your MySQL DB creds so you can log in. Add a new config var named 'PRODUCTION' and give it any value you want. The clashtracker app looks for that config variable to determine what do to in some circumstances. 
@@ -31,7 +31,7 @@ Go to <a href="https://developer.clashofclans.com">Clash of Clan's developer web
 Once you've created the API key, copy it and the IP addresses and go to the `/dev.php` page. Under the API Keys section, add the IPs and their associated API keys. You can add multiple IP addresses to the same API Key by putting all IP addresses divided by spaces in the IPs input.
 
 ## Setting up Proxy Information
-On the `/dev.php` page, add the different static IP add-ons that you're using. For each one you've added, you'll need the config variable name and the monthly limit of requests. Here are montly limits for the base plans of the add-ons mentioned above:
+On the `/dev.php` page, add the different static IP add-ons that you're using. For each one you've added, you'll need the config variable name, the monthly limit and one of the IP addresses for that add-on. Here are montly limits for the base plans of the add-ons mentioned above:
 
 Add-on | Config Var Name | Monthly Limit of Base Plan
 ------------ | ------------ | -------------
