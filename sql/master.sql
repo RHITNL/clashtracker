@@ -1182,3 +1182,11 @@ begin
     insert into proxy_request_count(count, month, monthly_limit, env, ip) values (0, varMonth, varLimit, varEnv, varIp);
 end //
 delimiter ;
+
+drop procedure if exists p_user_get_admin;
+delimiter //
+create procedure p_user_get_admin()
+begin
+    select * from user where admin = true order by id limit 1;
+end //
+delimiter ;
