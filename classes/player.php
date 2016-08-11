@@ -125,28 +125,7 @@ class Player{
 				if ($results->num_rows) {
 					$record = $results->fetch_object();
 					$results->close();
-					$this->id = $record->id;
-					$this->name = $record->name;
-					$this->tag = $record->tag;
-					$this->dateCreated = $record->date_created;
-					$this->dateModified = $record->date_modified;
-					$this->accessType = $record->access_type;
-					$this->minRankAccess = $record->min_rank_access;
-					$this->level = $record->level;
-					$this->trophies = $record->trophies;
-					$this->donations = $record->donations;
-					$this->received = $record->received;
-					$this->leagueUrl = $record->league_url;
-					$this->firstAttackTotalStars = $record->first_attack_total_stars;
-					$this->firstAttackNewStars = $record->first_attack_new_stars;
-					$this->secondAttackTotalStars = $record->second_attack_total_stars;
-					$this->secondAttackNewStars = $record->second_attack_new_stars;
-					$this->starsOnDefence = $record->stars_on_defence;
-					$this->numberOfDefences = $record->number_of_defences;
-					$this->attacksUsed = $record->attacks_used;
-					$this->numberOfWars = $record->number_of_wars;
-					$this->rankAttacked = $record->rank_attacked;
-					$this->rankDefended = $record->rank_defended;
+					$this->loadByObj($record);
 				}else{
 					throw new NoResultFoundException('No player found with id ' . $this->id);
 				}
@@ -171,28 +150,7 @@ class Player{
 				if ($results->num_rows) {
 					$record = $results->fetch_object();
 					$results->close();
-					$this->id = $record->id;
-					$this->name = $record->name;
-					$this->tag = $record->tag;
-					$this->dateCreated = $record->date_created;
-					$this->dateModified = $record->date_modified;
-					$this->accessType = $record->access_type;
-					$this->minRankAccess = $record->min_rank_access;
-					$this->level = $record->level;
-					$this->trophies = $record->trophies;
-					$this->donations = $record->donations;
-					$this->received = $record->received;
-					$this->leagueUrl = $record->league_url;
-					$this->firstAttackTotalStars = $record->first_attack_total_stars;
-					$this->firstAttackNewStars = $record->first_attack_new_stars;
-					$this->secondAttackTotalStars = $record->second_attack_total_stars;
-					$this->secondAttackNewStars = $record->second_attack_new_stars;
-					$this->starsOnDefence = $record->stars_on_defence;
-					$this->numberOfDefences = $record->number_of_defences;
-					$this->attacksUsed = $record->attacks_used;
-					$this->numberOfWars = $record->number_of_wars;
-					$this->rankAttacked = $record->rank_attacked;
-					$this->rankDefended = $record->rank_defended;
+					$this->loadByObj($record);
 				}else{
 					throw new NoResultFoundException('No player found with tag ' . $this->tag);
 				}
@@ -217,14 +175,16 @@ class Player{
 		$this->donations = $playerObj->donations;
 		$this->received = $playerObj->received;
 		$this->leagueUrl = $playerObj->league_url;
-		$this->firstAttackTotalStars = $playerObj->first_attack_total_stars;
-		$this->firstAttackNewStars = $playerObj->first_attack_new_stars;
-		$this->secondAttackTotalStars = $playerObj->second_attack_total_stars;
-		$this->secondAttackNewStars = $playerObj->second_attack_new_stars;
-		$this->starsOnDefence = $playerObj->stars_on_defence;
-		$this->numberOfDefences = $playerObj->number_of_defences;
-		$this->attacksUsed = $playerObj->attacks_used;
-		$this->numberOfWars = $playerObj->number_of_wars;
+		if(isset($playerObj->first_attack_total_stars)){
+			$this->firstAttackTotalStars = $playerObj->first_attack_total_stars;
+			$this->firstAttackNewStars = $playerObj->first_attack_new_stars;
+			$this->secondAttackTotalStars = $playerObj->second_attack_total_stars;
+			$this->secondAttackNewStars = $playerObj->second_attack_new_stars;
+			$this->starsOnDefence = $playerObj->stars_on_defence;
+			$this->numberOfDefences = $playerObj->number_of_defences;
+			$this->attacksUsed = $playerObj->attacks_used;
+			$this->numberOfWars = $playerObj->number_of_wars;
+		}
 		$this->rankAttacked = $playerObj->rank_attacked;
 		$this->rankDefended = $playerObj->rank_defended;
 		$this->clan = $clan;
