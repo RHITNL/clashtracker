@@ -14,6 +14,7 @@ drop table if exists war_player;
 drop table if exists war;
 drop table if exists clan_member;
 drop table if exists clan;
+drop table if exists loot;
 drop table if exists player_stats;
 drop table if exists player;
 
