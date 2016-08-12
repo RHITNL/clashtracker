@@ -175,16 +175,14 @@ class Player{
 		$this->donations = $playerObj->donations;
 		$this->received = $playerObj->received;
 		$this->leagueUrl = $playerObj->league_url;
-		if(isset($playerObj->first_attack_total_stars)){
-			$this->firstAttackTotalStars = $playerObj->first_attack_total_stars;
-			$this->firstAttackNewStars = $playerObj->first_attack_new_stars;
-			$this->secondAttackTotalStars = $playerObj->second_attack_total_stars;
-			$this->secondAttackNewStars = $playerObj->second_attack_new_stars;
-			$this->starsOnDefence = $playerObj->stars_on_defence;
-			$this->numberOfDefences = $playerObj->number_of_defences;
-			$this->attacksUsed = $playerObj->attacks_used;
-			$this->numberOfWars = $playerObj->number_of_wars;
-		}
+		$this->firstAttackTotalStars = $playerObj->first_attack_total_stars;
+		$this->firstAttackNewStars = $playerObj->first_attack_new_stars;
+		$this->secondAttackTotalStars = $playerObj->second_attack_total_stars;
+		$this->secondAttackNewStars = $playerObj->second_attack_new_stars;
+		$this->starsOnDefence = $playerObj->stars_on_defence;
+		$this->numberOfDefences = $playerObj->number_of_defences;
+		$this->attacksUsed = $playerObj->attacks_used;
+		$this->numberOfWars = $playerObj->number_of_wars;
 		$this->rankAttacked = $playerObj->rank_attacked;
 		$this->rankDefended = $playerObj->rank_defended;
 		$this->clan = $clan;
