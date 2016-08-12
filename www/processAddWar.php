@@ -66,7 +66,7 @@ $war = new War();
 unsetAll();
 try{
 	$war->create($clan, $enemyClan, $size);
-	$_SESSION['curMessage'] = 'Clan War created successully.';
+	$_SESSION['curMessage'] = 'Clan War created successfully.';
 	header('Location: /war.php?warId=' . $war->get('id') . '&clanId=' . $clan->get('id'));
 }catch(Exception $e){
 	try{
