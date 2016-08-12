@@ -73,7 +73,7 @@ try{
 	try{
 		$war->delete();
 	}catch(Exception $e){
-		//ignore
+		error_log($e->getMessage());
 	}
 	$_SESSION['curError'] = 'There was an error trying to create the war. Please try again.';
 	header('Location: /clan.php?clanId=' . $clan->get('id'));
