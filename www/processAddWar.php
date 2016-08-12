@@ -69,6 +69,7 @@ try{
 	$_SESSION['curMessage'] = 'Clan War created successfully.';
 	header('Location: /war.php?warId=' . $war->get('id') . '&clanId=' . $clan->get('id'));
 }catch(Exception $e){
+	error_log($e->getMessage());
 	try{
 		$war->delete();
 	}catch(Exception $e){
