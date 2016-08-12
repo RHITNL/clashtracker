@@ -72,10 +72,11 @@ try{
 	error_log($e->getMessage());
 	try{
 		$war->delete();
+		$_SESSION['curError'] = 'There was an error trying to create the war. Please try again.';
 	}catch(Exception $e){
 		error_log($e->getMessage());
+		$_SESSION['curError'] = 'There was an unexpected error.';
 	}
-	$_SESSION['curError'] = 'There was an error trying to create the war. Please try again.';
 	header('Location: /clan.php?clanId=' . $clan->get('id'));
 }
 exit;
