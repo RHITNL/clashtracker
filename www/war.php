@@ -149,7 +149,9 @@ require('header.php');
 	<div class="col-sm-12 text-center"><h2><i class="fa fa-star" style="color: gold;"></i> <?=$clan1Stars;?> - <?=$clan2Stars;?> <i class="fa fa-star" style="color: gold;"></i></h2></div>
 	<?if(!$userCanEdit){?>
 		<div class="col-md-6">
-			<h2 class="hidden-lg"><?=displayName($clan1->get('name'));?></h2>
+			<h2 class="hidden-lg" style="cursor: pointer;" onclick="clickRow('clan.php?clanId=<?=$clan1->get("id");?>');">
+				<?=displayName($clan1->get('name'));?>
+			</h2>
 			<div class="panel panel-primary">
 				<div class="panel-heading text-center">
 					<h3 class=" panel-title">Attack Totals</h3>
@@ -185,7 +187,9 @@ require('header.php');
 			</div>
 		</div>
 		<div class="col-md-6">
-			<h2 class="hidden-lg"><?=displayName($clan2->get('name'));?></h2>
+			<h2 class="hidden-lg" style="cursor: pointer;" onclick="clickRow('clan.php?clanId=<?=$clan2->get("id");?>');">
+				<?=displayName($clan2->get('name'));?>
+			</h2>
 			<div class="panel panel-primary">
 				<div class="panel-heading text-center">
 					<h3 class=" panel-title">Attack Totals</h3>
@@ -249,7 +253,9 @@ require('header.php');
 	<div id="warPlayers" class="col-md-12">
 		<br>
 		<div class="col-md-6">
-			<h2 class="hidden-lg"><?=displayName($clan1->get('name'));?></h2>
+			<h2 class="hidden-lg" style="cursor: pointer;" onclick="clickRow('clan.php?clanId=<?=$clan1->get("id");?>');">
+				<?=displayName($clan1->get('name'));?>
+			</h2>
 			<div class="col-md-12">
 				<?if($clan1CanAddMore && $userCanEdit){?>
 					<a type="button" class="btn btn-success" href="/addWarPlayer.php?warId=<?=$war->get('id');?>&addClanId=<?=$clan1->get('id');?><?=$clanIdText;?>">Add Players</a><br><br>
@@ -373,7 +379,9 @@ require('header.php');
 			</div>
 		</div>
 		<div class="col-md-6">
-			<h2 class="hidden-lg"><?=displayName($clan2->get('name'));?></h2>
+			<h2 class="hidden-lg" style="cursor: pointer;" onclick="clickRow('clan.php?clanId=<?=$clan2->get("id");?>');">
+				<?=displayName($clan2->get('name'));?>
+			</h2>
 			<div class="col-md-12">
 				<?if($clan2CanAddMore && $userCanEdit){?>
 					<a type="button" class="btn btn-success" href="/addWarPlayer.php?warId=<?=$war->get('id');?>&addClanId=<?=$clan2->get('id');?><?=$clanIdText;?>">Add Players</a><br><br>
@@ -502,11 +510,19 @@ require('header.php');
 			<table class="table table-hover">
 				<thead>
 					<tr>
-						<th class="text-left"><h3><?=displayName($clan1->get('name'));?></h3></th>
+						<th class="text-left">
+							<h3 style="cursor: pointer;" onclick="clickRow('clan.php?clanId=<?=$clan1->get("id");?>');">
+								<?=displayName($clan1->get('name'));?>
+							</h3>
+						</th>
 						<?if($userCanEdit){?>
 							<th class="text-center">Actions</th>
 						<?}?>
-						<th class="text-right"><h3><?=displayName($clan2->get('name'));?></h3></th>
+						<th class="text-right">
+							<h3 style="cursor: pointer;" onclick="clickRow('clan.php?clanId=<?=$clan2->get("id");?>');">
+								<?=displayName($clan2->get('name'));?>
+							</h3>
+						</th>
 					</tr>
 				</thead>
 				<tbody>
