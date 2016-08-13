@@ -147,7 +147,7 @@ require('header.php');
 		</div>
 	</div>
 	<div class="col-sm-12 text-center"><h2><i class="fa fa-star" style="color: gold;"></i> <?=$clan1Stars;?> - <?=$clan2Stars;?> <i class="fa fa-star" style="color: gold;"></i></h2></div>
-	<?if(!$userCanEdit){?>
+	<?if(!$isEditable){?>
 		<div class="col-md-6">
 			<h2 class="hidden-lg" style="cursor: pointer;" onclick="clickRow('clan.php?clanId=<?=$clan1->get("id");?>');">
 				<?=displayName($clan1->get('name'));?>

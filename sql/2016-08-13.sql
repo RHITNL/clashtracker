@@ -1,0 +1,1 @@
+alter table war add message varchar(1000);

@@ -14,12 +14,14 @@ class War{
 	private $starsLocked;
 	private $destruction;
 	private $experience;
+	private $message;
 
 	private $acceptGet = array(
 		'id' => 'id',
 		'first_clan_id' => 'firstClanId',
 		'second_clan_id' => 'secondClanId',
 		'size' => 'size',
+		'message' => 'message',
 		'date_created' => 'dateCreated',
 		'date_modified' => 'dateModified',
 		'stars_locked' => 'starsLocked'
@@ -27,6 +29,7 @@ class War{
 
 	private $acceptSet = array(
 		'size' => 'size',
+		'message' => 'message',
 		'first_clan_stars' => 'firstClanStars',
 		'second_clan_stars' => 'secondClanStars',
 		'clan_stars' => 'clanStars'
@@ -82,6 +85,7 @@ class War{
 					$this->firstClanId = $record->first_clan_id;
 					$this->secondClanId = $record->second_clan_id;
 					$this->size = $record->size;
+					$this->message = $record->message;
 					$this->dateCreated = $record->date_created;
 					$this->dateModified = $record->date_modified;
 					$this->clanStars[$this->firstClanId] = $record->first_clan_stars;
@@ -118,6 +122,7 @@ class War{
 		$this->clan2 = new Clan();
 		$this->clan2->loadByObj($clan);
 		$this->size = $warObj->size;
+		$this->message = $warObj->message;
 		$this->dateCreated = $warObj->date_created;
 		$this->dateModified = $warObj->date_modified;
 		$this->clanStars[$this->firstClanId] = $warObj->first_clan_stars;
