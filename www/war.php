@@ -692,25 +692,27 @@ require('header.php');
 						<tbody>
 							<?foreach($allowedUsers as $allowedUser){?>
 								<tr>
-									<td>
-										<?$allowedUserPlayer = $allowedUser->get('player');
-										if(isset($allowedUserPlayer)){
-											print displayName($allowedUserPlayer->get('name'));
-										}?>									
-									</td>
-									<td>
-										<?if(isset($allowedUserPlayer)){
-											print rankFromCode($allowedUserPlayer->get('rank'));
-										}?>
-									</td>
-									<td>
-										<?if(isset($allowedUserPlayer)){
-											$clan = $allowedUserPlayer->get('clan');
-											if(isset($clan)){
-												print displayName($clan->get('name'));
-											}
-										}?>
-									</td>
+									<?$allowedUserPlayer = $allowedUser->get('player');
+									if(isset($allowedUserPlayer)){?>
+										<td style="cursor: pointer;" onclick="clickRow('player.php?playerId=<?=$allowedUserPlayer->get("id");?>');">
+											<?=displayName($allowedUserPlayer->get('name'));?>
+										</td>
+										<td>
+											<?=rankFromCode($allowedUserPlayer->get('rank'));?>
+										</td>
+										<?$allowedUserPlayerClan = $allowedUserPlayer->get('clan');
+										if(isset($allowedUserPlayerClan)){?>
+											<td style="cursor: pointer;" onclick="clickRow('clan.php?clanId=<?=$allowedUserPlayerClan->get("id");?>');">
+												<?=displayName($allowedUserPlayerClan->get('name'));?>
+											</td>
+										<?}else{?>
+											<td></td>
+										<?}
+									}else{?>
+										<td></td>
+										<td></td>
+										<td></td>
+									<?}?>
 									<td><?=$allowedUser->get('email');?></td>
 									<td class="text-right">
 										<a type="button" class="btn btn-xs btn-danger" href="/processRevokeWarAccess.php?warId=<?=$war->get('id');?>&userId=<?=$allowedUser->get('id') . $clanIdText;?>">Revoke Access</a>
