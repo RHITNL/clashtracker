@@ -29,7 +29,7 @@ foreach ($ips as $ip) {
 	}
 }
 
-if(!isset($_SESSION['curError']){
+if(!isset($_SESSION['curError'])){
 	$_SESSION['curMessage'] = 'API Keys successfully added.';
 }
 header('Location: /dev.php');
