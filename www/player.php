@@ -522,7 +522,7 @@ $(document).ready(function() {
 		emptyDataMessage: "Oh no! We don't have enough records for this player's loot to display any stats. You can start by adding some above."
 	};
 	var warsAvailable = <?=json_encode($warsAvailable);?>;
-	var attacksAvailable = <?=json_encode(count($attacks)>0);?>;
+	var attacksAvailable = <?=json_encode($countAttacks>0);?>;
 	if(attacksAvailable){
 
 		var ctx = $("#attackPie").get(0).getContext("2d");
@@ -560,7 +560,7 @@ $(document).ready(function() {
 		]
 		var attackPieChart = new Chart(ctx).Pie(data,{});
 	}
-	var defenceAvailable = <?=json_encode(count($defences)>0);?>;
+	var defenceAvailable = <?=json_encode($countDefences>0);?>;
 	if(defenceAvailable){
 		var ctx = $("#defencePie").get(0).getContext("2d");
 		var data = [
