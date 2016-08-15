@@ -219,14 +219,11 @@ require('header.php');
 				</div>
 			</div>
 		</div>
-	<?}if(count($warAttacks) >= 0 || count($requests) > 0 || count($allowedUsers) > 0 || $canRequestAccess){?>
+	<?}if(count($warAttacks) > 0 || count($requests) > 0 || count($allowedUsers) > 0 || $canRequestAccess){?>
 		<div class="col-md-12">
 			<ul class="nav nav-pills" role="tablist">
-                                <li id="warAssignTab" role="presentation" class="active">
-					<a style="cursor: pointer;">Assign Attacks</a>
-				</li>
-				<li id="warPlayersTab" role="presentation">
-					<a style="cursor: pointer;">Record Attacks</a>
+				<li id="warPlayersTab" role="presentation" class="active">
+					<a style="cursor: pointer;">War Players</a>
 				</li>
 				<?if(count($warAttacks) > 0){?>
 					<li id="warAttacksTab" role="presentation">
@@ -248,188 +245,7 @@ require('header.php');
 			</ul>
 		</div>
 	<?}?>
-        <div id="warAssign" class="col-md-12">
-            list of asigned attacks here
-		<br>
-		<div class="col-md-12">
-			<h2 class="hidden-lg"><?=displayName($clan1->get('name'));?></h2>
-			<div class="col-md-12">
-				<?if($clan1CanAddMore && $userCanEdit){
-					if(isset($clanId)){?>
-						<a type="button" class="btn btn-success" href="/addWarPlayer.php?warId=<?=$war->get('id');?>&addClanId=<?=$clan1->get('id');?>&clanId=<?=$clanId;?>">Add Players</a><br><br>
-					<?}else{?>
-						<a type="button" class="btn btn-success" href="/addWarPlayer.php?warId=<?=$war->get('id');?>&addClanId=<?=$clan1->get('id');?>">Add Players</a><br><br>
-					<?}
-					if(count($clan1Players) > 0){?>
-						<div class="alert alert-warning" role="alert">
-							There's not enough players in the war for this clan yet. <?if($userCanEdit){ print "You can add more by clicking the button above.";}?>
-						</div>
-					<?}
-				}?>
-			</div>
-			<div class="col-md-12">
-				<?if(count($clan1Players) > 0){?>
-					<div class="table-responsive">
-						<table class="table table-hover">
-							<thead>
-								<tr>
-									<?if($userCanEdit){?>
-										<th></th>
-									<?}?>
-									<th>Player</th>
-                                                                        <th colspan="2">First&nbsp;Attack</th>
-                                                                        <th colspan="2">Second&nbsp;Attack</th>
-									<th>Defence</th>
-									<?if($userCanEdit){?>
-										<th></th>
-									<?}?>
-								</tr>
-							</thead>
-							<tbody>
-								<?foreach ($clan1Players as $player) {
-									$playerAttacks = getPlayerAttacks($player->get('id'));
-									$firstAttack = $playerAttacks[0];
-									$secondAttack = $playerAttacks[1];
-									$playerDefences = getPlayerAttacks($player->get('id'), 'defence');
-									$starsAgainst = -1;
-									$rank = $war->getPlayerRank($player->get('id'));
-									foreach ($playerDefences as $defence) {
-										if($defence['totalStars'] > $starsAgainst){
-											$starsAgainst = $defence['totalStars'];
-										}
-									}?>
-									<tr class="playerRow-<?=$player->get('id');?>">
-										<?if($userCanEdit){?>
-											<td style="line-height: 1;">
-												<?$upHidden='';
-												$downHidden='';
-												if($rank<=1){
-													$upHidden = 'hidden';
-												}if($rank>=count($war->getPlayers($clan1))){
-													$downHidden = 'hidden';
-												}?>
-												<a id="up-<?=$player->get('id');?>" class="<?=$upHidden;?>" style="color: black; cursor: pointer;" onclick="changeOrder('<?=$player->get('id');?>', '<?=$clanId;?>', 'up');">
-													<i class="fa fa-caret-up"></i><br>
-												</a>
-												<a id="down-<?=$player->get('id');?>" class="<?=$downHidden;?>" style="color: black; cursor: pointer;" onclick="changeOrder('<?=$player->get('id');?>', '<?=$clanId;?>', 'down');">
-													<i class="fa fa-caret-down"></i><br>
-												</a>
-											</td>
-										<?}?>
-										<td class="rank-<?=$player->get('id');?>" style="cursor: pointer;" onclick="clickRow('player.php?playerId=<?=$player->get("id");?>');"><?=$rank . '.&nbsp;' . displayName($player->get('name'));?></td>
-                                                                                    <?if(isset($firstAttack)){ ?>
-                                                                                        <td colspan="2">
-                                                                                            <?for($i=$firstAttack['totalStars']-$firstAttack['newStars'];$i>0;$i--){?>
-                                                                                                    <i class="fa fa-star" style="color: silver;"></i>
-                                                                                            <?}
-                                                                                            for($i=$firstAttack['newStars'];$i>0;$i--){?>
-                                                                                                    <i class="fa fa-star" style="color: gold;"></i>
-                                                                                            <?}
-                                                                                            for($i=$firstAttack['totalStars'];$i<3;$i++){?>
-                                                                                                    <i class="fa fa-star-o" style="color: silver;"></i>
-                                                                                            <?}?>
-                                                                                        </td>
-                                                                                    <?}else{?>
-                                                                                        <td>
-                                                                                            <?if(count($clan2Players) > 0 && $userCanEdit){
-                                                                                                            if(isset($clanId)){?>
-                                                                                                                    <a type="button" class="btn btn-xs btn-info" href="/addWarAssign.php?warId=<?=$war->get('id');?>&playerId=<?=$player->get('id');?>&clanId=<?=$clanId;?>">Assign</a>
-                                                                                                            <?}else{?>
-                                                                                                                    <a type="button" class="btn btn-xs btn-info" href="/addWarAssign.php?warId=<?=$war->get('id');?>&playerId=<?=$player->get('id');?>">Assign</a>
-                                                                                                            <?}
-                                                                                                    }
-                                                                                            ?>
-                                                                                        </td>
-                                                                                        <td>
-                                                                                            <?if(count($clan2Players) > 0 && $userCanEdit){
-                                                                                                    if(isset($clanId)){?>
-                                                                                                            <a type="button" class="btn btn-xs btn-success" href="/addWarAttack.php?warId=<?=$war->get('id');?>&playerId=<?=$player->get('id');?>&clanId=<?=$clanId;?>">Add Attack</a>
-                                                                                                    <?}else{?>
-                                                                                                            <a type="button" class="btn btn-xs btn-success" href="/addWarAttack.php?warId=<?=$war->get('id');?>&playerId=<?=$player->get('id');?>">Add Attack</a>
-                                                                                                    <?}
-                                                                                            }?>
-                                                                                        </td>
-                                                                                    <?}?>
-                                                                                    
-                                                                                    <?if(isset($secondAttack)){ ?>
-                                                                                        <td colspan="2">
-												<?for($i=$secondAttack['totalStars']-$secondAttack['newStars'];$i>0;$i--){?>
-													<i class="fa fa-star" style="color: silver;"></i>
-												<?}
-												for($i=$secondAttack['newStars'];$i>0;$i--){?>
-													<i class="fa fa-star" style="color: gold;"></i>
-												<?}
-												for($i=$secondAttack['totalStars'];$i<3;$i++){?>
-													<i class="fa fa-star-o" style="color: silver;"></i>
-												<?}?>
-                                                                                        </td>
-                                                                                    <?}elseif(isset($firstAttack)){?>
-                                                                                        <td>
-                                                                                        <?if(count($clan2Players) > 0 && $userCanEdit){
-													if(isset($clanId)){?>
-														<a type="button" class="btn btn-xs btn-info" href="/addWarAssign.php?warId=<?=$war->get('id');?>&playerId=<?=$player->get('id');?>&clanId=<?=$clanId;?>">Assign</a>
-													<?}else{?>
-														<a type="button" class="btn btn-xs btn-info" href="/addWarAssign.php?warId=<?=$war->get('id');?>&playerId=<?=$player->get('id');?>">Assign</a>
-													<?}
-												}
-                                                                                        ?>
-                                                                                        </td>
-                                                                                        <td>
-												<?if(count($clan2Players) > 0 && $userCanEdit){
-													if(isset($clanId)){?>
-														<a type="button" class="btn btn-xs btn-success" href="/addWarAttack.php?warId=<?=$war->get('id');?>&playerId=<?=$player->get('id');?>&clanId=<?=$clanId;?>">Add Attack</a>
-													<?}else{?>
-														<a type="button" class="btn btn-xs btn-success" href="/addWarAttack.php?warId=<?=$war->get('id');?>&playerId=<?=$player->get('id');?>">Add Attack</a>
-													<?}
-												}?>
-                                                                                        </td>
-											<?}
-                                                                                        elseif (!isset($firstAttack) && !isset($secondAttack)) {?>
-                                                                                        <td colspan="2">
-                                                                                            <?if(count($clan2Players) > 0 && $userCanEdit){
-													if(isset($clanId)){?>
-														<a type="button" class="btn btn-xs btn-info" href="/addWarAssign.php?warId=<?=$war->get('id');?>&playerId=<?=$player->get('id');?>&clanId=<?=$clanId;?>">Assign</a>
-													<?}else{?>
-														<a type="button" class="btn btn-xs btn-info" href="/addWarAssign.php?warId=<?=$war->get('id');?>&playerId=<?=$player->get('id');?>">Assign</a>
-													<?}
-												}
-                                                                                            ?> 
-                                                                                        </td>
-                                                                                        <?}?>
-										<td>
-											<?if($starsAgainst==3){?>
-												<i class="fa fa-star" style="color: gold;"></i> <i class="fa fa-star" style="color: gold;"></i> <i class="fa fa-star" style="color: gold;"></i>
-											<?}elseif($starsAgainst==2){?>
-												<i class="fa fa-star" style="color: gold;"></i> <i class="fa fa-star" style="color: gold;"></i> <i class="fa fa-star-o" style="color: silver;"></i>
-											<?}elseif($starsAgainst==1){?>
-												<i class="fa fa-star" style="color: gold;"></i> <i class="fa fa-star-o" style="color: silver;"></i> <i class="fa fa-star-o" style="color: silver;"></i>
-											<?}elseif($starsAgainst==0){?>
-												<i class="fa fa-star-o" style="color: silver;"></i> <i class="fa fa-star-o" style="color: silver;"></i> <i class="fa fa-star-o" style="color: silver;"></i>
-											<?}?>
-										</td>
-										<?if($userCanEdit){?>
-											<td>
-												<?if(isset($clanId)){?>
-													<a type="button" class="btn btn-xs btn-danger" href="/processRemoveWarPlayer.php?warId=<?=$war->get('id');?>&playerId=<?=$player->get('id');?>&clanId=<?=$clanId;?>" data-toggle="popover" data-trigger="hover" data-placement="left" data-content="Click to remove this player from the war.">&times;</a>
-												<?}else{?>
-													<a type="button" class="btn btn-xs btn-danger" href="/processRemoveWarPlayer.php?warId=<?=$war->get('id');?>&playerId=<?=$player->get('id');?>" data-toggle="popover" data-trigger="hover" data-placement="left" data-content="Click to remove this player from the war.">&times;</a>
-												<?}?>
-											</td>
-										<?}?>
-									</tr>
-								<?}?>
-							</tbody>
-						</table>
-					</div>
-				<?}else{?>
-					<div class="alert alert-info" role="alert">
-						<strong>On no!</strong> There's no players in the war for this clan. <?if($userCanEdit){ print "You can start by adding some above.";}?>
-					</div>
-				<?}?>
-			</div>
-		</div>
-        </div>
-	<div id="warPlayers" class="col-md-12 hidden">
+	<div id="warPlayers" class="col-md-12">
 		<br>
 		<div class="col-md-6">
 			<h2 class="hidden-lg"><?=displayName($clan1->get('name'));?></h2>
@@ -1012,31 +828,9 @@ function clickRow(href){
 $('#warAttacksTab').on('click', function(){
 	$('#warPlayersTab').removeClass('active');
 	$('#warPlayers').addClass('hidden');
-        
-        $('#warAssignTab').removeClass('active');
-        $('#warAssign').addClass('hidden');
 
 	$('#warAttacksTab').addClass('active');
 	$('#warAttacks').removeClass('hidden');
-
-	$('#editRequestsTab').removeClass('active');
-	$('#editRequests').addClass('hidden');
-
-	$('#allowedUsersTab').removeClass('active');
-	$('#allowedUsers').addClass('hidden');
-
-	$('#requestAccessTab').removeClass('active');
-	$('#requestAccess').addClass('hidden');
-});
-$('#warAssignTab').on('click', function(){
-	$('#warPlayersTab').removeClass('active');
-	$('#warPlayers').addClass('hidden');
-        
-        $('#warAssignTab').addClass('active');
-        $('#warAssign').removeClass('hidden');
-
-	$('#warAttacksTab').removeClass('active');
-	$('#warAttacks').addClass('hidden');
 
 	$('#editRequestsTab').removeClass('active');
 	$('#editRequests').addClass('hidden');
@@ -1051,10 +845,7 @@ $('#warPlayersTab').on('click', function(){
 	$('#warPlayersTab').addClass('active');
 	$('#warPlayers').removeClass('hidden');
 
-	$('#warAssignTab').removeClass('active');
-        $('#warAssign').addClass('hidden');
-        
-        $('#warAttacksTab').removeClass('active');
+	$('#warAttacksTab').removeClass('active');
 	$('#warAttacks').addClass('hidden');
 
 	$('#editRequestsTab').removeClass('active');
@@ -1070,9 +861,6 @@ $('#editRequestsTab').on('click', function(){
 	$('#warPlayersTab').removeClass('active');
 	$('#warPlayers').addClass('hidden');
 
-	$('#warAssignTab').removeClass('active');
-        $('#warAssign').addClass('hidden');
-        
 	$('#warAttacksTab').removeClass('active');
 	$('#warAttacks').addClass('hidden');
 
@@ -1090,9 +878,6 @@ $('#allowedUsersTab').on('click', function(){
 	$('#warPlayersTab').removeClass('active');
 	$('#warPlayers').addClass('hidden');
 
-	$('#warAssignTab').removeClass('active');
-        $('#warAssign').addClass('hidden');
-        
 	$('#warAttacksTab').removeClass('active');
 	$('#warAttacks').addClass('hidden');
 
@@ -1110,9 +895,6 @@ $('#requestAccessTab').on('click', function(){
 	$('#warPlayersTab').removeClass('active');
 	$('#warPlayers').addClass('hidden');
 
-	$('#warAssignTab').removeClass('active');
-        $('#warAssign').addClass('hidden');
-        
 	$('#warAttacksTab').removeClass('active');
 	$('#warAttacks').addClass('hidden');
 
