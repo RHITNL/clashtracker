@@ -234,7 +234,7 @@ require('header.php');
 		<div id="clanMessageWrapper" class="col-sm-12 <?=isset($clanMessage) ? '' : 'hidden';?>" style="margin-top: 10px;">
 			<div id="clanMessageDiv">
 				<div class="alert alert-info">
-					<div id="clanMessage" style="text-align: center;"><?=$clanMessage;?></div>
+					<div id="clanMessage" style="text-align: center;"><?=preg_replace('/\n/', '<br>', htmlspecialchars($clanMessage));?></div>
 					<?if($userCanEditClanMessage){?>
 						<div style="text-align: right;">
 							<a type="button" class="btn btn-xs btn-info" onclick="showEditMessageForm();">Edit</a>
@@ -245,9 +245,9 @@ require('header.php');
 			<?if($userCanEditClanMessage){?>
 				<div id="editClanMessageDiv" hidden>
 					<div class="alert alert-info">
-						<input type="textarea" style="text-align: center;" class="form-control" id="newMessage" value="<?=$clanMessage;?>"></input>
+						<textarea type="textarea" rows="<?=substr_count($clanMessage, "\n")+1;?>" style="text-align: center;" class="form-control" id="newMessage"></textarea>
 						<div style="text-align: right; margin-top: 10px;">
-							<a type="button" class="btn btn-xs btn-danger" onclick="showMessageForm();">Cancel</a>
+							<a type="button" class="btn btn-xs btn-danger" onclick="showMessage();">Cancel</a>
 							<a type="button" class="btn btn-xs btn-info" onclick="saveMessage('newMessage');">Save</a>
 						</div>
 					</div>
@@ -781,11 +781,15 @@ require('header.php');
 function showEditMessageForm(){
 	$('#clanMessageDiv').hide();
 	$('#editClanMessageDiv').show();
+	var message = HTMLdecode($('#clanMessage').html().replace(/<br>/g, "\n"));
+	$('#newMessage').val(message);
 }
-function showMessageForm(){
+function showMessage(){
+	console.log('1');
 	$('#clanMessageDiv').show();
 	$('#editClanMessageDiv').hide();
-	$('#newMessage').val($('#clanMessage').text());
+	var message = HTMLdecode($('#clanMessage').html().replace(/<br>/g, "\n"));
+	$('#newMessage').val(message);
 }
 function saveMessage(id){
 	var warId = '<?=$war->get('id');?>';
@@ -804,15 +808,23 @@ function saveMessage(id){
 		if(data.error){
 			alert(data.error);
 		}else{
-			$('#clanMessage').text(data.message);
+			var message = HTMLencode((data.message.replace(/\n/g, "<br>")));
+			$('#clanMessage').html(message);
+			$('#newMessage').prop('rows', (data.message.match(/\n/g) || []).length+1)
 			checkMessageStatus();
 		}
 	}).fail(function(xhr, textStatus){
 		alert('There was an unexpected error. Please refresh the page and try again.');
 	});
 }
+function HTMLencode(string){
+	return $('<div/>').text(string).html();
+}
+function HTMLdecode(string){
+	return $('<div/>').html(string).text();
+}
 function checkMessageStatus(){
-	if($('#clanMessage').text().length == 0){
+	if($('#clanMessage').html().length == 0){
 		$('#clanMessageWrapper').addClass('hidden');
 		$('#addMessageTab').removeClass('hidden');
 		$('#tabs').removeClass('hidden');
@@ -824,7 +836,7 @@ function checkMessageStatus(){
 		if(!<?=json_encode($otherTabs);?>){
 			$('#tabs').addClass('hidden');
 		}
-		showMessageForm();
+		showMessage();
 	}
 }
 function changeOrder(playerId, clanId, action){
