@@ -30,14 +30,25 @@ if(!$userCanEditMessage){
 
 
 $message = $_POST['message'];
+$sanitized = sanitizeClanWarMessage($message);
 if($message == $war->getMessage($clanId)){
-	echo json_encode(array('message' => $message));
+	echo json_encode(
+		array(
+			'message' => linkify($sanitized),
+			'textarea' => preg_replace('/\<br\>/', "\n", $sanitized)
+		)
+	);
 	exit;
 }
 
 try{
 	$war->set('clanMessage', $message, $clanId);
-	echo json_encode(array('message' => $message));
+	echo json_encode(
+		array(
+			'message' => linkify($sanitized),
+			'textarea' => preg_replace('/\<br\>/', "\n", $sanitized)
+		)
+	);
 }catch(Exception $e){
 	echo json_encode(array('error' => $e->getMessage()));
 }

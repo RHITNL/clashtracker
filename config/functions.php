@@ -472,3 +472,51 @@ function displayName($name){
 	$name = htmlspecialchars($name);
 	return str_replace(' ', '&nbsp;', $name);
 }
+
+function sanitizeClanWarMessage($message){
+	$tags = array('b','strong','i','em','mark','small','del','ins','sub','sup');
+	$stack = array();
+	$sanitized = '';
+	for ($i=0; $i < strlen($message); $i++) {
+		if(substr($message,$i,1)=="\n"){
+			$sanitized .= '<br>';
+			continue;
+		}
+		if(count($stack)>0){
+			$endTag = endTag(end($stack));
+			if($endTag == substr($message,$i,strlen($endTag))){
+				array_pop($stack);
+				$sanitized .= $endTag;
+				$i+=strlen($endTag)-1;
+				continue;
+			}
+		}
+		foreach ($tags as $tag) {
+			$startTag = startTag($tag);
+			if($startTag == substr($message,$i,strlen($startTag))){
+				array_push($stack, $tag);
+				$sanitized .= $startTag;
+				$i+=strlen($startTag);
+				continue;
+			}
+		}
+		$sanitized .= htmlspecialchars(substr($message,$i,1));
+	}
+	$stack = array_reverse($stack);
+	foreach ($stack as $tag) {
+		$sanitized .= endTag($tag);
+	}
+	return $sanitized;
+}
+
+function startTag($tag){
+	return "<$tag>";
+}
+
+function endTag($tag){
+	return "</$tag>";
+}
+
+function linkify($string){
+	return preg_replace('!(http|ftp|scp)(s)?:\/\/[a-zA-Z0-9.?&_/=]+!', "<a href=\"\\0\">\\0</a>", $string);
+}
