@@ -518,5 +518,5 @@ function endTag($tag){
 }
 
 function linkify($string){
-	return preg_replace('#(http|https|ftp|ftps|scp|scps)://\S+[^\s.,)\];\'"!?]#', '<a href="\0"target="_blank">\0</a>', $string);
+	return MakeItLink::transform($string);
 }
