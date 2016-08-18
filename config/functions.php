@@ -518,5 +518,5 @@ function endTag($tag){
 }
 
 function linkify($string){
-	return preg_replace('!(http|ftp|scp)(s)?:\/\/[a-zA-Z0-9.?&_/=]+!', "<a href=\"\\0\">\\0</a>", $string);
+	return preg_replace('#(http|https|ftp|ftps|scp|scps)://\S+[^\s.,)\];\'"!?]#', '<a href="\0"target="_blank">\0</a>', $string);
 }
